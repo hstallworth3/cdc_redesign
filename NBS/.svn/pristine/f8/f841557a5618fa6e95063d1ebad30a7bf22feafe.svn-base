@@ -1,0 +1,405 @@
+<project name="nedssproject" default="production" basedir=".">
+	<import file="./build.properties.xml"/>
+	<import file="./build.report.xml"/>
+	<import file="./build.nndm.xml"/>
+	<!-- _____________________________________________________________________________________________ -->
+	<target name="nbs.clean">
+		<delete includeEmptyDirs="true" quiet="true" failonerror="false">
+			<fileset dir="${eclipse_build_dir}" includes="**/*"/>
+			<fileset dir="${earDir}" includes="*.ear"/>
+			<fileset dir="${warDir}" includes="*.war"/>
+			<fileset dir="${jarDir}" includes="*.jar"/>
+			<fileset dir="${Nedss_dir}" includes="**/*"/>
+			<fileset dir="${dist_dir}" includes="**/*"/>
+			<fileset dir="${reportdest.dir}" includes="**/*"/>
+			<fileset dir="${APPLICATIONS}/nbs.ear" includes="**/*"/>
+			<fileset dir="${NNDM_APPLICATION_DIR}" includes="**/*"/>
+			<fileset dir="${libraries_dest_dir}" includes="**/*"/>
+		</delete>
+	</target>
+	
+	<!-- _____________________________________________________________________________________________ -->
+	<target name="nbs.init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		<!-- Create the build directory structure used by compile and copy the deployment descriptors into it-->
+		<mkdir dir="${Nedss_dir}"/>
+		<mkdir dir="${userprofile_dir}"/>
+		<mkdir dir="${cdf-dir}/import"/>
+		<mkdir dir="${cdf-dir}/success"/>
+		<mkdir dir="${cdf-dir}/failure"/>
+		<mkdir dir="${cdf-dir}/xhtml"/>
+		<mkdir dir="${cdf-dir}/rawdata"/>
+		<mkdir dir="${properties_dir}"/>
+		<mkdir dir="${properties_dir}/xmltojsp"/>
+		<mkdir dir="${properties_dir}/LogConfig"/>
+		<mkdir dir="${user_guide_dir}"/>
+		<mkdir dir="${Nedss_dir}/BatchFiles"/>
+		<mkdir dir="${Nedss_dir}/classfiles"/>
+		<mkdir dir="${dist_dir}"/>
+		<mkdir dir="${earDir}/META-INF"/>
+		<mkdir dir="${warDir}/WEB-INF"/>
+		<mkdir dir="${jarDir}/META-INF"/>
+		<mkdir dir="${nndmWarDir}/WEB-INF"/>
+		<mkdir dir="${nndmWarDir}/WEB-INF/lib"/>
+		<mkdir dir="${Nedss_dir}/nndm"/>
+		<mkdir dir="${Nedss_dir}/nndm/styles"/>
+		<mkdir dir="${Nedss_dir}/jsptempfiles"/>
+		<copy todir="${eclipse_build_dir}/META-INF" includeEmptyDirs="no">
+			<fileset dir=".">
+				<include name="ejb-jar.xml"/>
+				<include name="application.xml"/>
+				<include name="NEDSSEJBManifest.MF"/>
+				<exclude name="build.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${properties_dir}">
+			<fileset dir="${nbs_development_dir}/source/PropertyFiles"/>
+		</copy>
+		<copy todir="${user_guide_dir}">
+			<fileset dir="${nbs_development_dir}/source/gov/cdc/nedss/webapp/nbs/pdf"/>
+		</copy>
+		<copy todir="${libraries_dest_dir}" overwrite="no" includeEmptyDirs="no">
+			<fileset dir="${nbs_development_dir}/Libraries">
+				<include name="**/Apache/commons-codec-1.4.jar"/>
+				<include name="**/Apache/commons-collections-3.2.jar"/>
+				<include name="**/Apache/commons-pool-1.2.jar"/>
+				<include name="**/Castor/castor-0.9.3.9.jar"/>
+				<include name="**/cda/**"/>
+				<include name="**/Centrus/ABClient.jar"/>
+				<include name="**/charts/**"/>
+				<include name="**/customSubformJaxbLibrary/**"/>
+				<include name="**/DMBPageSchema/**"/>
+				<include name="**/EndorsedLibs/jakarta-bcel-20040329.jar"/>
+				<include name="**/EndorsedLibs/jakarta-regexp-1.4.jar"/>
+				<include name="**/EndorsedLibs/resolver.jar"/>
+				<include name="**/EndorsedLibs/xalan-2.7.0.jar"/>
+				<include name="**/EndorsedLibs/xsltc.jar"/>
+				<include name="**/Informa/**"/>
+				<include name="**/jaxb/**"/>
+				<include name="**/JustFormsPDF/JustFormsPDF.jar"/>
+				<include name="**/Log4J/log4j-1.2.17.jar"/>
+				<include name="**/mail/mail.jar"/>
+				<include name="**/nndMasterMsgFrameWork/**"/>
+				<include name="**/pdfbox/**"/>
+				<include name="**/struts/commons-beanutils-1.7.0.jar"/>
+				<include name="**/struts/commons-chain-1.1.jar"/>
+				<include name="**/struts/commons-digester-1.8.jar"/>
+				<include name="**/struts/commons-fileupload-1.1.1.jar"/>
+				<include name="**/struts/commons-io-1.1.jar"/>
+				<include name="**/struts/commons-logging-1.0.4.jar"/>
+				<include name="**/struts/commons-validator-1.3.1.jar"/>
+				<include name="**/struts/ditchnet-tabs-taglib.jar"/>
+				<include name="**/struts/jstl-1.0.2.jar"/>
+				<include name="**/struts/oro-2.0.8.jar"/>
+				<include name="**/struts/struts-core-1.3.8.jar"/>
+				<include name="**/struts/struts-el-1.3.8.jar"/>
+				<include name="**/struts/struts-extras-1.3.8.jar"/>
+				<include name="**/struts/struts-faces-1.3.8.jar"/>
+				<include name="**/struts/Struts-Layout-1.2.jar"/>
+				<include name="**/struts/struts-taglib-1.3.8.jar"/>
+				<include name="**/struts/dwr.jar"/>
+				<include name="**/tools/**"/>
+				<include name="**/PartnerServices/**"/>
+				<include name="**/vads/**"/>
+				<include name="**/webAF/activation.jar"/>
+				<include name="**/webAF/sas.ads.core.jar"/>
+				<include name="**/webAF/sas.ads.misc.jar"/>
+				<include name="**/webAF/sas.ads.servlet.jar"/>
+				<include name="**/webAF/sas.core.jar"/>
+				<include name="**/webAF/sas.intrnet.javatools.jar"/>
+				<include name="**/webAF/sas.servlet.jar"/>
+				<include name="**/webAF/sas.text.jar"/>
+				<include name="**/webAF/sas.webEIS.jar"/>
+				<include name="**/webAF/webafutil.jar"/>
+				<include name="**/xmlbeans/**"/>
+				<include name="**/tidy/jtidy-r938.jar"/>
+				<include name="module.xml"/>
+				
+				<exclude name="**/jboss/**"/>
+				<exclude name="**/json/**"/>
+				<exclude name="**/servlet/**"/>
+				
+			</fileset>
+		</copy>
+		<copy todir="${sql_libraries_dest_dir}" overwrite="no" includeEmptyDirs="no">
+			<fileset dir="${nbs_development_dir}/Libraries/SQLServer">
+				<include name="**/**"/>
+			</fileset>
+		</copy>
+		<copy todir="${oracle_libraries_dest_dir}" overwrite="no" includeEmptyDirs="no">
+			<fileset dir="${nbs_development_dir}/Libraries/ORACLE">
+				<include name="ojdbc6.jar"/>
+				<include name="xdb6.jar"/>
+				<include name="xmlparserv2.jar"/>
+				<include name="module.xml"/>
+				<exclude name="ironjacamar-jdbc-1.1.9.Final.jar"/>
+			</fileset>
+		</copy>
+		<copy todir="${properties_dir}/LogConfig" overwrite="no">
+			<fileset dir="${config_dir}/LogConfig"/>
+		</copy>
+		<copy todir="${Nedss_dir}/BatchFiles" overwrite="no">
+			<fileset dir="${nbs_development_dir}/source/BatchFiles"/>
+		</copy>
+		<copy todir="${properties_dir}/xmltojsp/">
+		<fileset dir="${nbs_development_dir}/source/gov/cdc/nedss/pagemanagement/wa/xml/transform" includes="**/*"/>
+		</copy>
+		<copy todir="${APPLICATIONS}/images" overwrite="no" file="${nbs_development_dir}/source/gov/cdc/nedss/webapp/nbs/resource/image/logo.jpg"/>
+		<move file="${APPLICATIONS}/images/logo.jpg" tofile="${APPLICATIONS}/images/nedssLogo.jpg"/>
+	</target>
+	<!-- _____________________________________________________________________________________________ -->
+	<!-- Compile classes into the buildclasses directory. This will avoid recompilation of eclipse build  -->
+	<!-- Then copy the classfiles into \Nedss\classfiles directory for jar prep -->
+	<target name="nbs.compile" depends="nbs.init">
+		<javac srcdir="${nbs_development_dir}/source" destdir="${eclipse_build_dir}" debug="yes" fork="true" memoryInitialSize="312m" memoryMaximumSize="512m">
+			<include name="**/*.java"/>
+			<exclude name="**/*.class"/>
+			<exclude name="${nbs_development_dir}/source/gov/cdc/nedss/webapp/nbs/WEB-INF/**"/>
+			<exclude name="gov/cdc/nedss/datamigration/application/**"/>
+			<exclude name="gov/cdc/nedss/datamigration/ejb/**"/>
+			<exclude name="gov/cdc/nedss/datamigration/unmarshaller/**"/>
+			<exclude name="gov/cdc/nedss/datamigration/entity/**"/>
+			<exclude name="gov/cdc/nedss/datamigration/xsd/**"/>
+			<exclude name="Rhapsody/**"/>
+			<classpath refid="class.path"/>
+		</javac>
+	</target>
+	<!-- _____________________________________________________________________________________________ -->
+	<!--target name="nbs.buildJar" depends="nbs.compile">
+		<jar destfile="${earDir}/NEDSSEJB.jar" basedir="${eclipse_build_dir}" manifest="${eclipse_build_dir}/META-INF/NEDSSEJBManifest.MF" update="yes" includes="gov/cdc/nedss/**/*.class,
+							 META-INF/ejb-jar.xml"  excludes="gov/cdc/nedss/webapp/**, **/webapp/nbs/servlet**, 
+							**/unittest/**, 
+				 	 		**/datamigration/**, **/Rhapsody/**"/>
+	</target-->
+<target name="nbs.buildJar" depends="nbs.compile">
+		<jar destfile="${earDir}/NEDSSEJB.jar" basedir="${eclipse_build_dir}" manifest="${eclipse_build_dir}/META-INF/NEDSSEJBManifest.MF" update="yes" includes="gov/cdc/nedss/**/*.class,
+							 META-INF/ejb-jar.xml" excludes="**gov/cdc/nedss/webapp/nbs/action**, **/webapp/nbs/servlet**, 
+							**/unittest/**, 
+				 	 		**/datamigration/**, **/Rhapsody/**"/>
+	</target>
+	<target name="jspc">
+		<delete includeEmptyDirs="true" quiet="true" failonerror="false">
+			<fileset dir="${eclipse_build_dir}/jsptempfiles" includes="**/*"/>
+		</delete>
+		<jar jarfile="${eclipse_build_dir}\allclasses.jar" basedir="${eclipse_build_dir}" excludes="allclasses.jar,**/META-INF/**,BatchFiles/**,ear/**,war/**,nndm/**,nndmWar/**,Rhapsody/**, jsptempfiles/**"/>
+		<taskdef classname="org.apache.jasper.JspC" name="jasper2">
+			<classpath id="jspc.classpath">
+				<pathelement location="${JAVA_HOME}/lib/tools.jar"/>
+				<fileset dir="${JB_DOMAIN_HOME}/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${nbs_development_dir}/Libraries/struts">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${nbs_development_dir}/Libraries/ORACLE">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${nbs_development_dir}/Libraries/xmlbeans">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${nbs_development_dir}/Libraries/Informa">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${nbs_development_dir}/Libraries/DMBPageSchema">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${nbs_development_dir}/Libraries/PartnerServices">
+					<include name="*.jar"/>
+				</fileset>				
+				<fileset dir="${nbs_development_dir}/source/gov/cdc/nedss/webapp/nbs//WEB-INF/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${eclipse_build_dir}">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+			<classpath refid="class.path"/>
+		</taskdef>
+		<jasper2 validateXml="false" uriroot="${warDir}/nbs.war" outputDir="${eclipse_build_dir}/jsptempfiles"/>
+		<javac sourcepath="" srcdir="${eclipse_build_dir}/jsptempfiles" debug="yes" fork="true" memoryInitialSize="512m" memoryMaximumSize="1024m">
+			<include name="**/*.java"/>
+			<exclude name="**/core/**"/>
+			<exclude name="**/ext/**"/>
+			<classpath refid="jspc.classpath"/>
+		</javac>
+		<copy todir="${Nedss_dir}/jsptempfiles" overwrite="no">
+			<fileset dir="${eclipse_build_dir}/jsptempfiles"/>
+		</copy>
+	</target>
+	<target name="nbs.buildWar" depends="nbs.compile" description="copies all web resources to war directory">
+		<copy todir="${warDir}/nbs.war" includeEmptyDirs="no">
+			<fileset dir="${nbs_development_dir}/source/gov/cdc/nedss/webapp/nbs/">
+				<include name="**/*.xmap"/>
+				<include name="**/*.xsp"/>
+				<include name="**/*.jsp"/>
+				<include name="**/*.xsl"/>
+				<include name="**/*.xml"/>
+				<include name="resource/**"/>
+				<include name="report/**"/>
+				<include name="html/**"/>
+				<include name="pdf/*.pdf"/>
+				<include name="WEB-INF/*"/>
+				<include name="WEB-INF/lib/*.jar"/>
+ 			</fileset>
+		</copy>
+		<copy todir="${warDir}/nbs.war/WEB-INF/classes/" includeEmptyDirs="no">
+			<fileset dir="${nbs_development_dir}/source">
+				<include name="gov/cdc/nedss/webapp/nbs/logicsheet/**"/>
+				<include name="gov/cdc/nedss/webapp/nbs/messageProperties/RVCT/RVCT.properties"/>
+			</fileset>
+		</copy>
+		<copy todir="${warDir}/nbs.war/WEB-INF/classes/" includeEmptyDirs="no">
+			<fileset dir="${eclipse_build_dir}">
+			<include name="gov/cdc/nedss/**/*.class"/>
+				<!--include name="gov/cdc/nedss/webapp/messageProperties/**"/>
+				<include name="gov/cdc/nedss/webapp/logicsheet/**"/>
+				<include name="gov/cdc/nedss/webapp/**/servlet/**"/>
+				<include name="gov/cdc/nedss/webapp/**/form/**"/>
+				<include name="gov/cdc/nedss/webapp/**/*.class"/>
+				<include name="gov/cdc/**/vo/**/*.class"/>
+				<include name="gov/cdc/**/dt/**/*.class"/>
+				<include name="gov/cdc/**/util/**/*.class"/>
+				<include name="gov/cdc/**/helper/**/*.class"/>
+				<include name="gov/cdc/**/exception/**/*.class"/>
+				<include name="gov/cdc/**/systemservice/**/*.class"/>
+				<include name="gov/cdc/**/group/**/*.class"/>
+				<include name="gov/cdc/**/importer/**/*.class"/>
+				<include name="gov/cdc/**/bean/**/*.class"/-->
+				<exclude name="**/WEB-INF/**"/>
+				<exclude name="**/doc/**"/>
+				<exclude name="**/bin/**"/>
+				<exclude name="**/gov/cdc/nedss/webapp/nbs/util/DeDuplicationQueueHelper.class"/> <!-- Excluded for DeDuplicationSimilar batch job to work. This batch job use static variable, if this file exist in WAR and EJB JAR file then it won't work.-->
+			</fileset>
+		</copy>
+		<copy todir="${warDir}/nbs.war/WEB-INF/classes/" includeEmptyDirs="no">
+			<fileset dir="${warDir}/nbs.war/WEB-INF">
+				<include name="MessageResources.properties"/>
+				<include name="displaytag.properties"/>
+			</fileset>
+		</copy>
+		<!--copy todir="${warDir}/nbs.war/WEB-INF/lib/" includeEmptyDirs="no">
+			<fileset dir="${earDir}">
+				<include name="NEDSSEJB.jar"/>
+			</fileset>
+		</copy-->
+	
+		<!-- _____________________________________________________________________________________________ -->
+		<!-- Online Help                                                                                   -->
+		<unzip src="${nbs_development_dir}/help/help.zip" dest="${warDir}/nbs.war"/>
+		<!-- Create war file and place in ear directory -->
+		<jar jarfile="${earDir}/${warFile}" basedir="${warDir}/nbs.war"/>
+	</target>
+	<!-- _____________________________________________________________________________________________ -->
+	<!-- Create the ear File -->
+	<target name="nbs.buildEar" depends="nbs.buildWar, nbs.buildJar, nbs.ZipClassFiles">
+		<copy todir="${earDir}/META-INF">
+			<fileset dir=".">
+				<include name="application.xml"/>
+				<include name="jboss-deployment-structure.xml"/>
+			</fileset>
+		</copy>
+		<!-- Create ear file and place in ear directory -->
+		<jar jarfile="${basedir}/${earFile}" basedir="${earDir}"/>
+	</target>
+	<!-- _____________________________________________________________________________________________ -->
+	<!-- deploy  the ear File -->
+	<target name="nbs.deployEar" depends="nbs.buildEar">
+		<copy file="nbs.ear" todir="${APPLICATIONS}"/>
+	</target>
+	<target name="nbs.ZipClassFiles" description="Create a Zip file and copy to the Nedss/Classes folder">
+		<zip destfile="${build_dir}\classfiles.zip" basedir="${eclipse_build_dir}" excludes="gov/cdc/nedss/webapp/**,**/META-INF/**,BatchFiles/**,ear/**,war/**,nndm/**,nndmWar/**,Rhapsody/**, jsptempfiles/**"/>
+	</target>
+	<!--	____________________________________________________________________________________________ -->
+	<target name="nbs.copyEndorsedLibs" description="copies jarfiles per new JDK endorsed libraries mechanism">
+		<copy todir="${JAVA_HOME}/jre/lib/endorsed" includeEmptyDirs="no">
+			<fileset dir="${nbs_development_dir}/Libraries/EndorsedLibs">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	<!-- _____________________________________________________________________________________________ -->
+	<target name="production" description="Full deploy with cleanup" depends="nbs.clean,
+	             nbs.init,
+				 nbs.buildJar,
+		         nbs.buildWar,
+		         nndm.buildWar,
+		         nbs.buildEar,
+		         nbs.deployEar,
+	             nbs.sasreport,
+	             nbs.copyEndorsedLibs,
+		         nbs.ZipClassFiles"/>
+	<!-- _____________________________________________________________________________________________ -->
+	<target name="installjbossservice" description="Installs JBoss Service">
+		<exec dir="${bin.jboss}/bin" executable="${bin.jboss.installservice.exec}" os="Windows 2000, Windows XP">
+			<env key="JAVA_COMMAND" value="${bin.java.exec}"/>
+		</exec>
+	</target>
+	<target name="uninstalljbossservice" description="UnInstalls JBoss Service">
+		<exec dir="${bin.jboss}/bin" executable="${bin.jboss.uninstallservice.exec}" os="Windows 2000, Windows XP">
+			</exec>
+	</target>
+	<target name="startjbossservice" description="Starts JBoss Service">
+		<exec dir="${bin.jboss}/bin" executable="${bin.jboss.startservice.exec}" os="Windows 2000, Windows XP">
+			</exec>
+	</target>
+	<target name="stopjbossservice" description="Stops JBoss Service">
+		<exec dir="${bin.jboss}/bin" executable="${bin.jboss.stopservice.exec}" os="Windows 2000, Windows XP">
+			</exec>
+	</target>
+	<target name="stop-deploy-start" depends="nbs.buildEar" description="Stops the JBoss service, deploys, and then restarts.">
+		<antcall target="stopjbossservice"/>
+		<antcall target="nbs.deployEar"/>
+		<antcall target="startjbossservice"/>
+	</target>
+	<target name="cleanstart" depends="nbs.compile" description="">
+		<antcall target="stopjbossservice"/>
+		<antcall target="nbs.clean"/>
+		<antcall target="nbs.deployEar"/>
+		<antcall target="startjbossservice"/>
+		<sleep seconds="20"/>
+	</target>
+	<target name="buildPSSchemaJar">
+	       <taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean" classpath="${nbs_development_dir}/Libraries/xmlbeans/xmlbean-2.6.0.jar"/>
+	       <xmlbean schema="schemas" destfile="PartnerServices20.jar"/>
+	</target>
+	<target name="buildDSMSchemaJar" >
+		<!--<echo>${toString:class.path}</echo>-->
+		<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean" classpath="${nbs_development_dir}/Libraries/xmlbeans/xmlbeans-2.6.0.jar"/>
+		<!--Create a folder 'schemas' and place the .xsd and .xsdconfig(to map a namespace to the Java package
+        name that should be generated ) file in the folder-->
+		<xmlbean schema="../schemas" destfile="../schemas/DSMAlgorithm.jar" classpath="${nbs_development_dir}/Libraries/xmlbeans/xmlbeans-2.6.0.jar"/>
+	</target>
+	<target name="buildPHDCSchemaJar">
+		<!--<echo>${toString:class.path}</echo>-->
+		<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
+		</taskdef>
+		<!--Create a folder 'phdcschemas' and place the .xsd and .xsdconfig(to map a namespace to the Java package
+	name that should be generated ) file in the folder-->   
+		<xmlbean schema="phdcschemas" destfile="phdcschemas/PHDCMessage.jar"/>
+	</target>
+	<target name="buildCDASchemaJar">
+			<!--<echo>${toString:class.path}</echo>-->
+			<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
+			</taskdef>
+			<!--Create a folder 'schemas/NBS/cda' and place the .xsd and .xsdconfig(to map a namespace to the Java package
+		name that should be generated ) file in the folder-->
+			<xmlbean schema="schemas/NBS" destfile="schemas/NBS/CDA_SDTC.jar"/>
+	</target>
+	<target name="buildExportPagePortMappingSchemaJar" >
+		<!--<echo>${toString:class.path}</echo>-->
+		<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean" classpath="${nbs_development_dir}/Libraries/xmlbeans/xmlbeans-2.6.0.jar"/>
+		<!--Create a folder 'schemas' and place the .xsd and .xsdconfig(to map a namespace to the Java package
+        name that should be generated ) file in the folder-->
+		<xmlbean schema="../GenerateJarFromXSD/PagePortMapping" destfile="../GenerateJarFromXSD/PagePortMapping/PagePortMapping.jar" classpath="${nbs_development_dir}/Libraries/xmlbeans/xmlbeans-2.6.0.jar"/>
+	</target>
+	
+	<target name="buildNNDIntermediaryMessageJar" >
+		<!--<echo>${toString:class.path}</echo>-->
+		<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean" classpath="${nbs_development_dir}/Libraries/xmlbeans/xmlbeans-2.6.0.jar"/>
+		<!--Create a folder 'schemas' and place the .xsd and .xsdconfig(to map a namespace to the Java package
+        name that should be generated ) file in the folder-->
+		<xmlbean schema="../GenerateJarFromXSD/NNDIntermediaryMessage" destfile="../GenerateJarFromXSD/NNDIntermediaryMessage/nndintermediarymessage.jar" classpath="${nbs_development_dir}/Libraries/xmlbeans/xmlbeans-2.6.0.jar"/>
+	</target>
+</project>
+<!-- End of file -->

@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp" xmlns:session="http://apache.org/xsp/session/2.0" xmlns:xsp-response="http://apache.org/xsp/response/2.0" xmlns:xsp-request="http://apache.org/xsp/request/2.0" xmlns:util="http://apache.org/xsp/util/2.0">
+	<xsp:structure>
+		<xsp:include>java.util.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.util.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.systemservice.nbssecurity.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.proxy.ejb.observationproxyejb.vo.*</xsp:include>
+	</xsp:structure>
+	<content>
+		<xsp:attribute name="form">
+			<xsp-request:get-attribute name="formHref"/>
+		</xsp:attribute>
+		<xsp:logic><![CDATA[
+				String contextAction = request.getParameter("ContextAction");
+				ArrayList observationList = new ArrayList();
+				String viewLabHref = (String)request.getAttribute("ViewLabHref");
+				String viewMorbHref = (String)request.getAttribute("ViewMorbHref");
+				String viewFileHref = (String)request.getAttribute("ViewFileHref");
+				String viewInvHref = (String)request.getAttribute("ViewInvHref");
+				
+				int currentIndex = 0;
+				int maxRowCount = 20;
+				if(request.getAttribute("maxRowCount")!=null)
+				    maxRowCount = ((Integer)(request.getAttribute("maxRowCount"))).intValue();
+				int numberOfRecords = 0;
+				String temp = request.getParameter("currentIndex");
+				if(temp==null)
+				   temp = (String)request.getAttribute("DSFromIndex");
+				if (temp!=null) 
+					currentIndex = Integer.parseInt(temp);
+				observationList = (ArrayList) request.getAttribute("observationList");
+
+				if(observationList != null)
+						numberOfRecords = observationList.size() ;
+				if(observationList == null || observationList.size()==0)
+			              currentIndex=-(maxRowCount);
+		]]></xsp:logic>
+		<tab>
+			<group>
+				<xsp:logic>
+		   if (request.getAttribute("ERR144") != null)
+	           {    
+			</xsp:logic>
+				<line>
+					<element type="join">
+						<line>
+							<element type="raw">
+								<span class="boldTenRed">The number of observations that you can access in this queue has been exceeded.  You will not be able to access the most recently created observations in this queue until the existing observations are processed</span>
+							</element>
+						</line>
+					</element>
+				</line>
+				<xsp:logic>
+                  }
+                </xsp:logic>
+				<line>
+					<element type="queue-data-table" allowEdit="no" page-size="20">
+						<xsp:attribute name="authorized">
+							<xsp-request:get-attribute name="viewObs"/>
+						</xsp:attribute>
+						<nextHref>
+							<xsp-request:get-attribute name="nextHref"/>
+						</nextHref>
+						<prevHref>
+							<xsp-request:get-attribute name="prevHref"/>
+						</prevHref>
+						<sortHref>
+							<xsp-request:get-attribute name="sortHref"/>
+						</sortHref>
+						<currentIndex>
+							<xsp:expr>currentIndex</xsp:expr>
+						</currentIndex>
+						<maxRowCount>
+							<xsp:expr>maxRowCount</xsp:expr>
+						</maxRowCount>
+						<totalRecords>
+							<xsp:expr>numberOfRecords</xsp:expr>
+						</totalRecords>
+						<sortDirection>
+							<xsp-request:get-attribute name="sortDirection"/>
+						</sortDirection>
+						<header width="15%" methodName="getDateReceived">Date Received</header>
+						<header width="16%" methodName="getType">Type/ Status</header>
+						<header width="15%" methodName="getJurisdiction">Jurisdiction</header>
+						<header width="15%" methodName="getLastName">Patient Name</header>
+						<header width="24%" methodName="getTestsString">Test/Condition</header>
+						<header width="15%" methodName="getObservationId">Observation ID</header>
+						<xsp:logic><![CDATA[
+						if(observationList!=null && observationList.size()>0){
+						for( int i=currentIndex; (i >= currentIndex) && (i < currentIndex + maxRowCount) && (i < numberOfRecords); i++ ) {
+							ObservationSummaryDisplayVO obs = (ObservationSummaryDisplayVO)observationList.get(i);
+							
+							String testStatus = null;
+							String patientName = null;
+							String link1URL = null;
+							String link2URL = null;
+							testStatus = StringUtils.replaceNull(obs.getType()) + "!" + StringUtils.replaceNull(obs.getStatus())+"!";
+							patientName = (obs.getLastName()==null?"No Last":obs.getLastName()) + ", " + (obs.getFirstName()==null?"No First":obs.getFirstName());
+							if(obs.getType() != null && obs.getType().trim().equals("Morbidity Report"))
+								link1URL = viewMorbHref+"&MPRUid="+String.valueOf(obs.getMPRUid())+"&observationUID="+String.valueOf(obs.getObservationUID());
+							else
+							     link1URL = viewLabHref+"&MPRUid="+String.valueOf(obs.getMPRUid())+"&observationUID="+String.valueOf(obs.getObservationUID());
+
+							link2URL = viewFileHref+"&MPRUid="+String.valueOf(obs.getMPRUid())+"&observationUID="+String.valueOf(obs.getObservationUID());						
+							]]></xsp:logic>
+						<record>
+							<link1>
+								<xsp:expr>link1URL</xsp:expr>
+							</link1>
+							<link2>
+								<xsp:expr>link2URL</xsp:expr>
+							</link2>
+							<column link1="">
+								<value>
+									<xsp:expr>StringUtils.formatDate(obs.getDateReceived())</xsp:expr>
+								</value>
+							</column>
+							<column>
+								<value>
+									<xsp:expr>testStatus</xsp:expr>
+								</value>
+								<multiline/>
+							</column>
+							<column>
+								<value>
+									<xsp:expr>StringUtils.replaceNull(obs.getJurisdiction())</xsp:expr>
+								</value>
+							</column>
+							<column link2="">
+								<value>
+									<xsp:expr>patientName</xsp:expr>
+								</value>
+							</column>
+							<column>
+								<value>
+									<xsp:expr>obs.getTestsString()</xsp:expr>
+								</value>
+								<multiline/>
+							</column>
+							<column>
+								<value>
+									<xsp:expr>obs.getObservationId()</xsp:expr>
+								</value>
+							</column>
+						</record>
+						<xsp:logic><![CDATA[
+							}}
+						]]></xsp:logic>
+					</element>
+				</line>
+			</group>
+		</tab>
+	</content>
+</xsp:page>

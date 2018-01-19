@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp" xmlns:session="http://apache.org/xsp/session/2.0" xmlns:xsp-response="http://apache.org/xsp/response/2.0" xmlns:xsp-request="http://apache.org/xsp/request/2.0" xmlns:srt-codes="http://www.cdc.gov/nedss/GetSRTCodes/1.0">
+	<xsp:structure>
+		<!--	<xsp:include>gov.cdc.nedss.wum.commands.*</xsp:include> -->
+		<xsp:include>java.util.*</xsp:include>
+	</xsp:structure>
+	<content>
+		<link-bar>
+			<link name="Return to Merge Candidate List">
+				/nbs/deduplication/mergeCandidateListSi0
+			</link>
+			<link name="Return to Home Page">
+				/nbs/HomePage.do?method=loadHomePage				
+			</link>
+		</link-bar>
+		<button-bar/>
+		<tab>
+			<group>
+				<line>
+					<element type="raw">
+						<span>
+							<p>
+								<b>The following patients have been successfully merged into PSN105665009PSN (Joe Smith).<br/>
+									<br/>
+									<br/>PSN105665010PSN (Joe Smith)
+									<br/>
+									<br/>This group has been removed from the Merge Candidate List.</b>
+							</p>
+						</span>
+					</element>
+				</line>
+			</group>
+		</tab>
+	</content>
+</xsp:page>

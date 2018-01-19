@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp" xmlns:session="http://apache.org/xsp/session/2.0" xmlns:xsp-response="http://apache.org/xsp/response/2.0" xmlns:xsp-request="http://apache.org/xsp/request/2.0" xmlns:srt-codes="http://www.cdc.gov/nedss/GetSRTCodes/1.0">
+	<xsp:structure>
+		<xsp:include>javax.servlet.http.*</xsp:include>
+		<xsp:include>java.util.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.deduplication.vo.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.webapp.nbs.action.person.util.*</xsp:include>
+	</xsp:structure>
+	<content>
+	<xsp:logic><![CDATA[
+	              Collection mergeConfirmationVO1 = (ArrayList)request.getAttribute("retMergeConfirmationVO");
+                   MergeConfirmationVO survivorVO = new MergeConfirmationVO();
+                   MergeConfirmationVO mergeConfirmationVO = new MergeConfirmationVO();
+                   if(mergeConfirmationVO1!=null)
+                   {
+                   Iterator itr = mergeConfirmationVO1.iterator();
+                   while(itr.hasNext())
+                   {
+                     mergeConfirmationVO = (MergeConfirmationVO)itr.next();
+                     if(mergeConfirmationVO!=null && mergeConfirmationVO.getSurvivor().booleanValue()==true)
+                     survivorVO = mergeConfirmationVO;
+                     
+                   }	
+                   }
+       	]]></xsp:logic>
+		<link-bar>
+		<xsp:logic><![CDATA[if(request.getAttribute("TaskName")!=null && request.getAttribute("TaskName").equals("MergeConfirmation2") ){]]></xsp:logic>
+		     <link name="Return to Merge Candidate List">
+				<xsp-request:get-attribute name="returnToMergeCandidateList"/>
+			</link>
+			<xsp:logic><![CDATA[}else{]]></xsp:logic>
+			<link name="Return to Find Patient Search Criteria">
+				<xsp-request:get-attribute name="returnToFindPatientHref"/>
+			</link>
+			<xsp:logic><![CDATA[}]]></xsp:logic>
+			<!--link name="Return to Merge Candidate List">
+				<xsp-request:get-attribute name="returnToViewPersonHref"/>&amp;personUID=<xsp-request:get-attribute name="personUID"/>
+			</link-->
+			<link name="Return to Home Page">
+				<xsp-request:get-attribute name="returnToHomePageHref"/>
+			</link>
+		</link-bar>
+		<button-bar/>
+		<tab>
+			<group>
+				<line>
+					<element type="raw">
+						<span>
+							<p><b>The following patients have been successfully merged into <xsp:expr>PersonUtil.getDisplayLocalID(survivorVO.getLocalId())</xsp:expr><xsp:expr>"      "</xsp:expr>(<xsp:expr> survivorVO.getFirstName()</xsp:expr><xsp:expr>"      "</xsp:expr> <xsp:expr> survivorVO.getMiddleName()</xsp:expr><xsp:expr>"      "</xsp:expr><xsp:expr> survivorVO.getLastName()</xsp:expr><xsp:expr>", "</xsp:expr><xsp:expr>survivorVO.getNmUseCdDesc()</xsp:expr>):<br/>
+									<xsp:logic><![CDATA[
+                                                 if(mergeConfirmationVO1!=null)
+                                                 {
+									    Iterator itr1 = mergeConfirmationVO1.iterator();
+						                   while(itr1.hasNext())
+						                   {
+						                     mergeConfirmationVO = (MergeConfirmationVO)itr1.next();
+						                     if(mergeConfirmationVO!=null && mergeConfirmationVO.getSurvivor().booleanValue()!=true)
+						                     {
+						                  ]]></xsp:logic>
+
+									<br/><xsp:expr>"  "</xsp:expr><xsp:expr>PersonUtil.getDisplayLocalID(mergeConfirmationVO.getLocalId())</xsp:expr><xsp:expr>"      "</xsp:expr>(<xsp:expr> mergeConfirmationVO.getFirstName()</xsp:expr><xsp:expr>"      "</xsp:expr><xsp:expr> mergeConfirmationVO.getMiddleName()</xsp:expr><xsp:expr>"      "</xsp:expr><xsp:expr> mergeConfirmationVO.getLastName()</xsp:expr><xsp:expr>", "</xsp:expr><xsp:expr>mergeConfirmationVO.getNmUseCdDesc()</xsp:expr>)
+									<xsp:logic><![CDATA[}}}]]></xsp:logic><br/>
+								     <xsp:logic><![CDATA[if(request.getAttribute("TaskName")!=null && request.getAttribute("TaskName").equals("MergeConfirmation2") ){]]></xsp:logic>
+                                             <br/>This group has been removed from the Merge Candidate List.
+                                             <xsp:logic><![CDATA[}]]></xsp:logic>
+							</b></p>
+						</span>
+					</element>
+				</line>
+			</group>
+		</tab>
+	</content>
+</xsp:page>

@@ -1,0 +1,493 @@
+package com.nbs.tests;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+
+import com.gargoylesoftware.htmlunit.javascript.host.Console;
+import com.rtts.utilities.DataFile;
+import com.rtts.utilities.Log;
+
+public class RunBulkOfELRs {
+	private WebDriver driver;
+	private String baseUrl;
+	private boolean acceptNextAlert = true;
+	private StringBuffer verificationErrors = new StringBuffer();
+	private Log log = new Log("BulkElrs", "C:\\Selenium\\Logs\\");
+	DataFile df = new DataFile("C:\\Selenium\\Data\\HL7.xls", "Sheet1");
+
+	String action;
+	String operator;
+	String testResult;
+	String resultedTest;
+	String resultedTestCode;
+	String condition;
+	String onFailure;
+	String question;
+	String questionValue;
+	String behavior;
+	String eventType;
+	String nameAlgorithm;
+	String zipCode;
+	String loinc;
+	String testNameNumber;
+	NBSUtils utils;
+	String database ="//NEDSS-DBSQL\\tst";
+	
+	@Before
+	public void setUp() throws Exception {
+		
+		// Firefox
+		//final FirefoxProfile firefoxProfile = new FirefoxProfile();
+		//firefoxProfile.setPreference("xpinstall.signatures.required", false);
+		 //driver = new FirefoxDriver();
+
+		// IE
+		// System.setProperty("webdriver.ie.driver","C:\\Selenium\\IEDriverServer_Win32_2.52.2\\IEDriverServer.exe");
+		// driver = new InternetExplorerDriver();
+
+		// Chrome
+		
+		System.setProperty("webdriver.chrome.driver","C:\\Selenium\\chromedriver_win32\\chromedriver.exe");
+		driver = new ChromeDriver();
+		baseUrl = "http://nedss-tstappsql:7001/";
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		
+	}
+
+	@Test
+	public void testPOCCreateWDS() throws Exception {
+		
+		
+		utils = new NBSUtils();
+		utils.setDriver(driver);
+		utils.setLog(log);
+		utils.logInNBS(baseUrl);
+		utils.setDatabase(database);
+		//String originFolder ="C:\\Users\\Administrator\\Desktop\\POC1866\\ELRsToCopy"; //commented by Deepthi
+	//	int nELR = new File(originFolder).listFiles().length; //commented by Deepthi
+		Database db = new Database();
+		
+		int nWDS=2;
+		
+		//Copy ELRs to HL7 2.3.1 folder
+		//copyElrsToHL7231Folder(nELR, originFolder); //commented by Deepthi
+		
+		//Create WDS
+		for(int i=1; i<=nWDS; i++)
+			createWDS1(i);
+		
+	   // utils.runELRBatchProcess(nELR); //commented by Deepthi
+	  //  utils.readActivityLog(nELR);  //commented by Deepthi
+	   /* 
+	    for(int i=1; i<=nELR; i++){
+	    	String labId = getLastNObsID(i);
+	    	System.out.println("Lab ID is:"+labId);
+	    	//utils.getTestCaseReadNotificationStatus(labId);	
+	    }*/
+		
+	}
+	
+
+	  protected String getLastNObsID(int i)
+	  {
+		  String ObsId = "";
+		  try{
+			  	
+			  	driver.findElement(By.linkText("System Management")).click();
+			    driver.findElement(By.cssSelector("#systemAdmin4 > thead > tr > th > a.toggleIconHref > img[alt=\"Maximize\"]")).click();
+			    driver.findElement(By.linkText("Manage ELR Activity Log")).click();
+			  /*  driver.findElement(By.id("from_date")).clear();
+			    driver.findElement(By.id("from_date")).sendKeys("02/22/2016");
+			    driver.findElement(By.id("to_date")).clear();
+			    driver.findElement(By.id("to_date")).sendKeys("03/17/2016");*/
+			    driver.findElement(By.id("searchButton")).click();
+			    ObsId = driver.findElement(By.xpath("//table[@id='parent']/tbody/tr["+i+"]/td[8]")).getText(); //get observation id of first record in the queue
+			    		    
+			   return ObsId;  
+		    }catch (NoSuchElementException e)
+		    		{
+		    			System.out.println("no such element exception thrown:");
+		    			e.printStackTrace();
+		    			return ObsId;
+		    		}
+	  }
+
+	public void createWDS1(int i){
+		try{
+		boolean runBatchProcess=true;
+		boolean createWDS=true;
+		
+		
+		action = df.getDataFromColumn("action", i);
+		operator = df.getDataFromColumn("operator", i);
+		testResult = df.getDataFromColumn("testResult", i);
+		resultedTest = df.getDataFromColumn("resultedTest", i);
+		resultedTestCode = df.getDataFromColumn("resultedTestCode", i);
+		condition = df.getDataFromColumn("condition", i);
+		onFailure = df.getDataFromColumn("onFailure", i);
+		question = df.getDataFromColumn("question", i);
+		questionValue = df.getDataFromColumn("questionValue", i);
+		behavior = df.getDataFromColumn("behavior", i);
+		eventType = df.getDataFromColumn("eventType", i);
+		nameAlgorithm = df.getDataFromColumn("nameAlgorithm", i);
+		zipCode=df.getDataFromColumn("zipCOde", i);
+		loinc=df.getDataFromColumn("loinc", i);
+		testNameNumber=df.getDataFromColumn("testNameNumber", i);
+		// runBatchProcess();
+		if(zipCode.contains(".0") && zipCode.length()>5)
+			zipCode=zipCode.substring(0,5);	 
+		//createWDSInvestigationWithNotification();
+		
+	  log.write("Search Active WDS "+resultedTestCode+" "+resultedTest+":"+testResult+" Action: "+action);
+
+	  boolean WDSexists=utils.existCreateInvestWithoutNotif(testResult, resultedTestCode, testNameNumber);
+	  
+	  if(WDSexists==true){//True = create WDS
+		  log.write("The Algorithm doesn't exist");
+
+			Database db = new Database();
+			boolean derivated = db.jurisdictionDerivated(database, zipCode);
+			if(derivated){//Check if the jurisdiction can be derivated
+				log.write("The jurisdiction can be derivated", "", true);
+				boolean loincExist = db.loincExists(database, loinc);
+				if(!loincExist){//Check if the Loinc exists
+					log.write("The loinc code "+loinc+" doesn't exist. Let's create it.");
+					//create LOINC from front end
+					utils.createLoincCode(loinc);
+					
+				}else
+					log.write("The loinc code "+loinc+" already exist");
+				
+				String condition2 = db.getConditionLinkedToLoinc(database, loinc);
+				
+				if(condition2==null || condition2.isEmpty()){
+					log.write("The loinc code "+loinc+" is not linked to any condition. Let's create it.");
+					utils.createLoincCodeCondition(loinc, condition);
+				}else
+				if(condition2.equalsIgnoreCase(condition)){//Check if the loinc is already linked to the condition
+					log.write("The loinc code "+loinc+" is already linked to the condition "+condition);
+					
+			}
+					
+				else{
+					log.write("The loinc "+loinc+" is already linked to another condition: "+condition, "", false);
+					runBatchProcess=false;
+					createWDS=false;
+				}
+				
+				if(createWDS){
+					createWDSInvestigationWithoutNotification(i);
+					 
+					
+				}
+			}else{
+				runBatchProcess=false;
+				log.write("The jurisdiction cannot be derivated", "", false);
+				createWDS=false;
+			}
+	  }
+		}catch(IOException e){
+			
+		}
+	}
+	
+
+	public void createWDSInvestigationWithoutNotification(int i) {
+
+		// driver.manage().window().maximize();
+
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Calendar cal = Calendar.getInstance();
+		String time = dateFormat.format(cal.getTime()); // 2014/08/06 16:00:22
+
+		nameAlgorithm += time;
+
+		// TODO: Delete this one it's merge with Avinav test case for not coming
+		// back
+		/*
+		 * driver.get(baseUrl + "/nbs/login");
+		 * driver.findElement(By.id("id_UserName")).clear();
+		 * driver.findElement(By.id("id_UserName")).sendKeys("pks");
+		 * driver.findElement
+		 * (By.id("id_Submit_bottom_ToolbarButtonGraphic")).click();
+		 */
+		driver.findElement(By.linkText("System Management")).click();
+		driver.findElement(By.cssSelector("img[alt=\"Maximize\"]")).click();
+		driver.findElement(By.linkText("Manage Workflow Decision Support"))
+				.click();
+
+		driver.findElement(By.name("Submit")).click();
+		driver.findElement(By.id("AlgoNm")).clear();
+		driver.findElement(By.id("AlgoNm")).sendKeys(nameAlgorithm);
+		driver.findElement(By.name("EVENT_TY_button")).click();
+		driver.findElement(By.name("EVENT_TY_textbox")).sendKeys(eventType);
+
+		driver.findElement(By.id("tabs0head1")).click();
+
+		driver.findElement(By.name("ActionList_button")).click();
+		driver.findElement(By.name("ActionList_textbox")).sendKeys(action);
+		// Loose focus
+		driver.findElement(By.id("ActionListL")).click();
+		driver.findElement(By.name("PublishedCondition_button")).click();
+		//String chancroidCode="10273";
+		//driver.findElement(By.cssSelector("option[value=\""+chancroidCode+"\"]")).click();
+		//try{
+		//TimeUnit.SECONDS.sleep(1); 
+		driver.findElement(By.name("PublishedCondition_textbox")).sendKeys(condition);
+		//TimeUnit.SECONDS.sleep(1); 
+		driver.findElement(By.name("onfail_button")).click();
+		//TimeUnit.SECONDS.sleep(1); 
+		driver.findElement(By.name("onfail_textbox")).sendKeys(onFailure);
+		//TimeUnit.SECONDS.sleep(1); 
+		// driver.findElement(By.cssSelector("#ActionList > option[value=\"3\"]")).click();
+		//driver.findElement(By.name("resultOperatorList_button")).click();
+		
+		//driver.findElement(By.name("resultOperatorList_textbox")).sendKeys(
+		//		operator);
+	/*	TimeUnit.SECONDS.sleep(1); 
+		}catch(InterruptedException e){}*/
+		// driver.findElement(By.cssSelector("option[value=\"=\"]")).click();
+		driver.findElement(By.id("textResult_text")).clear();
+		driver.findElement(By.id("textResult_text")).sendKeys(testResult);
+
+		// ERROR: Caught exception [Error: Dom locators are not implemented
+		// yet!]
+
+		/*****************************************************************************************************************/
+		String parentWindow = driver.getWindowHandle();
+		driver.findElement(By.id("testSearchButton")).click();
+
+		Set<String> handles = driver.getWindowHandles();
+		for (String windowHandle : handles) {
+			if (!windowHandle.equals(parentWindow)) {
+				driver.switchTo().window(windowHandle);
+				if(i==1)
+					resultedTestLocal(resultedTest);
+				else
+					resultedTestLOINC(loinc);
+
+			}
+		}
+
+		// driver.close(); //closing child window
+		driver.switchTo().window(parentWindow); // cntrl to parent window
+
+		/*****************************************************************************************************************/
+
+		try{  
+			
+			 TimeUnit.SECONDS.sleep(3); 
+		
+		driver.findElement(By.name("questionList_textbox")).click();
+		driver.findElement(By.name("questionList_textbox")).sendKeys(question);
+	
+		// Loose focus
+		driver.findElement(By.id("ActionListL")).click();
+		// driver.findElement(By.cssSelector("option[value=\"INV163\"]")).click();
+		driver.findElement(By.name("valueList1_button")).click();
+		driver.findElement(By.name("valueList1_textbox")).sendKeys(questionValue);
+
+		// new
+		// Select(driver.findElement(By.id("valueList1"))).selectByVisibleText("Confirmed");
+		// driver.findElement(By.cssSelector("option[value=\"C\"]")).click();
+		driver.findElement(By.name("behavior_button")).click();
+		driver.findElement(By.name("behavior_textbox")).sendKeys(behavior);
+		}catch(InterruptedException e){}
+		// new
+		// Select(driver.findElement(By.id("behavior"))).selectByVisibleText("Overwrite Existing Values");
+		// driver.findElement(By.cssSelector("#behavior > option[value=\"1\"]")).click();
+		driver.findElement(
+				By.cssSelector("#AddButtonToggleIdSubSection > td > input[type=\"button\"]"))
+				.click();
+		//driver.findElement(By.id("NotComment")).clear();
+		//driver.findElement(By.id("NotComment")).sendKeys(
+		//		"Notification created with Selenium");
+
+		driver.findElement(
+				By.cssSelector("#AddButtonToggleIdELRAdvancedSubSection > td > input[type=\"button\"]"))
+				.click();
+		driver.findElement(By.id("Submit")).click();
+
+		// Activate algorithm
+		driver.findElement(By.id("submitB")).click();
+		// assertEquals("You have indicated that you would like to activate the Testing1_2 algorithm. Once activated, this algorithm will be applied as a part of Workflow Decision Support.  Select OK to continue or Cancel to return to View Algorithm.",
+		// closeAlertAndGetItsText());
+		Alert alert = driver.switchTo().alert();
+		alert.accept();
+		try {
+			TimeUnit.SECONDS.sleep(1);
+		} catch (Exception e) {
+		}
+		try {
+			log.write("The WDS: " + nameAlgorithm + " has been created", "",
+					true);
+		} catch (Exception e) {
+		}
+		log.takeSnapshot(driver);
+		driver.findElement(By.id("manageLink")).click();
+		driver.findElement(By.id("manageLink")).click();
+	}
+
+	/**
+	 * copyElrsToHL7231Folder():
+	 */
+	
+	public void copyElrsToHL7231Folder(int nELR, String originFolder){
+		try{
+		String folderPath ="C:\\HL7231";
+		
+		for(int i=0; i<nELR;i++){
+			//String filePath ="C:\\Users\\Administrator\\Desktop\\POC1866\\ELRsToCopy\\POCHL7";
+			
+			String filePath = new File(originFolder).listFiles()[i].getPath();
+			copyFilesInFolder(filePath, folderPath,i);
+			log.write("File "+filePath+" copied into "+folderPath);
+		}	
+		Database db = new Database();
+		
+		while(db.getNbsInterfaceQueued(database)!=nELR){
+			
+			TimeUnit.SECONDS.sleep(2);
+		}
+		
+		}catch(InterruptedException e){
+			
+		}
+	}
+	
+public void copyFilesInFolder(String filePath, String folderPath, int index){
+	
+	DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+	Calendar cal = Calendar.getInstance();
+	String time = dateFormat.format(cal.getTime());
+	
+	String name="HL7-"+time+index;
+	name=name.replaceAll("/","").trim();
+	File originFile = new File(filePath);
+	File destinFile = new File(folderPath+"\\"+name);
+	
+	try{
+		
+		copyFileUsingStream(originFile, destinFile);
+		
+	}catch(IOException e){
+		
+		System.out.println("Error while copying ELRs from "+filePath+" to " + folderPath);
+		
+	}
+	
+}
+
+public void resultedTestLocal(String resultedTestValue) {
+
+	// Perform the actions on new window
+	driver.findElement(By.id("labTest")).clear();
+	driver.findElement(By.id("labTest")).sendKeys(resultedTestValue);
+	driver.findElement(By.id("Submit")).click();
+	driver.findElement(By.xpath("(//a[contains(text(),'Select')])[1]"))
+			.click();
+	// driver.findElement(By.cssSelector("#AddButtonToggleIdELRAdvancedSubSection > td > input[type=\"button\"]")).click();
+
+}
+
+public void resultedTestLOINC(String resultedTestValue) {
+
+	// Perform the actions on new window
+	driver.findElement(By.id("labTest")).clear();
+	driver.findElement(By.id("labTest")).sendKeys(resultedTestValue);
+	driver.findElement(By.xpath("//td[2]/table/tbody/tr[2]/td/input")).click();
+	driver.findElement(By.id("Submit")).click();
+	driver.findElement(By.xpath("(//a[contains(text(),'Select')])[1]"))
+			.click();
+	// driver.findElement(By.cssSelector("#AddButtonToggleIdELRAdvancedSubSection > td > input[type=\"button\"]")).click();
+
+}
+
+
+	private static void copyFileUsingStream(File source, File dest) throws IOException {
+	    InputStream is = null;
+	    OutputStream os = null;
+	    dest.createNewFile();
+	    try {
+	        is = new FileInputStream(source);
+	        os = new FileOutputStream(dest);
+	        byte[] buffer = new byte[1024];
+	        int length;
+	        while ((length = is.read(buffer)) > 0) {
+	            os.write(buffer, 0, length);
+	        }
+	    } finally {
+	        is.close();
+	        os.close();
+	    }
+	}
+
+	
+
+	@After
+	public void tearDown() throws Exception {
+		driver.quit();
+		log.close();
+		String verificationErrorString = verificationErrors.toString();
+		if (!"".equals(verificationErrorString)) {
+			fail(verificationErrorString);
+		}
+	}
+
+	private boolean isElementPresent(By by) {
+		try {
+			driver.findElement(by);
+			return true;
+		} catch (NoSuchElementException e) {
+			return false;
+		}
+	}
+
+	private boolean isAlertPresent() {
+		try {
+			driver.switchTo().alert();
+			return true;
+		} catch (NoAlertPresentException e) {
+			return false;
+		}
+	}
+
+	private String closeAlertAndGetItsText() {
+		try {
+			Alert alert = driver.switchTo().alert();
+			String alertText = alert.getText();
+			if (acceptNextAlert) {
+				alert.accept();
+			} else {
+				alert.dismiss();
+			}
+			return alertText;
+		} finally {
+			acceptNextAlert = true;
+		}
+	}
+
+
+}

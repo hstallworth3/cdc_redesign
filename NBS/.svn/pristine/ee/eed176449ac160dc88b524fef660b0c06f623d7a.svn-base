@@ -1,0 +1,19 @@
+package com.nbs.tests;
+
+
+public class HomePage_PatientSearch {
+
+	
+		
+		public void patientSearch() throws Exception {
+			
+			Login login = new Login();
+			
+			login.Setup();
+		}
+		
+		
+		
+	}
+	
+

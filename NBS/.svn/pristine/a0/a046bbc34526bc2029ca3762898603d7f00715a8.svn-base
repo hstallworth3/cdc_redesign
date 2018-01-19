@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp" xmlns:srt-codes="http://www.cdc.gov/nedss/GetSRTCodes/1.0" xmlns:nedss="http://www.cdc.gov/nedss/logicsheet/nedss" xmlns:session="http://apache.org/xsp/session/2.0" xmlns:xsp-response="http://apache.org/xsp/response/2.0" xmlns:xsp-request="http://apache.org/xsp/request/2.0" xmlns:util="http://apache.org/xsp/util/2.0">
+	<xsp:structure>
+		<xsp:include>java.util.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.util.NEDSSConstants</xsp:include>
+		<xsp:include>gov.cdc.nedss.entity.person.vo.PatientSearchVO</xsp:include>
+		<xsp:include>gov.cdc.nedss.util.*</xsp:include>
+	</xsp:structure>
+	<nedss:getTitle>
+	</nedss:getTitle>
+	<nedss:getName>
+		</nedss:getName>
+	<nedss:storePerName>
+		</nedss:storePerName>
+	<content>
+		<xsp:attribute name="title">
+			<xsp:expr>getTitle()</xsp:expr>
+		</xsp:attribute>
+		<xsp:attribute name="form">
+			<xsp-request:get-attribute name="formHref"/>
+		</xsp:attribute>
+		<nedss:RequestvaluesFind/>
+		<!--button-bar>
+			<right>
+				<label>Submit</label>
+				<javascript-action>submitForm();</javascript-action>
+			</right>
+			<nedss:ifEntitySearch>
+				<right>
+					<label>Cancel</label>
+					<javascript-action>window.close();</javascript-action>
+				</right>
+			</nedss:ifEntitySearch>
+		</button-bar-->
+		<javascript-files>
+			<import>PersonSearchSpecific.js</import>
+			<import>EntitySearch.js</import>
+		</javascript-files>
+		<tab name="Event Search">
+			<nedss:writeErrorMessages/>
+			<group>
+				<line>
+					<element type="hidden" name="perTitle">
+						<value>
+							<xsp:expr>storePerName()</xsp:expr>
+						</value>
+					</element>
+					<element name="ContextAction" type="hidden">
+						<value>
+							<xsp:expr>sOperationType</xsp:expr>
+						</value>
+					</element>
+					<element name="VOLookup" type="hidden">
+						<value>
+							<xsp-request:get-attribute name="VOLookup"/>
+						</value>
+					</element>
+				</line>
+			</group>
+			<group>
+				<line>
+				<element type="raw">
+					<span>
+						<i>Note: The Event ID must be an exact match.</i>
+					</span>
+				</element>
+				</line>
+				<line>
+					<element name="personSearch.actType" type="conditional-entry" label="Event ID Type">
+						<controller  name="personSearch.actType" type="select" label="Event ID Type">
+							<validation type="acctIdSearchCheck" nameRef="personSearch.actId" name="Event ID Type"/>
+							<value>
+								<nedss:PersonFindNotNull>
+										<xsp:expr>personFind.getActType()</xsp:expr>
+								</nedss:PersonFindNotNull>
+							</value>
+							<srt-options-string>	
+								<srt-codes:getCodedValues>
+									<type>PHVS_EVN_SEARCH_ABC</type>
+								</srt-codes:getCodedValues>
+							</srt-options-string>
+						</controller>
+						<line trigger="P10001|P10000|P10004|P10006|P10002|P10003|P10005|P10007|P10008|P10009|P10010">
+							<element name="personSearch.actId" type="text" label="Event ID" size="16">
+								<validation type="acctIdSearchCheck" nameRef="personSearch.actType" name="Event ID"/>
+								<nedss:PersonFindNotNull>
+									<value>
+										<xsp:expr>personFind.getActId()</xsp:expr>
+									</value>
+								</nedss:PersonFindNotNull>
+							</element>
+						</line>
+					</element>
+				</line>
+			</group>
+		</tab>
+	</content>
+</xsp:page>

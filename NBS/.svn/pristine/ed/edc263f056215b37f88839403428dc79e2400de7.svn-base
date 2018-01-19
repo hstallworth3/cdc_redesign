@@ -1,0 +1,87 @@
+<project name="nedssproject.build.Report" basedir=".">
+	<property name="SAS_HOME" value="${env.SAS_HOME}"/>
+	<property name="SAS_REPORT_HOME" value="${env.SAS_REPORT_HOME}"/>
+	<property name="sasroot" value="${SAS_HOME}"/>
+	<property name="reportsrc.dir" value="${nbs_development_dir}/source/sas"/>
+	<property name="reportdest.dir" value="${Nedss_dir}/report"/>
+	<property name="reportBatch.dir" value="${Nedss_dir}/BatchFiles"/>
+	<target name="nbs.sasreport">
+		<copy todir="${reportdest.dir}">
+			<fileset dir="${reportsrc.dir}" includes="autoexec.sas"/>
+		</copy>
+		<copy todir="${reportdest.dir}/pgm">
+			<fileset dir="${reportsrc.dir}/pgm" includes="*.sas"/>
+		</copy>
+		<copy todir="${reportdest.dir}/template">
+					<fileset dir="${reportsrc.dir}/template" includes="*.sas"/>
+				</copy>
+		<copy todir="${reportdest.dir}/phdc/src">
+							<fileset dir="${reportsrc.dir}/phdc/src" includes="*.sas"/>
+						</copy>
+		<copy todir="${reportdest.dir}/util">
+			<fileset dir="${reportsrc.dir}/util" includes="
+				export.sas,
+				odsmarkup.sas,
+				chk_mv.sas,
+			   	footnote.sas,
+			   	ascii.sas,
+				reportenv.sas,
+				Rpt_formats.sas"/>
+		</copy>
+		<copy todir="${reportdest.dir}/dm">
+			<fileset dir="${reportsrc.dir}/dm">
+				<exclude name="PhcMartEtl.bat"/>
+			</fileset>
+		</copy>
+		<copy todir="${reportdest.dir}/custom">
+			<fileset dir="${reportsrc.dir}/custom"/>
+		</copy>
+		<copy todir="${reportdest.dir}/metadata">
+			<fileset dir="${reportsrc.dir}/metadata" includes="FORMATS.SD2,FORMATS.SC2"/>
+		</copy>
+		<copy todir="${Nedss_dir}/BatchFiles" overwrite="no">
+			<fileset file="${nbs_development_dir}/source/sas/dw/etl/MasterEtl.bat"/>
+			<fileset file="${nbs_development_dir}/source/sas/dw/etl/MasterEtlIncremental.bat"/>
+			<!-- <fileset file="${nbs_development_dir}/source/sas/dw/etl/EtlProcessWithScheduler.bat"/>  -->
+			<fileset file="${nbs_development_dir}/source/sas/dw/etl/ClearPHCMartTableORA.sql"/>
+			<fileset file="${nbs_development_dir}/source/sas/dw/etl/ClearPHCMartTableSQL.sql"/>
+			<fileset file="${nbs_development_dir}/source/sas/dw/etl/Refresh_SQL_RDB_tables.sql"/>
+			<fileset file="${nbs_development_dir}/source/sas/dw/etl/Refresh_Oracle_RDB_tables.sql"/>
+			<fileset file="${nbs_development_dir}/source/sas/dw/etl/Incremental_Refresh_Oracle_RDB_Tables.sql"/>
+			<fileset file="${nbs_development_dir}/source/sas/dw/etl/Incremental_Refresh_SQL_RDB_Tables.sql"/>
+			<fileset file="${nbs_development_dir}/source/sas/dw/etl/RedefineTablespace.sql"/>
+			<fileset file="${nbs_development_dir}/source/sas/dm/PhcMartEtl.bat"/>
+			<fileset file="${nbs_development_dir}/source/sas/dm/ClearPHCContent.sql"/>
+		</copy>
+		<copy todir="${reportdest.dir}/dw/etl">
+			<fileset dir="${reportsrc.dir}/dw/etl">
+				<exclude name="etldevenv.sas"/>
+				<exclude name="MasterEtl.bat"/>
+				<exclude name="MasterEtlIncremental.bat"/>
+				<!-- <exclude name="EtlProcessWithScheduler.bat"/> -->
+				<exclude name="ClearPHCMartTableORA.sql"/>
+				<exclude name="ClearPHCMartTableSQL.sql"/>
+				<exclude name="Refresh_SQL_RDB_tables.sql"/>
+				<exclude name="Refresh_Oracle_RDB_tables.sql"/>
+				<exclude name="Incremental_Refresh_Oracle_RDB_Tables.sql"/>
+				<exclude name="Incremental_Refresh_SQL_RDB_Tables.sql"/>
+				<exclude name="RedefineTablespace.sql"/>
+			</fileset>
+		</copy>
+		<copy todir="${reportdest.dir}/metadata">
+			<fileset dir="${reportsrc.dir}/metadata" includes="imRDBmapping.xls,totalidm.XLS"/>
+		</copy>
+		<mkdir dir="${reportdest.dir}/log"/>
+		<mkdir dir="${reportdest.dir}/dw/etl/rdbdata"/>
+		<mkdir dir="${reportdest.dir}/format"/>
+		<replace file="${reportdest.dir}/autoexec.sas" value="${reportdest.dir}" token="%sysget(SAS_REPORT_HOME)"/>
+		<replace file="${Nedss_dir}/BatchFiles/MasterEtl.bat" value="${reportdest.dir}" token="%SAS_REPORT_HOME%"/>
+		<replace file="${Nedss_dir}/BatchFiles/MasterEtl.bat" value="${reportBatch.dir}" token="%SQL_SCRIPT_HOME%"/>
+		<!-- <replace 
+            file="${Nedss_dir}/BatchFiles/EtlProcessWithScheduler.bat"
+            value="${reportdest.dir}"
+            token="%SAS_REPORT_HOME%"/> -->
+		<replace file="${Nedss_dir}/BatchFiles/PhcMartEtl.bat" value="${reportdest.dir}" token="%SAS_REPORT_HOME%"/>
+		<replace file="${reportdest.dir}/dm/etl/phcmartETL.sas" value="${reportdest.dir}" token="%sysget(SAS_REPORT_HOME)"/>
+	</target>
+</project>

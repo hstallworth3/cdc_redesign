@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><testrun name="POCCreateWDS" project="Selenium Intro" tests="1" started="1" failures="0" errors="2" ignored="0">
+  <testsuite name="com.nbs.tests.POCCreateWDS" time="147.286">
+    <testcase name="testPOCCreateWDS" classname="com.nbs.tests.POCCreateWDS" time="147.286">
+      <error>org.openqa.selenium.remote.UnreachableBrowserException: Error communicating with the remote browser. It may have died.
+Build info: version: '2.53.1', revision: 'a36b8b1', time: '2016-06-30 17:37:03'
+System info: host: 'A21814', ip: '10.62.0.90', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.8.0_102'
+Driver info: driver.version: RemoteWebDriver
+Capabilities [{applicationCacheEnabled=true, rotatable=false, handlesAlerts=true, databaseEnabled=true, version=47.0.1, platform=WINDOWS, nativeEvents=false, acceptSslCerts=true, webStorageEnabled=true, locationContextEnabled=true, browserName=firefox, takesScreenshot=true, javascriptEnabled=true, cssSelectorsEnabled=true}]
+Session ID: e0576962-ce36-4d9a-8d17-42004fdb38cf&#13;
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:665)&#13;
+	at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:363)&#13;
+	at org.openqa.selenium.remote.RemoteWebDriver.findElementByXPath(RemoteWebDriver.java:500)&#13;
+	at org.openqa.selenium.By$ByXPath.findElement(By.java:361)&#13;
+	at org.openqa.selenium.remote.RemoteWebDriver.findElement(RemoteWebDriver.java:355)&#13;
+	at com.nbs.tests.POCCreateWDS.createWDS(POCCreateWDS.java:191)&#13;
+	at com.nbs.tests.POCCreateWDS.testPOCCreateWDS(POCCreateWDS.java:77)&#13;
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)&#13;
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)&#13;
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)&#13;
+	at java.lang.reflect.Method.invoke(Unknown Source)&#13;
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)&#13;
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)&#13;
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)&#13;
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)&#13;
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)&#13;
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:27)&#13;
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)&#13;
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)&#13;
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)&#13;
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)&#13;
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)&#13;
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)&#13;
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)&#13;
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)&#13;
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)&#13;
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:86)&#13;
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)&#13;
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:459)&#13;
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:678)&#13;
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:382)&#13;
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:192)&#13;
+Caused by: org.apache.http.conn.HttpHostConnectException: Connect to 127.0.0.1:7055 [/127.0.0.1] failed: Connection refused: connect&#13;
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:151)&#13;
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:353)&#13;
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:380)&#13;
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)&#13;
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:184)&#13;
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:88)&#13;
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)&#13;
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:184)&#13;
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:71)&#13;
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:55)&#13;
+	at org.openqa.selenium.remote.internal.ApacheHttpClient.fallBackExecute(ApacheHttpClient.java:162)&#13;
+	at org.openqa.selenium.remote.internal.ApacheHttpClient.execute(ApacheHttpClient.java:90)&#13;
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:142)&#13;
+	at org.openqa.selenium.firefox.internal.NewProfileExtensionConnection.execute(NewProfileExtensionConnection.java:160)&#13;
+	at org.openqa.selenium.firefox.FirefoxDriver$LazyCommandExecutor.execute(FirefoxDriver.java:380)&#13;
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:644)&#13;
+	... 31 more&#13;
+Caused by: java.net.ConnectException: Connection refused: connect&#13;
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)&#13;
+	at java.net.DualStackPlainSocketImpl.socketConnect(Unknown Source)&#13;
+	at java.net.AbstractPlainSocketImpl.doConnect(Unknown Source)&#13;
+	at java.net.AbstractPlainSocketImpl.connectToAddress(Unknown Source)&#13;
+	at java.net.AbstractPlainSocketImpl.connect(Unknown Source)&#13;
+	at java.net.PlainSocketImpl.connect(Unknown Source)&#13;
+	at java.net.SocksSocketImpl.connect(Unknown Source)&#13;
+	at java.net.Socket.connect(Unknown Source)&#13;
+	at org.apache.http.conn.socket.PlainConnectionSocketFactory.connectSocket(PlainConnectionSocketFactory.java:74)&#13;
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:134)&#13;
+	... 46 more&#13;
+&#13;
+org.openqa.selenium.remote.UnreachableBrowserException: Error communicating with the remote browser. It may have died.
+Build info: version: '2.53.1', revision: 'a36b8b1', time: '2016-06-30 17:37:03'
+System info: host: 'A21814', ip: '10.62.0.90', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.8.0_102'
+Driver info: driver.version: RemoteWebDriver
+Capabilities [{applicationCacheEnabled=true, rotatable=false, handlesAlerts=true, databaseEnabled=true, version=47.0.1, platform=WINDOWS, nativeEvents=false, acceptSslCerts=true, webStorageEnabled=true, locationContextEnabled=true, browserName=firefox, takesScreenshot=true, javascriptEnabled=true, cssSelectorsEnabled=true}]
+Session ID: e0576962-ce36-4d9a-8d17-42004fdb38cf&#13;
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:665)&#13;
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:701)&#13;
+	at org.openqa.selenium.remote.RemoteWebDriver.quit(RemoteWebDriver.java:526)&#13;
+	at com.nbs.tests.POCCreateWDS.tearDown(POCCreateWDS.java:259)&#13;
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)&#13;
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)&#13;
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)&#13;
+	at java.lang.reflect.Method.invoke(Unknown Source)&#13;
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)&#13;
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)&#13;
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)&#13;
+	at org.junit.internal.runners.statements.RunAfters.evaluate(RunAfters.java:33)&#13;
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)&#13;
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)&#13;
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)&#13;
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)&#13;
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)&#13;
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)&#13;
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)&#13;
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)&#13;
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)&#13;
+	at org.eclipse.jdt.internal.junit4.runner.JUnit4TestReference.run(JUnit4TestReference.java:86)&#13;
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)&#13;
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:459)&#13;
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:678)&#13;
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:382)&#13;
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:192)&#13;
+Caused by: org.apache.http.conn.HttpHostConnectException: Connect to 127.0.0.1:7055 [/127.0.0.1] failed: Connection refused: connect&#13;
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:151)&#13;
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:353)&#13;
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:380)&#13;
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)&#13;
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:184)&#13;
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:88)&#13;
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)&#13;
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:184)&#13;
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:71)&#13;
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:55)&#13;
+	at org.openqa.selenium.remote.internal.ApacheHttpClient.fallBackExecute(ApacheHttpClient.java:144)&#13;
+	at org.openqa.selenium.remote.internal.ApacheHttpClient.execute(ApacheHttpClient.java:90)&#13;
+	at org.openqa.selenium.remote.HttpCommandExecutor.execute(HttpCommandExecutor.java:142)&#13;
+	at org.openqa.selenium.firefox.internal.NewProfileExtensionConnection.execute(NewProfileExtensionConnection.java:160)&#13;
+	at org.openqa.selenium.firefox.FirefoxDriver$LazyCommandExecutor.execute(FirefoxDriver.java:380)&#13;
+	at org.openqa.selenium.remote.RemoteWebDriver.execute(RemoteWebDriver.java:644)&#13;
+	... 26 more&#13;
+Caused by: java.net.ConnectException: Connection refused: connect&#13;
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)&#13;
+	at java.net.DualStackPlainSocketImpl.socketConnect(Unknown Source)&#13;
+	at java.net.AbstractPlainSocketImpl.doConnect(Unknown Source)&#13;
+	at java.net.AbstractPlainSocketImpl.connectToAddress(Unknown Source)&#13;
+	at java.net.AbstractPlainSocketImpl.connect(Unknown Source)&#13;
+	at java.net.PlainSocketImpl.connect(Unknown Source)&#13;
+	at java.net.SocksSocketImpl.connect(Unknown Source)&#13;
+	at java.net.Socket.connect(Unknown Source)&#13;
+	at org.apache.http.conn.socket.PlainConnectionSocketFactory.connectSocket(PlainConnectionSocketFactory.java:74)&#13;
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:134)&#13;
+	... 41 more&#13;
+&#13;
+</error>
+    </testcase>
+  </testsuite>
+</testrun>

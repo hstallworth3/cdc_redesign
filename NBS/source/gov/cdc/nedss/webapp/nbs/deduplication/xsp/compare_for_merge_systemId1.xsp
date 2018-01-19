@@ -1,0 +1,683 @@
+<?xml version="1.0"?>
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp" xmlns:session="http://apache.org/xsp/session/2.0" xmlns:xsp-response="http://apache.org/xsp/response/2.0" xmlns:xsp-request="http://apache.org/xsp/request/2.0" xmlns:srt-codes="http://www.cdc.gov/nedss/GetSRTCodes/1.0">
+	<xsp:structure>
+		<xsp:include>java.util.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.util.*</xsp:include>
+		<!--xsp:include>gov.cdc.nedss.cdm.helpers.TypeValue</xsp:include-->
+		<xsp:include>gov.cdc.nedss.systemservice.nbssecurity.*</xsp:include>
+	</xsp:structure>
+	<content>
+		<!--xsp:logic><![CDATA[
+	            NBSSecurityObj secObj = null;
+	            if(request.getSession().getAttribute("NBSSecurityObject") != null)
+	            {
+	                secObj = (NBSSecurityObj)request.getSession().getAttribute("NBSSecurityObject");
+	            }
+	        ]]></xsp:logic-->
+		<xsp:attribute name="form">
+			<xsp-request:get-attribute name="formHref"/>
+		</xsp:attribute>
+		<!--content form="/nedss/posted"-->
+		<id-bar/>
+		<link-bar/>
+		<!--//////////////////////////////////-->
+		<!--           COMPARE FOR MERGE      -->
+		<!--//////////////////////////////////-->
+		<button-bar>
+			<right>
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="submitButton"/>
+				</xsp:attribute>
+				<label>Close</label>
+				<javascript-action>window.close();</javascript-action>
+			</right>
+			<!--right>
+				<label>Cancel</label>
+				<javascript-action>cancelForm('<xsp-request:get-attribute name="cancelButtonHref"/>');</javascript-action>
+			</right-->
+		</button-bar>
+		<javascript-files>
+			<import>MergePersonsCompare.js</import>
+		</javascript-files>
+		<!--xsp:logic>
+	  Iterator itr;
+	  TypeValue infoType;  
+
+	  <![CDATA[ArrayList nameTypes_Per1 = (ArrayList)]]><xsp-request:get-attribute name="nameTypes_Per1"/><![CDATA[;]]><![CDATA[ArrayList nameTypes_Per2 = (ArrayList)]]><xsp-request:get-attribute name="nameTypes_Per2"/><![CDATA[;]]><![CDATA[ArrayList identificationTypes_Per1 = (ArrayList)]]><xsp-request:get-attribute name="identificationTypes_Per1"/><![CDATA[;]]><![CDATA[ArrayList identificationTypes_Per2 = (ArrayList)]]><xsp-request:get-attribute name="identificationTypes_Per2"/><![CDATA[;]]><![CDATA[ArrayList addressTypes_Per1 = (ArrayList)]]><xsp-request:get-attribute name="addressTypes_Per1"/><![CDATA[;]]><![CDATA[ArrayList addressTypes_Per2 = (ArrayList)]]><xsp-request:get-attribute name="addressTypes_Per2"/><![CDATA[;]]><![CDATA[ArrayList telephoneTypes_Per1 = (ArrayList)]]><xsp-request:get-attribute name="telephoneTypes_Per1"/><![CDATA[;]]><![CDATA[ArrayList telephoneTypes_Per2 = (ArrayList)]]><xsp-request:get-attribute name="telephoneTypes_Per2"/><![CDATA[;]]><![CDATA[ArrayList locationTypes_Per1 = (ArrayList)]]><xsp-request:get-attribute name="locationTypes_Per1"/><![CDATA[;]]><![CDATA[ArrayList locationTypes_Per2 = (ArrayList)]]><xsp-request:get-attribute name="locationTypes_Per2"/><![CDATA[;]]><![CDATA[ArrayList raceTypes_Per1 = (ArrayList)]]><xsp-request:get-attribute name="raceTypes_Per1"/><![CDATA[;]]><![CDATA[ArrayList raceTypes_Per2 = (ArrayList)]]><xsp-request:get-attribute name="raceTypes_Per2"/><![CDATA[;]]></xsp:logic-->
+		<entity1>
+			<xsp-request:get-attribute name="entity1"/>
+		</entity1>
+		<entity2>
+			<xsp-request:get-attribute name="entity2"/>
+		</entity2>
+		<selects>
+			<select name="P_NM_USE">
+				<srt-codes:getCodedValues>
+					<type>P_NM_USE</type>
+				</srt-codes:getCodedValues>
+			</select>
+			<select name="SEX">
+				<srt-codes:getCodedValues>
+					<type>SEX</type>
+				</srt-codes:getCodedValues>
+			</select>
+			<select name="YNU">
+				<srt-codes:getCodedValues>
+					<type>YNU</type>
+				</srt-codes:getCodedValues>
+			</select>
+			<select name="P_EDUC_LVL">
+				<srt-codes:getCodedValues>
+					<type>P_EDUC_LVL</type>
+				</srt-codes:getCodedValues>
+			</select>
+			<select name="getIndustryCodes">
+				<srt-codes:getIndustryCodes/>
+			</select>
+			<select name="P_MARITAL">
+				<srt-codes:getCodedValues>
+					<type>P_MARITAL</type>
+				</srt-codes:getCodedValues>
+			</select>
+			<select name="getLanguageCodes">
+				<srt-codes:getLanguageCodes/>
+			</select>
+			<select name="EI_TYPE">
+				<srt-codes:getCodedValues>
+					<type>EI_TYPE</type>
+				</srt-codes:getCodedValues>
+			</select>
+			<select name="P_ETHN_GRP">
+				<srt-codes:getCodedValues>
+					<type>P_ETHN_GRP</type>
+				</srt-codes:getCodedValues>
+			</select>
+			<select name="P_ETHN">
+				<srt-codes:getCodedValues>
+					<type>P_ETHN</type>
+				</srt-codes:getCodedValues>
+			</select>
+			<select name="getAddressType">
+				<srt-codes:getAddressType/>
+			</select>
+			<select name="USA">
+				<srt-codes:getCodedValues>
+					<type>USA</type>
+				</srt-codes:getCodedValues>
+			</select>
+			<select name="EL_TYPE">
+				<srt-codes:getCodedValues>
+					<type>EL_TYPE</type>
+				</srt-codes:getCodedValues>
+			</select>
+			<select name="RL_TYPE">
+				<srt-codes:getCodedValues>
+					<type>RL_TYPE</type>
+				</srt-codes:getCodedValues>
+			</select>
+		</selects>
+		<tab name="MergePersons">
+			<group name="Name">
+				<column1>
+					<!--xsp:logic><![CDATA[
+
+					
+					itr = ]]><xsp:expr>nameTypes_Per1.iterator()</xsp:expr><![CDATA[;
+					while (itr.hasNext()) {
+					infoType = (TypeValue)itr.next();
+
+				]]></xsp:logic-->
+					<line>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"nameType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"Legal"</xsp:expr>
+							</xsp:attribute>
+							<!--xsp:attribute name="srt-name-label">P_NM_USE</xsp:attribute-->
+						</element>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"nameType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"10/10/2002"</xsp:expr>
+							</xsp:attribute>
+							<!--xsp:attribute name="srt-name-label">P_NM_USE</xsp:attribute-->
+						</element>
+					</line>
+					<line>
+						<element name="name_Per1" type="select">
+							<value>
+								<xsp:expr>"Mike J Brown"</xsp:expr>
+							</value>
+						</element>
+					</line>
+					<line>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"nameType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"Legal"</xsp:expr>
+							</xsp:attribute>
+							<!--xsp:attribute name="srt-name-label">P_NM_USE</xsp:attribute-->
+						</element>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"nameType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"03/06/2001"</xsp:expr>
+							</xsp:attribute>
+							<!--xsp:attribute name="srt-name-label">P_NM_USE</xsp:attribute-->
+						</element>
+					</line>
+					<line>
+						<element name="name_Per1" type="select">
+							<value>
+								<xsp:expr>"Mickey N Browne"</xsp:expr>
+							</value>
+						</element>
+					</line>
+				</column1>
+				<column2>
+					<line>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"nameType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"Legal"</xsp:expr>
+							</xsp:attribute>
+							<!--xsp:attribute name="srt-name-label">P_NM_USE</xsp:attribute-->
+						</element>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"nameType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"09/09/2002"</xsp:expr>
+							</xsp:attribute>
+							<!--xsp:attribute name="srt-name-label">P_NM_USE</xsp:attribute-->
+						</element>
+					</line>
+					<line>
+						<element name="name_Per1" type="select">
+							<value>
+								<xsp:expr>"Mike J Browne "</xsp:expr>
+							</value>
+						</element>
+					</line>
+					<line>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"nameType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"Legal"</xsp:expr>
+							</xsp:attribute>
+							<!--xsp:attribute name="srt-name-label">P_NM_USE</xsp:attribute-->
+						</element>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"nameType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"02/04/2001"</xsp:expr>
+							</xsp:attribute>
+							<!--xsp:attribute name="srt-name-label">P_NM_USE</xsp:attribute-->
+						</element>
+					</line>
+					<line>
+						<element name="name_Per1" type="select">
+							<value>
+								<xsp:expr>"Mike Browny"</xsp:expr>
+							</value>
+						</element>
+					</line>
+				</column2>
+			</group>
+			<group name="Sex and Birth">
+				<column1>
+					<line>
+						<element name="SexandBirthAsOf_Per1" type="select" label="Sex and Birth Information As Of">
+							<value>10/10/2002</value>
+						</element>
+					</line>
+					<line>
+						<element name="currentSex_Per1" type="select" label="Current Sex">
+							<value>Male</value>
+						</element>
+					</line>
+					<line>
+						<element name="currentAge_Per1" type="select" label="Current Age">
+							<value>30 years</value>
+						</element>
+					</line>
+					<line>
+						<element name="DOB_Per1" type="select" label="DOB">
+							<value>04/07/1973</value>
+						</element>
+					</line>
+				</column1>
+				<column2>
+					<line>
+						<element name="SexandBirthAsOf_Per1" type="select" label="Sex and Birth Information As Of">
+							<value>09/09/2002</value>
+						</element>
+					</line>
+					<line>
+						<element name="currentSex_Per1" type="select" label="Current Sex">
+							<value>Male</value>
+						</element>
+					</line>
+					<line>
+						<element name="currentSex_Per1" type="select" label="Current Age">
+							<value>30 years</value>
+						</element>
+					</line>
+					<line>
+						<element name="DOB_Per1" type="select" label="DOB">
+							<value>04/10/1973</value>
+						</element>
+					</line>
+				</column2>
+			</group>
+			<group name="Mortality">
+				<column1>
+					<line>
+						<element name="deceasedDate_Per1" type="select" label="Mortality Information As Of">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element name="isPersonDeceased_Per1" type="select" label="Is the person deceased?">
+							<value></value>
+						</element>
+					</line>
+				</column1>
+				<column2>
+					<line>
+						<element name="deceasedDate_Per1" type="select" label="Mortality Information As Of">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element name="isPersonDeceased_Per1" type="select" label="Is the person deceased?">
+							<value></value>
+						</element>
+					</line>
+				</column2>
+			</group>
+			<group name="General">
+				<column1>
+					<line>
+						<element name="mothersMaidenName_Per1" type="select" label="General Information As Of">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element name="mothersMaidenName_Per1" type="select" label="Mother's Maiden Name">
+							<value></value>
+						</element>
+					</line>
+				</column1>
+				<column2>
+					<line>
+						<element name="mothersMaidenName_Per1" type="select" label="General Information As Of">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element name="mothersMaidenName_Per1" type="select" label="Mother's Maiden Name">
+							<value></value>
+						</element>
+					</line>
+				</column2>
+			</group>
+			<group name="Identification Information">
+				<column1>
+					<line>
+						<element name="SSNAsOf_Per1" type="select" label="SSN Information As Of">
+							<value>10/10/2002</value>
+						</element>
+					</line>
+					<line>
+						<element name="SSN_Per1" type="select" label="SSN">
+							<value>214-19-8899</value>
+						</element>
+					</line>
+					<line>
+						<element name="IdentificationAsOf_Per1" type="select" label="Identification Information As Of">
+							<value>05/10/2002</value>
+						</element>
+					</line>
+					<line>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"identificationType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"Account Number"</xsp:expr>
+							</xsp:attribute>
+						</element>
+					</line>
+					<line>
+						<element name="identificationValue_Per1" type="select">
+							<value>ACCT25455</value>
+						</element>
+					</line>
+				</column1>
+				<column2>
+					<line>
+						<element name="SSNAsOf_Per1" type="select" label="SSN Information As Of">
+							<value>09/09/2002</value>
+						</element>
+					</line>
+					<line>
+						<element name="SSN_Per1" type="select" label="SSN">
+							<value>624-23-7698</value>
+						</element>
+					</line>
+					<line>
+						<element name="IdentificationAsOf_Per1" type="select" label="Identification Information As Of">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"identificationType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>""</xsp:expr>
+							</xsp:attribute>
+						</element>
+					</line>
+					<line>
+						<element name="identificationValue_Per1" type="select">
+							<value></value>
+						</element>
+					</line>
+				</column2>
+			</group>
+			<group name="Ethnicity">
+				<column1>
+					<line>
+						<element name="EthnicityAsOf_Per1" type="select" label="Ethnicity Information As Of">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element name="Ethnicity_Per1" type="select" label="Ethnicity">
+							<value></value>
+						</element>
+					</line>
+				</column1>
+				<column2>
+					<line>
+						<element name="EthnicityAsOf_Per1" type="select" label="Ethnicity Information As Of">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element name="Ethnicity_Per1" type="select" label="Ethnicity">
+							<value></value>
+						</element>
+					</line>
+				</column2>
+			</group>
+			<group name="Race">
+				<column1>
+					<line>
+						<element name="RaceAsOf_Per1" type="select" label="Race Information As Of">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element name="Race_Per1" type="select" label="Race">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element name="RaceAsOf_Per1" type="select" label="Race Information As Of">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element name="Race_Per1" type="select" label="Race">
+							<value></value>
+						</element>
+					</line>
+				</column1>
+				<column2>
+					<line>
+						<element name="RaceAsOf_Per1" type="select" label="Race Information As Of">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element name="Race_Per1" type="select" label="Race">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element name="RaceAsOf_Per1" type="select" label="Race Information As Of">
+							<value></value>
+						</element>
+					</line>
+					<line>
+						<element name="Race_Per1" type="select" label="Race">
+							<value></value>
+						</element>
+					</line>
+				</column2>
+			</group>
+			<group name="Address Information">
+				<column1>
+					<line>
+						<element name="AddressAsOf_Per1" type="select" label="Address Information As Of">
+							<value>10/10/2002</value>
+						</element>
+					</line>
+					<line>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"addressType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"Home - Current"</xsp:expr>
+							</xsp:attribute>
+							<!--xsp:attribute name="srt-name-label">getAddressType</xsp:attribute-->
+						</element>
+					</line>
+					<line>
+						<element name="streetAddress1Value_Per1" type="select">
+							<value>1900 Main St.</value>
+						</element>
+					</line>
+					<line>
+						<element name="streetAddress2Value_Per1" type="select">
+							<value>Apt. 25</value>
+						</element>
+					</line>
+					<line>
+						<element name="cityStateZipValue_Per1" type="select">
+							<value>Atlanta,GA 30332</value>
+						</element>
+					</line>
+					<line>
+						<element name="countyValue_Per1" type="select">
+							<value>Fulton County</value>
+						</element>
+					</line>
+				</column1>
+				<column2>
+					<line>
+						<element name="AddressAsOf_Per1" type="select" label="Address Information As Of">
+							<value>09/09/2002</value>
+						</element>
+					</line>
+					<line>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"addressType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"Home - Current"</xsp:expr>
+							</xsp:attribute>
+							<!--xsp:attribute name="srt-name-label">getAddressType</xsp:attribute-->
+						</element>
+					</line>
+					<line>
+						<element name="streetAddress1Value_Per1" type="select">
+							<value>800 Manassas St.</value>
+						</element>
+					</line>
+					<line>
+						<element name="streetAddress2Value_Per1" type="select">
+							<value>Apt. 109B</value>
+						</element>
+					</line>
+					<line>
+						<element name="cityStateZipValue_Per1" type="select">
+							<value>Atlanta,GA 30329</value>
+						</element>
+					</line>
+					<line>
+						<element name="countyValue_Per1" type="select">
+							<value>Dekalb County</value>
+						</element>
+					</line>
+				</column2>
+			</group>
+			<group name="Telephone Information">
+				<column1>
+					<line>
+						<element name="TelephoneAsOf_Per1" type="select" label="Telephone Information As Of">
+							<value>10/10/2002</value>
+						</element>
+					</line>
+					<line>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"telephoneType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"Home - Current"</xsp:expr>
+							</xsp:attribute>
+						</element>
+					</line>
+					<line>
+						<element name="countrycodePhonenumExtValue_Per1" type="select">
+							<value>404-552-8875</value>
+						</element>
+					</line>
+					<line>
+						<element name="emailValue_Per1" type="select">
+							<value></value>
+						</element>
+					</line>
+				</column1>
+				<column2>
+					<line>
+						<element name="TelephoneAsOf_Per1" type="select" label="Telephone Information As Of">
+							<value>09/09/2002</value>
+						</element>
+					</line>
+					<line>
+						<element>
+							<xsp:attribute name="name">
+								<xsp:expr>"telephoneType_Per1"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="type">
+								<xsp:expr>"select"</xsp:expr>
+							</xsp:attribute>
+							<xsp:attribute name="label">
+								<xsp:expr>"Home - Current"</xsp:expr>
+							</xsp:attribute>
+							<!--xsp:attribute name="srt-name-label">EL_TYPE</xsp:attribute-->
+						</element>
+					</line>
+					<line>
+						<element name="countrycodePhonenumExtValue_Per1" type="select">
+							<value>770546-2304</value>
+						</element>
+					</line>
+					<line>
+						<element name="emailValue_Per2" type="select">
+							<value></value>
+						</element>
+					</line>
+				</column2>
+			</group>
+			<group name="Administrative Information">
+				<column1>
+					<line>
+						<element name="AdministrativeAsOf_Per1" type="select" label="Administrative Information As Of">
+							<value/>
+						</element>
+					</line>
+					<line>
+						<element name="generalComments_Per1" type="select" label="General Comments">
+							<value/>
+						</element>
+					</line>
+				</column1>
+				<column2>
+					<line>
+						<element name="AdministrativeAsOf_Per2" type="select" label="Administrative Information As Of">
+							<value/>
+						</element>
+					</line>
+					<line>
+						<element name="generalComments_Per2" type="select" label="General Comments">
+							<value/>
+						</element>
+					</line>
+				</column2>
+			</group>
+		</tab>
+	</content>
+</xsp:page>

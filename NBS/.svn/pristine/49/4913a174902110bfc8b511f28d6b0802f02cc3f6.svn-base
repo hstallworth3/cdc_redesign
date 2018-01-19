@@ -1,0 +1,146 @@
+package com.nbs.tests;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+//import static org.hamcrest.CoreMatchers.*;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+//import org.openqa.selenium.support.ui.Select;
+
+import com.rtts.utilities.DataFile;
+import com.rtts.utilities.Log;
+
+public class AddNewPatient {
+  private WebDriver driver;
+  private String baseUrl;
+  private boolean acceptNextAlert = true;
+  private StringBuffer verificationErrors = new StringBuffer();
+  private Log log = new Log("LogPatients", "C:\\Selenium\\Logs\\");
+  DataFile df = new DataFile("C:\\Selenium\\Data\\Patients.xls", "Sheet1");
+
+  @Before
+  public void setUp() throws Exception {
+	Login login = new Login();
+	driver = (WebDriver) login.Setup();
+	//login.setDriver(driver);
+	  }
+
+  @Test
+  public void testAddNewPatient() throws Exception {
+	
+	String name="";
+	String lastName="";
+	String dob="";
+	String sex="";
+    
+	for(int i=1; i<df.getRowCount(); i++){
+		
+		try{
+			
+			name=df.getDataFromColumn("Name", i);
+			lastName=df.getDataFromColumn("LastName", i);
+			dob=df.getDataFromColumn("DOB", i);
+			sex=df.getDataFromColumn("Sex", i);
+			  
+	    
+		    //Search patient
+		    driver.findElement(By.id("DEM104")).clear();
+		    driver.findElement(By.id("DEM104")).sendKeys(name);
+		    driver.findElement(By.xpath("//input[@value='Search']")).click();
+		    driver.findElement(By.name("Submit")).click();
+		
+		    //Patient information
+		    driver.findElement(By.id("DEM102")).clear();
+		    driver.findElement(By.id("DEM102")).sendKeys(lastName);
+		    driver.findElement(By.id("patientDOB")).clear();
+		    //boolean found = verifyDOBPattern(dob);
+		    //if(found)
+		    driver.findElement(By.id("patientDOB")).sendKeys(dob);
+		    driver.findElement(By.name("DEM113_button")).click();
+		    //new Select(driver.findElement(By.id("DEM113"))).selectByVisibleText("Female");
+		    driver.findElement(By.cssSelector("option[value=\""+sex+"\"]")).click();
+		    
+		    
+		    driver.findElement(By.cssSelector("form[name=\"personSearchForm\"] > #printExport > #Submit")).click();
+		    driver.findElement(By.id("tabs0head0")).click();
+		    driver.findElement(By.linkText("Home")).click();
+		    
+		    
+		    log.write("Patient created: ", "Patient "+name+" created result", true);
+		    log.takeSnapshot(driver);
+		    
+		}catch(Exception e){
+			
+			log.write("Patient created: ", "Patient "+name+" created result", false);
+			log.takeSnapshot(driver);
+				
+		}
+    
+	}
+	
+  }
+
+  public boolean verifyDOBPattern(String dob){
+	  
+	  
+	    Pattern p = Pattern.compile("[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}");
+		Matcher m = p.matcher(dob);
+		boolean found = false;
+		
+		if(m.find())
+		{
+			System.out.println(m.group(1));
+			found=true;
+		}
+		
+		return found;
+  }
+  @After
+  public void tearDown() throws Exception {
+   //driver.quit();
+    log.close();
+    String verificationErrorString = verificationErrors.toString();
+    if (!"".equals(verificationErrorString)) {
+      fail(verificationErrorString);
+    }
+  }
+
+  private boolean isElementPresent(By by) {
+    try {
+      driver.findElement(by);
+      return true;
+    } catch (NoSuchElementException e) {
+      return false;
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+      driver.switchTo().alert();
+      return true;
+    } catch (NoAlertPresentException e) {
+      return false;
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+      Alert alert = driver.switchTo().alert();
+      String alertText = alert.getText();
+      if (acceptNextAlert) {
+        alert.accept();
+      } else {
+        alert.dismiss();
+      }
+      return alertText;
+    } finally {
+      acceptNextAlert = true;
+    }
+  }
+}

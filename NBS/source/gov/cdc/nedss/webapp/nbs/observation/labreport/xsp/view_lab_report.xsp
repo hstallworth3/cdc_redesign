@@ -1,0 +1,2710 @@
+<?xml version="1.0"?>
+<!-- edited with XMLSPY v5 rel. 3 U (http://www.xmlspy.com) by Pradeep Sharma (Computer Sciences Corp) -->
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp" xmlns:nedss="http://www.cdc.gov/nedss/logicsheet/nedss" xmlns:session="http://apache.org/xsp/session/2.0" xmlns:xsp-response="http://apache.org/xsp/response/2.0" xmlns:xsp-request="http://apache.org/xsp/request/2.0" xmlns:srt-codes="http://www.cdc.gov/nedss/GetSRTCodes/1.0" xmlns:util="http://apache.org/xsp/util/2.0">
+	<xsp:structure>
+		<xsp:include>java.util.*</xsp:include>
+		<xsp:include>java.text.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.util.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.webapp.nbs.diseaseform.util.InvestigationFieldConstants</xsp:include>
+		<xsp:include>gov.cdc.nedss.act.observation.vo.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.act.observation.dt.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.association.dt.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.entity.organization.vo.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.proxy.ejb.observationproxyejb.vo.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.entity.entityid.dt.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.systemservice.nbssecurity.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.ldf.subform.dt.*</xsp:include>
+	</xsp:structure>
+	<xsp:logic>
+		protected String formatDate(java.sql.Timestamp timestamp) {
+		Date date = null;
+		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+		if (timestamp != null) {
+		date = new Date(timestamp.getTime());
+		}
+		if (date == null) {
+		return "";
+		}
+		else {
+		return formatter.format(date);
+		}
+		}
+
+		protected String formatDateTime(java.sql.Timestamp timestamp) {
+		Date date = null;
+		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+		//SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+		if (timestamp != null) {
+		date = new Date(timestamp.getTime());
+		}
+		if (date == null) {
+		return "";
+		}
+		else {
+		return formatter.format(date);
+		}
+		}
+
+		private Long getparticipationUid(ObservationVO obsVO)
+		{
+		Long participationUid = null;
+		if(obsVO.getTheParticipationDTCollection() != null)
+		{
+		Iterator iter = obsVO.getTheParticipationDTCollection().
+		iterator();
+		while (iter.hasNext())
+		{
+		ParticipationDT participationDT = (ParticipationDT)iter.next();
+		if(participationDT.getTypeCd().equals("PRF"))
+		{
+		participationUid = participationDT.getSubjectEntityUid();
+		}
+		}
+		}
+		return participationUid;
+		}
+
+		private OrganizationVO getOrganizationVO(Collection orgCollection,Long uid)
+		{
+		OrganizationVO organizationVO = new OrganizationVO();
+		if(orgCollection != null)
+		{Iterator iter = orgCollection.iterator();
+		while(iter.hasNext())
+		{
+		organizationVO = (OrganizationVO)iter.next();
+		if(organizationVO.getTheOrganizationDT().getOrganizationUid().compareTo(uid)==0)
+		{
+		return organizationVO;
+		}
+		}
+		}
+		return organizationVO;
+		}
+
+		private String getResultCodes(ObservationVO obsVO)
+		{
+
+		String resultCodes = "";String lab121 = "";String lab302lab303 = "";  String lab283 = ""; String lab285lab286="";
+		String lab308=""; String lab310lab311="";
+		if(obsVO.getObsValueCodedDT_s(0).getCode() !=null)
+		lab121 = obsVO.getObsValueCodedDT_s(0).getCode();
+		if(obsVO.getObsValueCodedDT_s(0).getCodeSystemDescTxt()!=null)
+		{  if(obsVO.getObsValueCodedDT_s(0).getCodeSystemCd() != null )
+		lab302lab303  = " ("+obsVO.getObsValueCodedDT_s(0).getCodeSystemCd() +" "+obsVO.getObsValueCodedDT_s(0).getCodeSystemDescTxt()+") ";
+		else
+		lab302lab303  = "("+obsVO.getObsValueCodedDT_s(0).getCodeSystemDescTxt()+") ";
+		}
+		else if(obsVO.getObsValueCodedDT_s(0).getCodeSystemDescTxt()==null)
+		{
+		if(obsVO.getObsValueCodedDT_s(0).getCodeSystemCd() != null )
+		lab302lab303   =  obsVO.getObsValueCodedDT_s(0).getCodeSystemCd();
+		else
+		lab302lab303  = "" ;
+		}
+		if(obsVO.getObsValueCodedDT_s(0).getAltCd()!=null)
+		lab283 = obsVO.getObsValueCodedDT_s(0).getAltCd();
+		if(obsVO.getObsValueCodedDT_s(0).getAltCdSystemCd()!=null)
+		{
+		if(obsVO.getObsValueCodedDT_s(0).getAltCdSystemDescTxt()!=null)
+		lab285lab286 = " ("+obsVO.getObsValueCodedDT_s(0).getAltCdSystemCd()+" " +obsVO.getObsValueCodedDT_s(0).getAltCdSystemDescTxt()+") ";
+		else
+		lab285lab286 = "(" +  obsVO.getObsValueCodedDT_s(0).getAltCdSystemCd() +")";
+		}
+		else if(obsVO.getObsValueCodedDT_s(0).getAltCdSystemCd()==null)
+		{
+		if(obsVO.getObsValueCodedDT_s(0).getAltCdSystemDescTxt()!=null)
+		lab285lab286 = obsVO.getObsValueCodedDT_s(0).getAltCdSystemDescTxt();
+		else
+		lab285lab286 = "";
+		}
+		resultCodes = lab121+ lab302lab303 +"/"+ lab283 + lab285lab286;
+		if((lab121== null  || lab121.equals("")) &amp;  (lab302lab303 == null || lab302lab303.equals(""))&amp; ( lab283 == null || lab283.equals("")) &amp;  (lab285lab286 ==null || lab285lab286.equals("")) )
+		resultCodes  = "";
+
+		return resultCodes;
+		}
+
+
+
+		private String getComments(ObservationVO obsVO)
+		{
+		StringBuffer ResultComments =  new StringBuffer("");
+		if(obsVO.getTheObsValueTxtDTCollection()!=null)
+		{
+		Iterator iter = obsVO.getTheObsValueTxtDTCollection().iterator();
+		while(iter.hasNext())
+		{
+		ObsValueTxtDT obsValueTxtDT = (ObsValueTxtDT)iter.next();
+		if(obsValueTxtDT.getTxtTypeCd()!= null)
+
+		if(obsValueTxtDT.getTxtTypeCd().equals("N"))
+		{
+		if (obsValueTxtDT.getValueTxt() != null){
+
+		if(!ResultComments.toString().equals(""))
+		ResultComments.append(" " + obsValueTxtDT.getValueTxt());
+		else
+		ResultComments.append(obsValueTxtDT.getValueTxt());
+		// System.out.println("\n ResultComments  " +ResultComments);
+		}
+		}
+		}
+		}
+		return ResultComments.toString();
+
+		}
+	</xsp:logic>
+	<content>
+		<xsp:logic>
+			<![CDATA[
+
+			 //LDF
+			String previewXSP= (String)request.getAttribute("previewXSP");
+			if(previewXSP==null)
+				previewXSP="<group></group>";
+			String extXSP= (String)request.getAttribute(NEDSSConstants.LABREPORT_LDF + "extXSP");
+				if(extXSP==null)
+				extXSP="<group></group>";
+			String extPatientXSP= (String)request.getAttribute(NEDSSConstants.PATIENT_LDF+"extXSP");
+				//System.out.println("extPatientXSP in view lab patient:   " + extPatientXSP);
+			if(extPatientXSP==null)
+			extPatientXSP ="<group></group>";
+			//System.out.println("extPatientXSP outside is :" +  extPatientXSP);
+			if(extPatientXSP.indexOf("<group name=\"Custom Fields\">")==0)
+          		{
+       	     		extPatientXSP=  extPatientXSP.substring(("<group name=\"Custom Fields\">").length(), extPatientXSP.length());
+           			extPatientXSP = "<group name=\"Custom Fields For Patient\">"+extPatientXSP;
+          		}
+
+]]>
+		</xsp:logic>
+		<xsp:logic>
+			<![CDATA[	
+			//To display User Name on the Printable Forms
+			String fullName = "";
+			try {
+					NBSSecurityObj so = (NBSSecurityObj) request.getSession().getAttribute("NBSSecurityObject");
+					
+	
+					if (so != null) {
+						
+						 fullName = so.getTheUserProfile().getTheUser().getFirstName() + " " + so.getTheUserProfile().getTheUser().getLastName();
+						 
+					}   
+					
+			}
+		
+			catch (Exception e) {
+				
+			}
+		]]>
+		</xsp:logic>
+		<xsp:logic>
+			//To display complete date and time on the Printable Forms
+			String dateReceived = (String)request.getAttribute("dateReceivedHidden");
+			Date today = new Date();
+			DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.FULL, new Locale("en","US"));
+			DateFormat timeFormatter = DateFormat.getTimeInstance(DateFormat.DEFAULT,new Locale("en","US"));
+			String dateOut = dateFormatter.format(today);
+			String timeOut = timeFormatter.format(today);
+			//System.out.println("dateOut ===" + dateOut );
+			//System.out.println("timeOut ===" + timeOut );
+		</xsp:logic>
+		<xsp:attribute name="form">
+			<xsp-request:get-attribute name="formHref"/>
+		</xsp:attribute>
+		<!-- ID BAR -->
+		<id-bar>
+			<id name="Patient ID">
+				<xsp-request:get-attribute name="personLocalID"/>
+			</id>
+			<id name="Observation ID">
+				<xsp-request:get-attribute name="observationLocalUID"/>
+			</id>
+			<element id="printUser" type="hidden">
+				<value>
+					<xsp:expr>fullName</xsp:expr>
+				</value>
+				<value>
+				</value>
+			</element>
+		</id-bar>
+		<!--<content form="/nedss/posted">-->
+		<nedss:FileInstances/>
+		<nedss:RequestValues/>
+		<!-- BUTTON BAR -->
+		<button-bar>
+			<left tie-to="View">
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="checkMarkAsReview"/>
+				</xsp:attribute>&amp;
+				<label>Mark as Reviewed</label>
+				<xsp:logic>
+					String PDLogic = (String) request.getAttribute("PDLogic");
+					if(PDLogic!=null){
+						if (PDLogic.equals(NEDSSConstants.STD_PROCESSING_DECISION_NOT_APPLICABLE)){
+				</xsp:logic>
+					<javascript-action>
+						getPage('<xsp-request:get-attribute name="markAsReviewButtonHref"/>');
+					</javascript-action>
+				<xsp:logic>}else{</xsp:logic>
+					<javascript-action>OpenMarkAsReviewed('LabReport');</javascript-action>
+				<xsp:logic>}}</xsp:logic>
+			</left>
+			<left tie-to="View">
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="checkClearMarkAsReview"/>
+				</xsp:attribute>&amp;
+					<label>Clear Mark as Reviewed</label>
+				<javascript-action>getPage('<xsp-request:get-attribute name="clearMarkAsReviewButtonHref"/>');</javascript-action>
+			</left>
+			<left tie-to="View">
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="checkTransfer"/>
+				</xsp:attribute>&amp;
+				<label>Transfer Ownership</label>
+				<javascript-action>
+					getPage('<xsp-request:get-attribute name="transferOwnership"/>');
+				</javascript-action>
+			</left>
+			<right tie-to="View">
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="checkEdit"/>
+				</xsp:attribute>&amp;
+				<label>Edit</label>
+				<javascript-action>
+					notificationCheck('<xsp-request:get-attribute name="editButtonHref"/>');
+				</javascript-action>
+			</right>
+			<right tie-to="View">
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="checkDelete"/>
+				</xsp:attribute>&amp;
+				<label>Delete</label>
+				<!--<javascript-action>getPage('<xsp-request:get-attribute name="deleteButtonHref"/>');</javascript-action>-->
+				<javascript-action>
+					deleteForm('<xsp-request:get-attribute name="deleteButtonHref"/>');
+				</javascript-action>
+			</right>
+			<right tie-to="View">
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="checkCreateInvestigation"/>
+				</xsp:attribute>&amp;
+				<label>Create Investigation</label>
+				<javascript-action>
+					getPage('<xsp-request:get-attribute name="creatInvestigationButtonHref"/>');
+				</javascript-action>
+			</right>
+			<right tie-to="View">
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="checkCreateInvestigation"/>
+				</xsp:attribute>&amp;
+				<label>Associate Investigations</label>
+				<javascript-action>
+					getPage('<xsp-request:get-attribute name="associateToInvestigationsButtonHref"/>');
+				</javascript-action>
+			</right>
+			<right tie-to="View">
+				<label>Print</label>
+				<javascript-action>
+					window.open('<xsp-request:get-attribute name="PrintPage"/>');
+				</javascript-action>
+			</right>
+		</button-bar>
+		<!-- LINK BAR  -->
+		<link-bar>
+			<link>
+				<xsp:attribute name="name">
+					<xsp-request:get-attribute name="linkName1"/>
+				</xsp:attribute>
+				<xsp-request:get-attribute name="linkValue1"/>
+			</link>|
+			<link>
+				<xsp:attribute name="name">
+					<xsp-request:get-attribute name="linkName"/>
+				</xsp:attribute>
+				<xsp-request:get-attribute name="linkValue"/>
+			</link>
+			<link>
+				<xsp:attribute name="name">
+					<xsp-request:get-attribute name="linkNameViewEvents"/>
+				</xsp:attribute>
+				<xsp-request:get-attribute name="linkValueViewEvents"/>
+			</link>
+		</link-bar>
+		<javascript-files>
+			<import>EntitySearch.js</import>
+			<import>AddComment.js</import>
+			<import>DisplayInfoCheck.js</import>
+			<import>ProcessingDecision.js</import>
+		</javascript-files>
+		<topgroup anchor="yes">
+			<!-- The below 5 fields are for printable forms, doesnt effect view lab functionality -->
+			<line>
+				<element type="hidden" name="PDLogic">
+					<value>
+						<xsp-request:get-attribute name="PDLogic"/>
+					</value>
+				</element>
+				<element type="hidden" name="PDLogicCreateInv">
+					<value>
+						<xsp-request:get-attribute name="PDLogicCreateInv"/>
+					</value>
+				</element>
+				<element name="printPatientNameForViewLab" type="hidden">
+					<value>
+						<xsp-request:get-attribute name="personLegalDetails"/>
+						<xsp-request:get-attribute name="legalLastName"/>
+					</value>
+				</element>
+				<element name="dateOfBirth" type="hidden">
+					<value>
+						<xsp-request:get-attribute name="dateOfBirth"/>
+					</value>
+				</element>
+				<element id="printAge" type="hidden">
+					<value>
+						<xsp-request:get-attribute name="ageReported"/>
+					</value>
+				</element>
+				<element name="patientCurrentSex" type="hidden">
+					<readonly/>
+					<srt-options-string>
+						<srt-codes:getCodedValues>
+							<type>SEX</type>
+						</srt-codes:getCodedValues>
+					</srt-options-string>
+					<value>
+						<xsp-request:get-attribute name="DEM113"/>
+					</value>
+				</element>
+				<element id="markAsReviewReason" name="markAsReviewReason" type="hidden"/>
+				<element id="markAsReviewButtonHref" name="markAsReviewButtonHref" type="hidden">
+				<value>
+						<xsp-request:get-attribute name="markAsReviewButtonHref"/>
+					</value>
+				</element>
+				<element id="creatInvestigationButtonHref" name="creatInvestigationButtonHref" type="hidden">
+					<value>
+						<xsp-request:get-attribute name="creatInvestigationButtonHref"/>
+					</value>
+				</element>
+				<element type="hidden" name="STD_PA_LIST">
+					<value>
+						<xsp-request:get-attribute name="STD_PA_LIST"/>
+					</value>
+				</element>
+			</line>
+			<line>
+				<element name="Lab202" type="plain-text" label="Created" align-label="right">
+					<value>
+						<xsp-request:get-attribute name="LAB202"/>
+					</value>
+				</element>
+				<element name="Lab203" type="plain-text" label="by" align-label="right">
+					<value>
+						<xsp-request:get-attribute name="LAB203"/>
+					</value>
+				</element>
+				<element name="Lab211" type="plain-text" label="Updated" align-label="right">
+					<value>
+						<xsp-request:get-attribute name="LAB211"/>
+					</value>
+				</element>
+				<element name="Lab212" type="plain-text" label="by" align-label="right">
+					<value>
+						<xsp-request:get-attribute name="LAB212"/>
+					</value>
+				</element>
+			</line>
+			</topgroup>
+			<topgroup anchor="yes">
+			<line>
+				<element name="LAB197" type="plain-text" label="Lab Report Date" align-label="left">
+					<value>
+						<xsp-request:get-attribute name="LAB197"/>
+					</value>
+				</element>
+				<element/>
+				<element/>
+				<xsp:logic>
+					LabResultProxyVO labResultProxyVO = (LabResultProxyVO)request.getAttribute("labResultProxyVO");
+					String electronicInd = (String) request.getAttribute("electronicInd");
+					String ELRelectronicInd = (String) request.getAttribute("ELRelectronicInd");
+
+					String user = (String) request.getAttribute("user");
+					//System.out.println( "\n\n user "+user);
+					/*
+					if (user==null)
+					System.out.println("The user is null");
+					else if (user.equals("externalUser"))
+					System.out.println("The user is an externalUser");
+					else if(user.equals("internalUser"))
+					System.out.println("the user is an internallUser");
+					*/
+
+
+
+					//field is not visible if the user is a n externalUser
+					if (user.equals("internalUser")){
+				</xsp:logic>
+				<element name="LAB201" type="plain-text" label="Date Received by Public Health" align-label="left">
+					<value>
+						<xsp-request:get-attribute name="LAB201"/>
+					</value>
+				</element>
+				<xsp:logic>}</xsp:logic>
+			</line>
+			<xsp:logic>
+				if(ELRelectronicInd != null )
+				{
+				if(ELRelectronicInd.equals("Y") || ELRelectronicInd.equals("E") )
+				{
+
+			</xsp:logic>
+			<line>
+				<element type="raw">
+					<span>
+						<font class="">
+							<i>
+								Submitted by Outside Facility<br/>
+							</i>
+						</font>
+					</span>
+				</element>
+			</line>
+			<xsp:logic>
+				}}
+			</xsp:logic>
+		</topgroup>
+		<xsp:logic>
+		if(PDLogic != null){
+						if (!PDLogic.equals(NEDSSConstants.STD_PROCESSING_DECISION_NOT_APPLICABLE)){
+		</xsp:logic>
+		<topgroup anchor="yes">
+		<line>
+				<element name="Lab235" type="plain-text" label="Processing Decision" align-label="right">
+					<value>
+						<xsp-request:get-attribute name="markAsReviewReasonDesc"/>
+					</value>
+				</element>
+				<element/>
+				<element/>
+			</line>
+		</topgroup>
+		<xsp:logic>}}</xsp:logic>
+		<separator name="View Lab Report">
+		</separator>
+		<tab name="Order Information">
+			<nedss:writeErrorMessages/>
+			<group name="Patient Information">
+				<line>
+					<element name="personLegalDetails" type="plain-text" label="Name">
+						<value>
+							<xsp-request:get-attribute name="personLegalDetails"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element id="printDate" type="hidden">
+						<value>
+							<xsp:expr>dateOut</xsp:expr>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element id="printTime" type="hidden">
+						<value>
+							<xsp:expr>timeOut</xsp:expr>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="DisplayInformationExists" type="hidden" onload="displayInfoCheck();">
+						<value>
+							<xsp-request:get-attribute name="displayInformationExists"/>
+						</value>
+					</element>
+				</line>				
+				<xsp:logic>
+					if(ELRelectronicInd != null )
+					{
+					if(ELRelectronicInd.equals("Y"))
+					{
+				</xsp:logic>
+				<line>
+					<element name="personAliasDetails" type="plain-text" label="Alias">
+						<value>
+							<xsp-request:get-attribute name="personAliasDetails"/>
+						</value>
+					</element>
+				</line>
+				<xsp:logic>
+					}}
+				</xsp:logic>
+				<line>
+					<element name="DEM159" type="text" label="Home Address">
+						<value>
+							<xsp-request:get-attribute name="homeAddress"/>
+						</value>
+						<value>
+							<xsp-request:get-attribute name="fileSummaryAddress2"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="HomeDEM177" type="plain-text" label="Home Phone">
+						<value>
+							<xsp-request:get-attribute name="Home177"/>
+						</value>
+						<xsp:logic>
+							if(ELRelectronicInd != null )
+							{
+							if(ELRelectronicInd.equals("Y"))
+							{
+						</xsp:logic>
+						<partner type="text" label="Ext">
+							<xsp:logic>
+								if(!ELRelectronicInd.equals("Y"))
+								request.setAttribute("Home181","");
+							</xsp:logic>
+							<value>
+								<xsp-request:get-attribute name="Home181"/>
+							</value>
+						</partner>
+						<xsp:logic>
+							}}
+						</xsp:logic>
+					</element>
+					<xsp:logic>
+						if(ELRelectronicInd != null )
+						{
+						if(ELRelectronicInd.equals("Y"))
+						{
+					</xsp:logic>
+					<element name="WorkDEM177" type="plain-text" label="Work Phone">
+						<value>
+							<xsp-request:get-attribute name="Work177"/>
+						</value>
+						<partner type="text" label="Ext">
+							<value>
+								<xsp-request:get-attribute name="Work181"/>
+							</value>
+						</partner>
+					</element>
+					<xsp:logic>
+						}}
+					</xsp:logic>
+				</line>
+				<line>
+					<element name="DEM113" type="select" label="Sex">
+						<srt-options-string>
+							<srt-codes:getCodedValues>
+								<type>SEX</type>
+							</srt-codes:getCodedValues>
+						</srt-options-string>
+						<value>
+							<xsp-request:get-attribute name="DEM113"/>
+						</value>
+					</element>
+					<element name="DEM152" type="plain-text" label="Race">
+						<value>
+							<xsp-request:get-attribute name="personRace"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="DEM115" type="plain-text" label="DOB">
+						<value>
+							<xsp-request:get-attribute name="dateOfBirth"/>
+						</value>
+					</element>
+					<element name="DEM216" type="plain-text" label="Age">
+						<value>
+							<xsp-request:get-attribute name="ageReported"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<xsp:logic>
+						if(ELRelectronicInd != null )
+						{
+						if(ELRelectronicInd.equals("Y"))
+						{
+					</xsp:logic>
+					<element name="DEM127" type="select" label="Deceased">
+						<value>
+							<xsp-request:get-attribute name="isDeceased"/>
+						</value>
+						<srt-options-string>
+							<srt-codes:getCodedValues>
+								<type>YNU</type>
+							</srt-codes:getCodedValues>
+						</srt-options-string>
+					</element>
+					<xsp:logic>
+						}} else{
+					</xsp:logic>
+					<element name="DEM127" type="select" label="">
+						<value/>
+						<srt-options-string>
+							<srt-codes:getCodedValues>
+								<type>YNU</type>
+							</srt-codes:getCodedValues>
+						</srt-options-string>
+					</element>
+					<xsp:logic>
+						}
+					</xsp:logic>
+					<element name="DEM128" type="plain-text" label="Death Date/Time">
+						<value>
+							<xsp-request:get-attribute name="DEM128"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="DEM140" type="select" label="Marital Status">
+						<value>
+							<xsp-request:get-attribute name="DEM140"/>
+						</value>
+						<srt-options-string>
+							<srt-codes:getCodedValues>
+								<type>P_MARITAL</type>
+							</srt-codes:getCodedValues>
+						</srt-options-string>
+					</element>
+					<element name="DEM155" type="select" label="Ethnicity">
+						<srt-options-string>
+							<srt-codes:getCodedValues>
+								<type>P_ETHN_GRP</type>
+							</srt-codes:getCodedValues>
+						</srt-options-string>
+						<value>
+							<xsp-request:get-attribute name="DEM155"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="LAB196" type="plain-text" label="Patient Comments">
+						<value>
+							<xsp-request:get-attribute name="DEM196"/>
+						</value>
+					</element>
+					<element name="DEM133" type="plain-text" label="SSN">
+						<value>
+							<xsp-request:get-attribute name="DEM133"/>
+						</value>
+					</element>
+				</line>
+			</group>
+			<!--	*************** -->
+			<xsp:logic>
+				if(ELRelectronicInd != null )
+				{
+				if(ELRelectronicInd.equals("Y"))
+				{
+			</xsp:logic>
+			<group>
+				<line>
+					<element type="data-table" allowEdit="no">
+						<header>ID Type</header>
+						<header>ID </header>
+						<header>Assigning Authority</header>
+						<header>Expiration Date</header>
+						<value>
+							<xsp-request:get-attribute name="entityIdList"/>
+						</value>
+					</element>
+				</line>
+			</group>
+			<xsp:logic>
+				}}
+			</xsp:logic>
+			<group name="Test Results">
+			</group>
+			<group background="blue">
+				<line>
+					<element type="plain-text" label="Ordered Test" align-label="left">
+						<value>
+							<xsp-request:get-attribute name="LAB112"/>
+						</value>
+					</element>
+				</line>
+				<xsp:logic>
+					if(ELRelectronicInd != null )
+					{
+					if(ELRelectronicInd.equals("Y"))
+					{
+				</xsp:logic>
+				<line>
+					<element type="plain-text" label="Codes" align-label="left">
+						<value>
+							<xsp-request:get-attribute name="lab269andlab272"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element type="plain-text" label="Status" align-label="left">
+						<value>
+							<xsp-request:get-attribute name="LAB196"/>
+						</value>
+					</element>
+				</line>
+				<xsp:logic>
+					}}
+				</xsp:logic>
+			</group>
+			<group>
+				<xsp:logic>
+
+					CachedDropDownValues cdv = new CachedDropDownValues();
+					Collection observationCollections = (ArrayList)request.getAttribute("obsResultedColl");
+					if(observationCollections != null)
+					{
+					Iterator it =  observationCollections.iterator();
+					while(it.hasNext())
+					{
+					ResultedTestVO  resultedTestVO   = (ResultedTestVO)it.next();
+					ObservationVO  obsVO   = (ObservationVO)resultedTestVO.getTheIsolateVO();
+					//System.out.println("\n\n CdSystemCd" +obsVO.getTheObservationDT().getCdSystemCd());
+				</xsp:logic>
+				<line>
+					<element type="join" border="true">
+						<line>
+							<element type="line-separator" title="Resulted Tests and Results"/>
+						</line>
+						<line>
+							<element type="plain-text" label="Resulted Test">
+								<xsp:logic><![CDATA[
+									String lab288 = "";
+									String lab288Code ="";
+									String Lab288Desc="";
+									if(ELRelectronicInd != null)
+									if(ELRelectronicInd.equals("Y"))
+									if(obsVO.getTheObservationDT().getAltCdDescTxt() != null)
+									lab288 = obsVO.getTheObservationDT().getAltCdDescTxt() ;
+									if(obsVO.getTheObservationDT().getCdDescTxt() != null)
+									lab288Code = obsVO.getTheObservationDT().getCdDescTxt() ;
+									if(lab288Code!=null && lab288!=null && !lab288.trim().equals(""))
+									Lab288Desc= lab288Code +"("+ lab288+")";
+									else if(lab288Code!=null )
+									Lab288Desc= lab288Code;
+									
+									]]>
+								</xsp:logic>
+								<value>
+									<xsp:expr>Lab288Desc</xsp:expr>
+								</value>
+							</element>
+						</line>
+						<line>
+							<element type="plain-text" label="Result(s)">
+								<xsp:logic>
+									String cdDesc = ""; String displayNameDesc = ""; String Lab121andLab278= "" ;
+									/*if(obsVO.getObsValueCodedDT_s(0).getCode() !=null)
+									cdDesc = cdv.getCodedResultDesc(obsVO.getObsValueCodedDT_s(0).getCode());
+									if(obsVO.getObsValueCodedDT_s(0).getDisplayName() != null)
+									{
+									TreeMap treeMap = (TreeMap)cdv.getOrganismListDesc();
+									displayNameDesc  = (String)treeMap .get(obsVO.getObsValueCodedDT_s(0).getCode());
+
+									}
+									// System.out.println("\n\n cdDesc  " +cdDesc );
+									// System.out.println("\n\n displayNameDesc  " +displayNameDesc);
+									if(cdDesc != null)
+									{
+									if(displayNameDesc != null)
+									Lab121andLab278 = cdDesc + "  " + displayNameDesc;
+									else
+									Lab121andLab278 = cdDesc;
+									}
+									else if( cdDesc ==null)
+									{
+									if(displayNameDesc != null)
+									Lab121andLab278 =  displayNameDesc ;
+									else
+									Lab121andLab278 = "";
+									} */
+									String finalResult="";
+									if( obsVO.getObsValueCodedDT_s(0).getDisplayName() != null)
+									Lab121andLab278 = obsVO.getObsValueCodedDT_s(0).getDisplayName();
+									else
+									Lab121andLab278 ="";
+									if(ELRelectronicInd != null )
+									{
+									if(ELRelectronicInd .equals("Y"))
+									{
+									if(obsVO.getObsValueCodedDT_s(0).getCodeSystemDescTxt() !=null)
+									if(!obsVO.getObsValueCodedDT_s(0).getCodeSystemDescTxt().equals(""))
+									Lab121andLab278 = Lab121andLab278 + "("+ obsVO.getObsValueCodedDT_s(0).getCodeSystemDescTxt()+") ";
+									}
+									}
+									finalResult=Lab121andLab278;
+						
+				
+						
+									String unitDesc = "";
+									if (obsVO.getObsValueNumericDT_s(0).getNumericUnitCd() != null)
+									{
+									unitDesc =  cdv.getDescForCode("UNIT_ISO", obsVO.getObsValueNumericDT_s(0).getNumericUnitCd());
+									if(unitDesc == null)
+									unitDesc =  obsVO.getObsValueNumericDT_s(0).getNumericUnitCd();
+									//System.out.println("unitDesc = "+unitDesc);
+									}
+									String lab113to117 = "";
+									lab113to117 = ((obsVO.getObsValueNumericDT_s(0).getComparatorCd1()== null?"":obsVO.getObsValueNumericDT_s(0).getComparatorCd1()) + " "
+									+ (obsVO.getObsValueNumericDT_s(0).getNumericValue1()==null?"":obsVO.getObsValueNumericDT_s(0).getNumericValue1().toString()) +" "
+									+ (obsVO.getObsValueNumericDT_s(0).getSeparatorCd()== null?"":obsVO.getObsValueNumericDT_s(0).getSeparatorCd()) +" "
+									+ (obsVO.getObsValueNumericDT_s(0).getNumericValue2()==null?"":obsVO.getObsValueNumericDT_s(0).getNumericValue2().toString()) +" "
+									+ unitDesc);
+									//System.out.println("lab113to117  is :" + lab113to117 );
+						
+									if(finalResult!="")
+										finalResult+=" ";
+									finalResult+=lab113to117;
+								
+								
+								
+							if(obsVO.getTheObsValueTxtDTCollection()!=null) {
+							Iterator iter = obsVO.getTheObsValueTxtDTCollection().iterator();
+
+							while(iter.hasNext()) {
+							ObsValueTxtDT obsValueTxtDT = (ObsValueTxtDT)iter.next();
+							if(obsValueTxtDT.getTxtTypeCd()== null || obsValueTxtDT.getTxtTypeCd().equalsIgnoreCase("O"))
+							if (obsValueTxtDT.getValueTxt() != null) {
+								if(lab113to117!="")
+										finalResult+=" ";
+								finalResult+=obsValueTxtDT.getValueTxt();
+							}}}
+						</xsp:logic>
+								
+								
+								
+								
+								<value>
+									<xsp:expr>finalResult</xsp:expr>
+								</value>
+								
+						
+								
+								<!--value>
+									<xsp:expr>obsVO.getObsValueCodedDT_s(0).getDisplayName()</xsp:expr>
+								</value-->
+							</element>
+						</line>
+					
+							
+					
+						
+				
+						
+						<line>
+							<element type="line-separator"/>
+						</line>
+						<line>
+							<element type="plain-text" label="Reference Range">
+								<xsp:logic>
+									String lab119to120 = "";
+									String lab119 = obsVO.getObsValueNumericDT_s(0).getLowRange()== null?"":obsVO.getObsValueNumericDT_s(0).getLowRange();
+									String lab120 = obsVO.getObsValueNumericDT_s(0).getHighRange()== null?"":obsVO.getObsValueNumericDT_s(0).getHighRange();
+									//System.out.println(" \n\n lab119  "+lab119 );
+									//System.out.println(" \n\n lab120  "+lab120 );
+									if(lab119.trim().length()>0 &amp;&amp; lab120.trim().length()>0)
+									{
+									lab119to120=lab119+" to "+lab120 ;
+									}
+									else if(lab119.trim().length()>0 &amp;&amp; lab120.trim().length()==0)
+									{
+									lab119to120=lab119;
+									}
+									else if(lab119.trim().length()==0 &amp;&amp; lab120.trim().length()>0)
+									{
+									lab119to120=lab120;
+									}
+									// System.out.println(" \n\n lab119to120 "+lab119 );
+								</xsp:logic>
+								<value>
+									<xsp:expr>lab119to120</xsp:expr>
+								</value>
+								<!--value>
+									<xsp:expr>(obsVO.getObsValueNumericDT_s(0).getLowRange()== null?"":obsVO.getObsValueNumericDT_s(0).getLowRange())</xsp:expr>
+								</value-->
+							</element>
+							<xsp:logic>
+								//	 System.out.println("\n\n ELRelectronicInd  "+ELRelectronicInd );
+								if(ELRelectronicInd != null )
+								{
+								if(ELRelectronicInd.equals("Y"))
+								{
+							</xsp:logic>
+							<element type="plain-text" label="Date/Time">
+								<value>
+									<xsp:expr>obsVO.getTheObservationDT().getActivityToTime()</xsp:expr>
+								</value>
+							</element>
+							<xsp:logic>
+								}}
+							</xsp:logic>
+						</line>
+						<xsp:logic>
+							if(ELRelectronicInd != null )
+							{
+							if(ELRelectronicInd.equals("Y"))
+							{
+						</xsp:logic>
+						<line>
+							<element type="plain-text" label="Interpretation">
+								<xsp:logic>
+								<![CDATA[
+									String interpretationDesc = "";
+									if(obsVO.getObservationInterpDT_s(0).getInterpretationCd() != null)
+										interpretationDesc= cdv.getDescForCode("OBS_INTRP",obsVO.getObservationInterpDT_s(0).getInterpretationCd());
+									if(interpretationDesc==null || (interpretationDesc!=null && interpretationDesc.trim().equals("")))
+										interpretationDesc=obsVO.getObservationInterpDT_s(0).getInterpretationCd();
+								]]>
+								</xsp:logic>
+								
+								<value>
+									<xsp:expr>(interpretationDesc)</xsp:expr>
+								</value>
+								
+							</element>
+							<xsp:logic>
+								Long participationUid = getparticipationUid(obsVO);
+								OrganizationVO organizationVO = new OrganizationVO();
+								String ord106 =""; String ord104ord107 = ""; String orgName = "";
+								if(participationUid != null)
+								{
+								if (labResultProxyVO != null)
+								{
+								if(labResultProxyVO.getTheOrganizationVOCollection() != null)
+								{
+								organizationVO =  getOrganizationVO(labResultProxyVO.getTheOrganizationVOCollection(),participationUid);
+								}
+								}
+								}
+								if(organizationVO !=null)
+								{
+								orgName = organizationVO.getOrganizationNameDT_s(0).getNmTxt();  // has only one name
+
+								if(organizationVO .getTheEntityIdDTCollection()!=null)
+								{
+								Iterator iter = organizationVO .getTheEntityIdDTCollection().iterator();
+								while(iter.hasNext())
+								{
+								EntityIdDT entityIdDT = (EntityIdDT)iter.next();
+								if(entityIdDT.getTypeCd().equals("FI"))
+								if(entityIdDT.getRootExtensionTxt()!=null)
+								ord106 = entityIdDT.getRootExtensionTxt();
+								if(entityIdDT.getTypeCd()!=null)
+								{
+								if(entityIdDT.getAssigningAuthorityCd() !=null)
+								ord104ord107 = "("+entityIdDT.getTypeCd()+ " " +entityIdDT.getAssigningAuthorityCd()+")";
+								else
+								ord104ord107 ="("+entityIdDT.getTypeCd()+")";
+								}
+								else
+								ord104ord107 ="("+entityIdDT.getAssigningAuthorityCd()+")";
+
+								}
+								}
+								}
+							</xsp:logic>
+							<element type="plain-text" label="Performing Facility">
+								<value>
+									<xsp:expr>orgName</xsp:expr>
+								</value>
+							</element>
+						</line>
+						<line>
+							<element type="plain-text" label="Result Method">
+								<xsp:logic>
+									String lab105lab279 = "";
+									if(obsVO.getTheObservationDT().getMethodDescTxt() != null)
+									lab105lab279 = cdv.getDescForCode("OBS_METH",obsVO.getTheObservationDT().getMethodDescTxt());
+									if (lab105lab279 == null)
+									lab105lab279 = "";
+									if(obsVO.getTheObservationDT().getMethodCd()!=null)
+									lab105lab279 = lab105lab279 +" ("+ obsVO.getTheObservationDT().getMethodCd()+")";
+								</xsp:logic>
+								<value>
+									<xsp:expr>lab105lab279</xsp:expr>
+								</value>
+							</element>
+							<element type="plain-text" label="Facility ID">
+								<value>
+									<xsp:expr>ord106</xsp:expr>
+								</value>
+							</element>
+						</line>
+						<line>
+							<element/>
+							<element/>
+							<element/>
+							<element type="plain-text">
+								<value>
+									<xsp:expr>ord104ord107</xsp:expr>
+								</value>
+							</element>
+						</line>
+						<xsp:logic>
+							}}
+						</xsp:logic>
+						<line>
+							<element type="plain-text" label="Status">
+								<xsp:logic>
+									String  resultStatus = "";
+									if(obsVO.getTheObservationDT().getStatusCd() !=null)
+									resultStatus  = cdv.getDescForCode("ACT_OBJ_ST", obsVO.getTheObservationDT().getStatusCd());
+								</xsp:logic>
+								<value>
+									<xsp:expr>resultStatus</xsp:expr>
+								</value>
+							</element>
+						</line>
+						<xsp:logic>
+							if(ELRelectronicInd != null )
+							{
+							if(ELRelectronicInd.equals("Y"))
+							{
+						</xsp:logic>
+						<line>
+							<element type="plain-text" label="Test Code(s)">
+								<xsp:logic>
+									//	 System.out.println("The getCdSystemCdis :" + obsVO.getTheObservationDT().getCdSystemCd());
+									String testCodes = "";  String lab293 = ""; String lab287= ""; String obs295And296=""; String lab289 = ""; String lab290="";
+									if(obsVO.getTheObservationDT().getCd()!=null)
+									lab293 = obsVO.getTheObservationDT().getCd();
+									if(obsVO.getTheObservationDT().getCdSystemCd()!= null || obsVO.getTheObservationDT().getCdSystemDescTxt()!= null)
+									{
+									//	 System.out.println("The getCdSystemCdis :" + obsVO.getTheObservationDT().getCdSystemCd());
+									obs295And296 =  " ("+ obsVO.getTheObservationDT().getCdSystemCd() + " "+ obsVO.getTheObservationDT().getCdSystemDescTxt() +") " ;
+									}
+
+									if(obsVO.getTheObservationDT().getAltCd() != null)
+									lab287 =  obsVO.getTheObservationDT().getAltCd();
+									if(obsVO.getTheObservationDT().getAltCdSystemCd()!=null)
+									lab289 = obsVO.getTheObservationDT().getAltCdSystemCd();
+									if(obsVO.getTheObservationDT().getAltCdSystemDescTxt()!=null)
+									lab290 = obsVO.getTheObservationDT().getAltCdSystemDescTxt();
+									testCodes =lab293 + obs295And296 +"/"+lab287 +" ("+lab289 + " "+lab290+")";
+								</xsp:logic>
+								<value>
+									<xsp:expr>testCodes</xsp:expr>
+								</value>
+							</element>
+						</line>
+						<line>
+							<element type="plain-text" label="Result Code(s)">
+								<xsp:logic>
+									String resultCodes = getResultCodes(obsVO);
+
+									/*	String lab121 = "";String lab302lab303 = "";  String lab283 = ""; String lab285lab286="";
+									String lab308=""; String lab310lab311="";
+									if(obsVO.getObsValueCodedDT_s(0).getCode() !=null)
+									lab121 = obsVO.getObsValueCodedDT_s(0).getCode();
+									if(obsVO.getObsValueCodedDT_s(0).getCodeSystemDescTxt()!=null)
+									{  if(obsVO.getObsValueCodedDT_s(0).getCodeSystemCd() != null )
+									lab302lab303  = " ("+obsVO.getObsValueCodedDT_s(0).getCodeSystemCd() +" "+obsVO.getObsValueCodedDT_s(0).getCodeSystemDescTxt()+") ";
+									else
+									lab302lab303  = "("+obsVO.getObsValueCodedDT_s(0).getCodeSystemDescTxt()+") ";
+									}
+									else if(obsVO.getObsValueCodedDT_s(0).getCodeSystemDescTxt()==null)
+									{
+									if(obsVO.getObsValueCodedDT_s(0).getCodeSystemCd() != null )
+									lab302lab303   =  obsVO.getObsValueCodedDT_s(0).getCodeSystemCd();
+									else
+									lab302lab303  = "" ;
+									}
+									if(obsVO.getObsValueCodedDT_s(0).getAltCd()!=null)
+									lab283 = obsVO.getObsValueCodedDT_s(0).getAltCd();
+									if(obsVO.getObsValueCodedDT_s(0).getAltCdSystemCd()!=null)
+									{
+									if(obsVO.getObsValueCodedDT_s(0).getAltCdSystemDescTxt()!=null)
+									lab285lab286 = " ("+obsVO.getObsValueCodedDT_s(0).getAltCdSystemCd()+" " +obsVO.getObsValueCodedDT_s(0).getAltCdSystemDescTxt()+") ";
+									else
+									lab285lab286 = "(" +  obsVO.getObsValueCodedDT_s(0).getAltCdSystemCd() +")";
+									}
+									else if(obsVO.getObsValueCodedDT_s(0).getAltCdSystemCd()==null)
+									{
+									if(obsVO.getObsValueCodedDT_s(0).getAltCdSystemDescTxt()!=null)
+									lab285lab286 = obsVO.getObsValueCodedDT_s(0).getAltCdSystemDescTxt();
+									else
+									lab285lab286 = "";
+									}
+									resultCodes = lab121+ lab302lab303 +"/"+ lab283 + lab285lab286; */
+
+								</xsp:logic>
+								<value>
+									<xsp:expr>resultCodes</xsp:expr>
+								</value>
+							</element>
+						</line>
+						<xsp:logic>
+							}}  //for ELRelectronicInd
+						</xsp:logic>
+						<line>
+							<element type="plain-text" label="Result Comments" size="72">
+								<xsp:logic>
+									if(obsVO.getTheObsValueTxtDTCollection()!=null) {
+									Iterator iter = obsVO.getTheObsValueTxtDTCollection().iterator();
+									ObsValueTxtDT obsValueTxtDT=null;
+									while ( iter.hasNext() ) {
+									obsValueTxtDT = (ObsValueTxtDT)iter.next();
+									if(obsValueTxtDT.getTxtTypeCd()!= null)
+									if(obsValueTxtDT.getTxtTypeCd().equals("N"))
+									if (obsValueTxtDT.getValueTxt() != null) {
+								</xsp:logic>
+								<value>
+									<xsp:expr>obsValueTxtDT.getValueTxt()</xsp:expr>
+								</value>
+								<xsp:logic>
+									break;
+									}
+									}
+								</xsp:logic>
+							</element>
+						</line>
+						<xsp:logic>
+							while(iter.hasNext()) {
+							obsValueTxtDT = (ObsValueTxtDT)iter.next();
+							if(obsValueTxtDT.getTxtTypeCd()!= null)
+							if(obsValueTxtDT.getTxtTypeCd().equals("N"))
+							if (obsValueTxtDT.getValueTxt() != null) {
+						</xsp:logic>
+						<line>
+							<element type="plain-text" label="" size="72">
+								<value>
+									<xsp:expr>obsValueTxtDT.getValueTxt()</xsp:expr>
+								</value>
+							</element>
+						</line>
+						<xsp:logic>
+							}
+							}
+							}
+						</xsp:logic>
+						<xsp:logic>
+							if(resultedTestVO.getTheSusceptibilityCollection() !=null)
+							{
+							if(resultedTestVO.getTheSusceptibilityCollection().size()>0)
+							{
+						</xsp:logic>
+						<line>
+							<element type="line-separator" title="Related Tests and Results"/>
+						</line>
+						<xsp:logic>
+							}
+							Iterator itSus = resultedTestVO.getTheSusceptibilityCollection().iterator();
+							while(itSus.hasNext())
+							{
+							ObservationVO obsVO110 = (ObservationVO)itSus.next();
+
+							//	System.out.println("\n\n CdSystemCd" +obsVO110 .getTheObservationDT().getCdSystemCd());
+
+						</xsp:logic>
+						<line>
+							<element type="join" background="gray" border="true">
+								<line>
+									<element type="plain-text" label="Resulted Test">
+										<xsp:logic>
+											String resultedTest110 = "";
+											if(obsVO110.getTheObservationDT().getCdDescTxt()!=null)
+											resultedTest110 = obsVO110.getTheObservationDT().getCdDescTxt();
+											if(ELRelectronicInd != null )
+											{
+											if(ELRelectronicInd.equals("Y"))
+											{
+											if(obsVO110.getTheObservationDT().getAltCdDescTxt()!= null)
+											resultedTest110 = resultedTest110 +" ("+ obsVO110.getTheObservationDT().getAltCdDescTxt()+")";
+											}
+											}
+										</xsp:logic>
+										<value>
+											<xsp:expr>resultedTest110</xsp:expr>
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="plain-text" label="Result(s)">
+										<xsp:logic>
+											String results110="";
+											String translatedResuted110 = "";
+											if(obsVO110.getObsValueCodedDT_s(0).getCode()!= null)
+											translatedResuted110 = cdv.getCodedResultDesc(obsVO110.getObsValueCodedDT_s(0).getCode());
+											if( translatedResuted110==null &amp;&amp; (obsVO110.getObsValueCodedDT_s(0).getCode()!= null))
+											{
+											results110 =  obsVO110.getObsValueCodedDT_s(0).getCode();
+											}else if(obsVO110.getObsValueCodedDT_s(0).getCode() !=null)
+											results110= translatedResuted110;
+											String display110 = "";
+											if(obsVO110.getObsValueCodedDT_s(0).getDisplayName() != null)
+											display110 =obsVO110.getObsValueCodedDT_s(0).getDisplayName();
+											if( display110 != null &amp;&amp; (translatedResuted110==null ) )
+											results110 = display110;
+											if(results110 != null &amp;&amp; results110.equalsIgnoreCase("NI"))
+											results110  = "";
+											if(ELRelectronicInd != null )
+											{
+											if(ELRelectronicInd.equals("Y"))
+											{
+											if(obsVO110.getObsValueCodedDT_s(0).getAltCdDescTxt()!=null)
+											{
+											results110 = results110 +" ("+ obsVO110.getObsValueCodedDT_s(0).getAltCdDescTxt()+") ";
+											}
+											}
+											}
+										</xsp:logic>
+										<value>
+											<xsp:expr>results110</xsp:expr>
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="plain-text" label="">
+										<xsp:logic>
+											String unitDesc110 = "";
+											if (obsVO110.getObsValueNumericDT_s(0).getNumericUnitCd() != null)
+											{   unitDesc110 =  cdv.getDescForCode("UNIT_ISO", obsVO110.getObsValueNumericDT_s(0).getNumericUnitCd());
+											if(unitDesc110 == null || unitDesc110.equals(""))
+											  unitDesc110 = obsVO110.getObsValueNumericDT_s(0).getNumericUnitCd();
+											}
+
+											String lab113to117forLab110 = ((obsVO110 .getObsValueNumericDT_s(0).getComparatorCd1()== null?"":obsVO110.getObsValueNumericDT_s(0).getComparatorCd1()) + " "
+											+ (obsVO110.getObsValueNumericDT_s(0).getNumericValue1()==null?"":obsVO110.getObsValueNumericDT_s(0).getNumericValue1().toString()) +" "
+											+ (obsVO110.getObsValueNumericDT_s(0).getSeparatorCd()== null?"":obsVO110.getObsValueNumericDT_s(0).getSeparatorCd()) +" "
+											+ (obsVO110.getObsValueNumericDT_s(0).getNumericValue2()==null?"":obsVO110.getObsValueNumericDT_s(0).getNumericValue2().toString()) +" "
+											+unitDesc110);
+											//	System.out.println("lab113to117  is :" + lab113to117forLab110 );
+										</xsp:logic>
+										<value>
+											<xsp:expr>lab113to117forLab110</xsp:expr>
+										</value>
+									</element>
+								</line>
+								<xsp:logic>
+									if(ELRelectronicInd != null )
+									{
+									if(ELRelectronicInd.equals("Y"))
+									{
+								</xsp:logic>
+								<line>
+									<element type="plain-text" label="">
+										<value>
+											<xsp:expr>obsVO110.getObsValueTxtDT_s(0).getValueTxt()</xsp:expr>
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="line-separator"/>
+								</line>
+								<line>
+									<element type="plain-text" label="Reference Range">
+										<value>
+											<xsp:expr>(obsVO110.getObsValueNumericDT_s(0).getLowRange()== null?"":obsVO110.getObsValueNumericDT_s(0).getLowRange())</xsp:expr>
+										</value>
+									</element>
+									<element tie-to="null" type="plain-text" label="Date/Time">
+										<value>
+											<xsp:expr>obsVO110.getTheObservationDT().getActivityToTime()</xsp:expr>
+										</value>
+									</element>
+								</line>
+								<xsp:logic>
+									}}
+								</xsp:logic>
+								<xsp:logic>
+									<xsp:logic>
+										Long participationUid110 = getparticipationUid(obsVO110);
+										OrganizationVO organizationVO110 = new OrganizationVO();
+										String ord106for110 =""; String ord104ord107for110 = ""; String orgNamefor110 = "";
+										if(participationUid110 != null)
+										{
+										if (labResultProxyVO != null)
+										{
+										if(labResultProxyVO.getTheOrganizationVOCollection() != null)
+										{
+										organizationVO110 =  getOrganizationVO(labResultProxyVO.getTheOrganizationVOCollection(),participationUid110);
+										}
+										}
+										}
+										if(organizationVO110 !=null)
+										{
+										orgNamefor110 = organizationVO110.getOrganizationNameDT_s(0).getNmTxt();  // has only one name
+
+										if(organizationVO110 .getTheEntityIdDTCollection()!=null)
+										{
+										Iterator iter110 = organizationVO110 .getTheEntityIdDTCollection().iterator();
+										while(iter110.hasNext())
+										{
+										EntityIdDT entityIdDT110 = (EntityIdDT)iter110.next();
+										if(entityIdDT110.getTypeCd().equals("FI"))
+										if(entityIdDT110.getRootExtensionTxt()!=null)
+										ord106for110 = entityIdDT110.getRootExtensionTxt();
+										if(entityIdDT110.getTypeCd()!=null)
+										{
+										if(entityIdDT110.getAssigningAuthorityCd() !=null)
+										ord104ord107for110 = "("+entityIdDT110.getTypeCd()+ " " +entityIdDT110.getAssigningAuthorityCd()+")";
+										else
+										ord104ord107for110 = "("+entityIdDT110.getTypeCd()+")";
+										}
+										else
+										ord104ord107for110 = "("+entityIdDT110.getAssigningAuthorityCd()+")";
+
+										}
+										}
+										}
+									</xsp:logic>
+								</xsp:logic>
+								<line>
+									<element type="plain-text" label="Interpretation">
+										<xsp:logic>
+											String interpretationCd110 = "";
+											if(obsVO110.getObservationInterpDT_s(0).getInterpretationCd() != null)
+											interpretationCd110 = cdv.getDescForCode("OBS_INTRP",obsVO110.getObservationInterpDT_s(0).getInterpretationCd());
+										</xsp:logic>
+										<value>
+											<xsp:expr>interpretationCd110</xsp:expr>
+										</value>
+									</element>
+									<xsp:logic>
+										if(ELRelectronicInd != null )
+										{
+										if(ELRelectronicInd.equals("Y"))
+										{
+									</xsp:logic>
+									<element type="plain-text" label="Performing Facility">
+										<value>
+											<xsp:expr>orgNamefor110</xsp:expr>
+										</value>
+									</element>
+									<xsp:logic>
+										}}
+									</xsp:logic>
+								</line>
+								<line>
+									<element type="plain-text" label="Result Method">
+										<xsp:logic>
+											String  lab105 = "";
+											if(obsVO110.getTheObservationDT().getMethodCd()!= null)
+											{
+											//System.out.println("This is Chris:" +obsVO110.getTheObservationDT().getMethodCd());
+											lab105  = cdv.getDescForCode("OBS_METH_SUSC", obsVO110.getTheObservationDT().getMethodCd());
+											}
+											if(ELRelectronicInd != null )
+											{
+											if(ELRelectronicInd.equals("Y"))
+											{
+											if(obsVO110.getTheObservationDT().getMethodCd()!= null)
+											{
+											if(obsVO110.getTheObservationDT().getMethodDescTxt()!=null)
+											{
+											lab105  =  obsVO110.getTheObservationDT().getMethodDescTxt() + "("+obsVO110.getTheObservationDT().getMethodCd()+ ")";
+											if(lab105 == null)
+											lab105 =  "N/A";
+											}
+											}
+											else if(obsVO110.getTheObservationDT().getMethodCd()!= null)
+											{
+											if(obsVO110.getTheObservationDT().getMethodDescTxt()==null)
+											{
+											lab105  = "("+obsVO110.getTheObservationDT().getMethodCd() + ")";
+											if(lab105 == null)
+											lab105 =  "N/A";
+											}
+											}
+											else if(obsVO110.getTheObservationDT().getMethodCd()== null)
+											{
+											if(obsVO110.getTheObservationDT().getMethodDescTxt()==null)
+											{
+											lab105 =  "N/A";
+											}
+											}
+											else if(obsVO110.getTheObservationDT().getMethodCd()== null)
+											{
+											if(obsVO110.getTheObservationDT().getMethodDescTxt()!=null)
+											lab105  =  obsVO110.getTheObservationDT().getMethodDescTxt();
+											}
+											else
+											lab105 =  "N/A";
+											}
+											}
+										</xsp:logic>
+										<value>
+											<xsp:expr>lab105</xsp:expr>
+										</value>
+									</element>
+									<xsp:logic>
+										if(ELRelectronicInd != null )
+										{
+										if(ELRelectronicInd.equals("Y"))
+										{
+									</xsp:logic>
+									<element type="plain-text" label="Facility ID">
+										<value>
+											<xsp:expr>ord106for110</xsp:expr>
+										</value>
+									</element>
+									<xsp:logic>
+										}}
+									</xsp:logic>
+								</line>
+								<xsp:logic>
+									if(ELRelectronicInd != null )
+									{
+									if(ELRelectronicInd.equals("Y"))
+									{
+								</xsp:logic>
+								<line>
+									<element type="plain-text" label="Status">
+										<xsp:logic>
+											String  resultStatus110 = "";
+											if(obsVO110.getTheObservationDT().getStatusCd() !=null)
+											resultStatus110  = cdv.getDescForCode("ACT_OBJ_ST", obsVO110.getTheObservationDT().getStatusCd());
+										</xsp:logic>
+										<value>
+											<xsp:expr>resultStatus110</xsp:expr>
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="plain-text" label="Test Code(s)">
+										<xsp:logic>
+											String obs295And296for110 = ""; String obs293obs295And296for110 = ""; String testCodes110 = ""; String lab289lab290for110 = ""; String lab287lab289lab290for110 = "";
+											//	 System.out.println("The getCdSystemCdis :" + obsVO110.getTheObservationDT().getCdSystemCd());
+											if(obsVO110.getTheObservationDT().getCdSystemCd()!= null || obsVO110.getTheObservationDT().getCdSystemDescTxt()!= null)
+											{
+											//	 System.out.println("The getCdSystemCdis :" + obsVO.getTheObservationDT().getCdSystemCd());
+											if(obsVO110.getTheObservationDT().getCdSystemCd() != null)
+											{
+											if (obsVO110.getTheObservationDT().getCdSystemDescTxt() !=null)
+											obs295And296for110 =  " ("+ obsVO110.getTheObservationDT().getCdSystemCd() + " "+ obsVO110.getTheObservationDT().getCdSystemDescTxt() +")";
+											else
+											obs295And296for110 ="("+  obsVO110.getTheObservationDT().getCdSystemCd() +" )";
+											}
+											else if(obsVO110.getTheObservationDT().getCdSystemDescTxt() == null)
+											{
+											if (obsVO110.getTheObservationDT().getCdSystemDescTxt() !=null)
+											obs295And296for110 =  " ("+  obsVO110.getTheObservationDT().getCdSystemDescTxt() +")";
+											else
+											obs295And296for110 ="";
+
+
+											}
+
+											if(obsVO110.getTheObservationDT().getCd()!=null)
+											obs293obs295And296for110  = obsVO110.getTheObservationDT().getCd()+obs295And296for110;
+											else
+											obs293obs295And296for110  =  obs295And296for110;
+
+											if( obsVO110.getTheObservationDT().getAltCdSystemCd()!=null || obsVO110.getTheObservationDT().getAltCdSystemDescTxt()!=null )
+											lab289lab290for110 = " ("+obsVO110.getTheObservationDT().getAltCdSystemCd()+" " +obsVO110.getTheObservationDT().getAltCdSystemDescTxt()+" )";
+											if(obsVO110.getTheObservationDT().getAltCd()!=null)
+											lab287lab289lab290for110  = obsVO110.getTheObservationDT().getAltCd()+ " " +  lab289lab290for110;
+											else
+											lab287lab289lab290for110 =  lab289lab290for110;
+											if(lab287lab289lab290for110  != null || !lab287lab289lab290for110.equals(""))
+											testCodes110 =  obs293obs295And296for110  + "/"+ lab287lab289lab290for110;
+											else
+											testCodes110 =  obs293obs295And296for110;
+
+										</xsp:logic>
+										<value>
+											<xsp:expr>testCodes110</xsp:expr>
+										</value>
+										<xsp:logic>
+											}
+											else
+											{
+										</xsp:logic>
+										<value>
+											<xsp:expr>(obsVO110.getTheObservationDT().getCd())</xsp:expr>
+										</value>
+										<xsp:logic>
+											}
+										</xsp:logic>
+									</element>
+								</line>
+								<line>
+									<element type="plain-text" label="Result Code(s)">
+										<xsp:logic>
+											String resultCodesfor110 = getResultCodes(obsVO110);
+										</xsp:logic>
+										<value>
+											<xsp:expr>resultCodesfor110</xsp:expr>
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="plain-text" label="Result Comments">
+										<xsp:logic>
+											String susComments = getComments(obsVO110);
+										</xsp:logic>
+										<value>
+											<xsp:expr>susComments</xsp:expr>
+										</value>
+									</element>
+								</line>
+								<xsp:logic>
+									}}
+								</xsp:logic>
+							</element>
+						</line>
+						<xsp:logic>
+							} // for Lab110 while loop
+							} // for Lab110 null check
+							if(resultedTestVO.getTheTrackIsolateVOHaspMap()!=null)
+							if(resultedTestVO.getTheTrackIsolateVOHaspMap().size()>0){
+							Map trackIsolateMap = resultedTestVO.getTheTrackIsolateVOHaspMap();
+						</xsp:logic>
+						<line>
+							<element type="join" border="true">
+								<xsp:logic>
+									ObservationVO obs329aVO = null;
+									if(trackIsolateMap.get(NEDSSConstants.LAB_329A)!=null){
+									obs329aVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_329A));
+								</xsp:logic>
+								<line>
+									<element type="join">
+										<line>
+											<element type="text" label="Track Isolate?">
+												<value>
+													<xsp:expr>cdv.getDescForCode( "YN", obs329aVO .getObsValueCodedDT_s(0).getCode())</xsp:expr>
+												</value>
+											</element>
+										</line>
+									</element>
+								</line>
+								<xsp:logic>
+									}
+									ObservationVO obs331VO= null;
+									if( obs329aVO!= null  &amp;&amp; obs329aVO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("Y")){
+								</xsp:logic>
+								<line>
+									<element type="plain-text" label="Was an isolate received at the state public health lab?">
+										<value>
+											<xsp:logic>
+
+												if(trackIsolateMap.get(NEDSSConstants.LAB_331)!=null){
+												obs331VO= (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_331));
+											</xsp:logic>
+											<xsp:expr>  cdv.getDescForCode( "YNU", obs331VO.getObsValueCodedDT_s(0).getCode())</xsp:expr>
+											<xsp:logic>}</xsp:logic>
+										</value>
+									</element>
+								</line>
+								<xsp:logic>
+									}
+									if(obs331VO!= null)
+									if(obs331VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("N")){  //start LAB331 if
+								</xsp:logic>
+								<line>
+									<element type="join">
+										<xsp:logic>
+										</xsp:logic>
+										<line>
+											<element type="plain-text" label="If an isolate wasn't received at the state public health lab, what is the reason?">
+												<value>
+													<xsp:logic>
+														ObservationVO obs337VO =null;
+														if(trackIsolateMap.get(NEDSSConstants.LAB_332)!=null){
+														obs337VO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_332));
+													</xsp:logic>
+													<xsp:expr>  cdv.getDescForCode( "PHVSFB_SPECFORW", obs337VO .getObsValueCodedDT_s(0).getCode())	</xsp:expr>
+													<xsp:logic>} //end 332</xsp:logic>
+												</value>
+											</element>
+										</line>
+										<xsp:logic>
+											if(obs337VO!=null)
+											if(obs337VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("OTH")){
+										</xsp:logic>
+										<line>
+											<element type="plain-text" label="If 'Other', please specify">
+												<value>
+													<xsp:logic>
+														if(trackIsolateMap.get(NEDSSConstants.LAB_333)!=null){
+														ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_333));
+													</xsp:logic>
+													<xsp:expr>observationVO.getObsValueTxtDT_s(0).getValueTxt()</xsp:expr>
+													<xsp:logic>} //end 333</xsp:logic>
+												</value>
+											</element>
+										</line>
+										<xsp:logic>
+											}
+										</xsp:logic>
+									</element>
+								</line>
+								<xsp:logic>
+									}//end N for code 331
+									if(obs331VO!= null)
+									if(obs331VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("Y")){
+									//start LAB331 if
+								</xsp:logic>
+								<line>
+									<element type="plain-text" label="If 'Yes', specify date received in state public health lab">
+										<value>
+											<xsp:logic>
+												if(trackIsolateMap.get(NEDSSConstants.LAB_334)!=null){
+												ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_334));
+											</xsp:logic>
+											<xsp:expr>formatDate(observationVO.getObsValueDateDT_s(0).getFromTime())</xsp:expr>
+											<xsp:logic>}//end 334</xsp:logic>
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="plain-text" label="State public health lab isolate id number">
+										<value>
+											<xsp:logic>
+												if(trackIsolateMap.get(NEDSSConstants.LAB_335)!=null){
+												ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_335));
+											</xsp:logic>
+											<xsp:expr>observationVO.getObsValueTxtDT_s(0).getValueTxt()</xsp:expr>
+											<xsp:logic>} //end 335</xsp:logic>
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="plain-text" label="Was case confirmed at state public health lab?">
+										<value>
+											<xsp:logic>
+												if(trackIsolateMap.get(NEDSSConstants.LAB_336)!=null){
+												ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_336));
+											</xsp:logic>
+											<xsp:expr>  cdv.getDescForCode( "YNU", observationVO.getObsValueCodedDT_s(0).getCode())</xsp:expr>
+											<xsp:logic>} //end 336</xsp:logic>
+										</value>
+									</element>
+								</line>
+								<xsp:logic>
+								</xsp:logic>
+								<xsp:logic>
+									}//end obs331VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase Y for code 331
+								</xsp:logic>
+								<xsp:logic>
+									<line>
+										<element type="line-separator"/>
+									</line>
+									<line>
+										<element type="plain-text" label="Was specimen or isolate forwarded to CDC for testing or confirmation?">
+											<value>
+												<xsp:logic>
+													if(trackIsolateMap.get(NEDSSConstants.LAB_363)!=null){
+													ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_363));
+												</xsp:logic>
+												<xsp:expr>  cdv.getDescForCode( "YNU", observationVO.getObsValueCodedDT_s(0).getCode())</xsp:expr>
+												<xsp:logic>} //end 363</xsp:logic>
+											</value>
+										</element>
+									</line>
+									////////////////////////starts 337///////////////////////////
+									ObservationVO obs338VO =null;
+									ObservationVO obs337VO=null;
+									if( obs329aVO!= null  &amp;&amp;  obs329aVO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("Y")){
+								</xsp:logic>
+								<line>
+									<element type="line-separator"/>
+								</line>
+								<line>
+									<element type="join">
+										<line>
+											<element type="plain-text" label="PulseNet Isolate?">
+												<value>
+													<xsp:logic>
+														if(trackIsolateMap.get(NEDSSConstants.LAB_337)!=null){
+														obs337VO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_337));
+													</xsp:logic>
+													<xsp:expr>  cdv.getDescForCode( "YN", obs337VO.getObsValueCodedDT_s(0).getCode())</xsp:expr>
+													<xsp:logic>}</xsp:logic>
+												</value>
+											</element>
+										</line>
+									</element>
+								</line>
+								<xsp:logic>
+									}
+									if(obs337VO!=null)
+									if(obs337VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("Y") ){
+								</xsp:logic>
+								<line>
+									<element type="plain-text" label="Has isolate PFGE pattern been sent to central PulseNet database?">
+										<value>
+											<xsp:logic>
+												if(trackIsolateMap.get(NEDSSConstants.LAB_338)!=null){
+												obs338VO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_338));
+											</xsp:logic>
+											<xsp:expr>  cdv.getDescForCode( "YNU", obs338VO.getObsValueCodedDT_s(0).getCode())</xsp:expr>
+											<xsp:logic>}</xsp:logic>
+										</value>
+									</element>
+								</line>
+								<xsp:logic>}//ends 337</xsp:logic>
+								<xsp:logic>
+									<![CDATA[
+						if(obs337VO!=null)
+						if(obs338VO !=null &&  obs338VO.getObsValueCodedDT_s(0).getCode()!=null && obs338VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("Y") ){ 
+						]]>
+								</xsp:logic>
+								<line>
+									<element type="plain-text" label="PulseNet PFGE Designation Enzyme 1">
+										<value>
+											<xsp:logic>
+												if(trackIsolateMap.get(NEDSSConstants.LAB_339)!=null){
+												ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_339));
+											</xsp:logic>
+											<xsp:expr>observationVO.getObsValueTxtDT_s(0).getValueTxt()</xsp:expr>
+											<xsp:logic>} //end 339</xsp:logic>
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="plain-text" label="State Health Department Lab PFGE Designation" subText=" Enzyme 1">
+										<value>
+											<xsp:logic>
+												if(trackIsolateMap.get(NEDSSConstants.LAB_340)!=null){
+												ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_340));
+											</xsp:logic>
+											<xsp:expr>observationVO.getObsValueTxtDT_s(0).getValueTxt()</xsp:expr>
+											<xsp:logic>} //end 340</xsp:logic>
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="plain-text" label="PulseNet PFGE Designation Enzyme 2">
+										<value>
+											<xsp:logic>
+												if(trackIsolateMap.get(NEDSSConstants.LAB_341)!=null){
+												ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_341));
+											</xsp:logic>
+											<xsp:expr>observationVO.getObsValueTxtDT_s(0).getValueTxt()</xsp:expr>
+											<xsp:logic>} //end 341</xsp:logic>
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="plain-text" label="State Health Department Lab PFGE Designation" subText=" Enzyme 2">
+										<value>
+											<xsp:logic>
+												if(trackIsolateMap.get(NEDSSConstants.LAB_342)!=null){
+												ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_342));
+											</xsp:logic>
+											<xsp:expr>observationVO.getObsValueTxtDT_s(0).getValueTxt()</xsp:expr>
+											<xsp:logic>} //end 342</xsp:logic>
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="plain-text" label="PulseNet PFGE Designation Enzyme 3">
+										<value>
+											<xsp:logic>
+												if(trackIsolateMap.get(NEDSSConstants.LAB_343)!=null){
+												ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_343));
+											</xsp:logic>
+											<xsp:expr>observationVO.getObsValueTxtDT_s(0).getValueTxt()</xsp:expr>
+											<xsp:logic>} //end 343</xsp:logic>
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="plain-text" label="State Health Department Lab PFGE Designation" subText=" Enzyme 3">
+										<value>
+											<xsp:logic>
+												if(trackIsolateMap.get(NEDSSConstants.LAB_344)!=null){
+												ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_344));
+											</xsp:logic>
+											<xsp:expr>observationVO.getObsValueTxtDT_s(0).getValueTxt()</xsp:expr>
+											<xsp:logic>} //end 344</xsp:logic>
+										</value>
+									</element>
+								</line>
+								<xsp:logic>
+									} //ends obs338VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase Y
+								</xsp:logic>
+								<xsp:logic>
+									//////////////////////////////////////////////////////////345 to 350 /////////////////////////////////////////////////////
+									ObservationVO obs345VO = null;
+									if( obs329aVO!= null  &amp;&amp;  obs329aVO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("Y")){
+								</xsp:logic>
+								<line>
+									<element type="line-separator"/>
+								</line>
+								<line>
+									<element type="join">
+										<line>
+											<element type="plain-text" label="NARMS Isolate?">
+												<value>
+													<xsp:logic>
+														if(trackIsolateMap.get(NEDSSConstants.LAB_345)!=null){
+														obs345VO  = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_345));
+													</xsp:logic>
+													<xsp:expr>  cdv.getDescForCode( "YN", obs345VO.getObsValueCodedDT_s(0).getCode())</xsp:expr>
+													<xsp:logic>}</xsp:logic>
+												</value>
+											</element>
+										</line>
+									</element>
+								</line>
+								<xsp:logic>
+									<![CDATA[
+						}						
+						if(obs345VO !=null && obs345VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("Y")){ 
+						]]>
+								</xsp:logic>
+								<line>
+									<element type="join">
+										<line>
+											<element type="plain-text" label="Has isolate been sent to NARMS?">
+												<value>
+													<xsp:logic>
+														ObservationVO  obs346VO = null;
+														if(trackIsolateMap.get(NEDSSConstants.LAB_346)!=null){
+														obs346VO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_346));
+														if(obs346VO !=null){
+													</xsp:logic>
+													<xsp:expr>  cdv.getDescForCode( "YNU", obs346VO.getObsValueCodedDT_s(0).getCode())</xsp:expr>
+													<xsp:logic>}} //end 346</xsp:logic>
+												</value>
+											</element>
+										</line>
+										<xsp:logic>
+											<![CDATA[
+								if(obs346VO!=null && obs346VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("N")){
+								]]>
+										</xsp:logic>
+										<line>
+											<element type="plain-text" label="If an isolate was not sent to NARMS, what is the reason?">
+												<value>
+													<xsp:logic>
+														if(trackIsolateMap.get(NEDSSConstants.LAB_347)!=null){
+														ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_347));
+													</xsp:logic>
+													<xsp:expr>  cdv.getDescForCode( "PHVSFB_ISOLATNO", observationVO.getObsValueCodedDT_s(0).getCode())		</xsp:expr>
+													<xsp:logic>} //end 347</xsp:logic>
+												</value>
+											</element>
+										</line>
+										<xsp:logic>}//ends 346 equals N</xsp:logic>
+										<xsp:logic>
+											<![CDATA[
+							if(obs346VO!=null && obs346VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("Y")){
+							]]>
+										</xsp:logic>
+										<line>
+											<element type="join">
+												<line>
+													<element/>
+													<element type="plain-text" label="State-assigned NARMS ID number">
+														<value>
+															<xsp:logic>
+																if(trackIsolateMap.get(NEDSSConstants.LAB_348)!=null){
+																ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_348));
+															</xsp:logic>
+															<xsp:expr>observationVO.getObsValueTxtDT_s(0).getValueTxt()</xsp:expr>
+															<xsp:logic>} //end 348</xsp:logic>
+														</value>
+													</element>
+												</line>
+												<xsp:logic>
+
+												</xsp:logic>
+												<line>
+													<element/>
+													<element type="plain-text" label="Expected Ship Date">
+														<value>
+															<xsp:logic>
+																if(trackIsolateMap.get(NEDSSConstants.LAB_349)!=null){
+																ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_349));
+															</xsp:logic>
+															<xsp:expr>formatDate(observationVO.getObsValueDateDT_s(0).getFromTime())</xsp:expr>
+															<xsp:logic>}   //end 349</xsp:logic>
+														</value>
+													</element>
+												</line>
+												<line>
+													<element/>
+													<element type="plain-text" label="Actual Ship Date">
+														<value>
+															<xsp:logic>
+																if(trackIsolateMap.get(NEDSSConstants.LAB_350)!=null){
+																ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_350));
+															</xsp:logic>
+															<xsp:expr>formatDate(observationVO.getObsValueDateDT_s(0).getFromTime())</xsp:expr>
+															<xsp:logic>}   //end 350</xsp:logic>
+														</value>
+													</element>
+												</line>
+												<xsp:logic>
+												</xsp:logic>
+											</element>
+										</line>
+										<xsp:logic>}//ends </xsp:logic>
+									</element>
+								</line>
+								<xsp:logic>
+									}//end obs345VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase Y
+									///////////////////////////////////////ends 345 to 350//////////////////////////////////////////////
+									///////////////////////////lab351 to lab362 //////////////////////////////////////
+									ObservationVO obs351VO =null;
+									if(obs329aVO!= null  &amp;&amp;  obs329aVO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("Y")){
+								</xsp:logic>
+								<line>
+									<element type="line-separator"/>
+								</line>
+								<line>
+									<element type="join">
+										<line>
+											<element type="plain-text" label="EIP Isolate?">
+												<value>
+													<xsp:logic>
+														if(trackIsolateMap.get(NEDSSConstants.LAB_351)!=null){
+														obs351VO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_351));
+													</xsp:logic>
+													<xsp:expr>  cdv.getDescForCode( "YN", obs351VO .getObsValueCodedDT_s(0).getCode())</xsp:expr>
+													<xsp:logic>}//ends obs351VO </xsp:logic>
+												</value>
+											</element>
+										</line>
+									</element>
+								</line>
+								<xsp:logic>
+									}
+									if(obs351VO!=null)
+									if(obs351VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("Y")){
+								</xsp:logic>
+								<xsp:logic>
+								</xsp:logic>
+								<line>
+									<element type="join">
+										<line>
+											<element type="plain-text" label="Is this specimen available for further EIP testing?">
+												<value>
+													<xsp:logic>
+														ObservationVO obs352VO = null;
+														if(trackIsolateMap.get(NEDSSConstants.LAB_352)!=null){
+														obs352VO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_352));
+													</xsp:logic>
+													<xsp:expr>  cdv.getDescForCode( "PHVSFB_ISOLATAV", obs352VO.getObsValueCodedDT_s(0).getCode())</xsp:expr>
+													<xsp:logic>}//ends obs352VO </xsp:logic>
+												</value>
+											</element>
+										</line>
+										<xsp:logic>
+											if(obs352VO !=null)
+											if(obs352VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("N") || obs352VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("ISOLATNO") ){
+										</xsp:logic>
+										<line>
+											<element type="join">
+												<line>
+													<element type="plain-text" label="If a specimen is not available for further EIP testing, what is the reason?">
+														<value>
+															<xsp:logic>
+																ObservationVO obs353 =null;
+																if(trackIsolateMap.get(NEDSSConstants.LAB_353)!=null){
+																obs353 =(ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_353));
+															</xsp:logic>
+															<xsp:expr>  cdv.getDescForCode( "PHVSFB_SPECAVAL", obs353.getObsValueCodedDT_s(0).getCode())</xsp:expr>
+															<xsp:logic>} //end 353</xsp:logic>
+														</value>
+													</element>
+												</line>
+												<xsp:logic>
+													if(obs353!=null)
+													if(obs353.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("N")){
+												</xsp:logic>
+												<line>
+													<element type="join">
+														<line>
+															<element type="plain-text" label="If 'Other', please specify other reason why specimen is not available">
+																<value>
+																	<xsp:logic>
+																		if(trackIsolateMap.get(NEDSSConstants.LAB_354)!=null){
+																		ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_354));
+																	</xsp:logic>
+																	<xsp:expr>observationVO.getObsValueTxtDT_s(0).getValueTxt()</xsp:expr>
+																	<xsp:logic>} 		 //end 354</xsp:logic>
+																</value>
+															</element>
+														</line>
+													</element>
+												</line>
+												<xsp:logic>}</xsp:logic>
+											</element>
+										</line>
+										<xsp:logic>
+											}	//obs352VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase N
+										</xsp:logic>
+										<xsp:logic>
+											if(obs352VO !=null)
+											if(obs352VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("Y")  || obs352VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("ISOLATNO")){
+										</xsp:logic>
+										<line>
+											<element type="join">
+												<line>
+													<element type="plain-text" label="If 'Yes', where will the specimen be shipped?">
+														<value>
+															<xsp:logic>
+																if(trackIsolateMap.get(NEDSSConstants.LAB_355)!=null){
+																ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_355));
+															</xsp:logic>
+															<xsp:expr>  cdv.getDescForCode( "PHVSFB_CDCLABSH", observationVO.getObsValueCodedDT_s(0).getCode())		</xsp:expr>
+															<xsp:logic>} //end 355</xsp:logic>
+														</value>
+													</element>
+												</line>
+												<line>
+													<element type="plain-text" label="Expected Ship Date">
+														<value>
+															<xsp:logic>
+																if(trackIsolateMap.get(NEDSSConstants.LAB_356)!=null){
+																ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_356));
+															</xsp:logic>
+															<xsp:expr>formatDate(observationVO.getObsValueDateDT_s(0).getFromTime())</xsp:expr>
+															<xsp:logic>}   //end 356</xsp:logic>
+														</value>
+													</element>
+												</line>
+												<line>
+													<element type="plain-text" label="Actual Ship Date">
+														<value>
+															<xsp:logic>
+																if(trackIsolateMap.get(NEDSSConstants.LAB_357)!=null){
+																ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_357));
+															</xsp:logic>
+															<xsp:expr>formatDate(observationVO.getObsValueDateDT_s(0).getFromTime())</xsp:expr>
+															<xsp:logic>}  //end 357</xsp:logic>
+														</value>
+													</element>
+												</line>
+												<line>
+													<element type="plain-text" label="Was specimen requested for reshipment?">
+														<value>
+															<xsp:logic>
+																ObservationVO obs358VO =null;
+																if(trackIsolateMap.get(NEDSSConstants.LAB_358)!=null){
+																obs358VO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_358));
+															</xsp:logic>
+															<xsp:expr>  cdv.getDescForCode( "YN", obs358VO.getObsValueCodedDT_s(0).getCode())</xsp:expr>
+															<xsp:logic>} //ends 358</xsp:logic>
+														</value>
+													</element>
+												</line>
+												<xsp:logic>
+													////////////////////////////////area/////////////
+												</xsp:logic>
+												<xsp:logic>
+													<![CDATA[
+										if(obs358VO !=null && obs358VO.getObsValueCodedDT_s(0).getCode()!=null && obs358VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("Y")){ 
+										]]>
+												</xsp:logic>
+												<line>
+													<element type="join">
+														<line>
+															<element type="plain-text" label="If a specimen was requested for reshipment for further EIP testing, what is the reason?">
+																<value>
+																	<xsp:logic>
+																		ObservationVO obs359VO = null;
+																		if(trackIsolateMap.get(NEDSSConstants.LAB_359)!=null){
+																		obs359VO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_359));
+																	</xsp:logic>
+																	<xsp:expr>  cdv.getDescForCode( "PHVSFB_CONTAMIN", obs359VO .getObsValueCodedDT_s(0).getCode())</xsp:expr>
+																	<xsp:logic>}//ends 359</xsp:logic>
+																</value>
+															</element>
+														</line>
+														<xsp:logic>
+															if(obs359VO !=null)
+															if(obs359VO .getObsValueCodedDT_s(0).getCode().equalsIgnoreCase("OTH")){
+
+														</xsp:logic>
+														<line>
+															<element type="join">
+																<line>
+																	<element type="plain-text" label="If 'Other', please specify reason for reshipment">
+																		<value>
+																			<xsp:logic>
+																				if(trackIsolateMap.get(NEDSSConstants.LAB_360)!=null){
+																				ObservationVO obs360VO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_360));
+																			</xsp:logic>
+																			<xsp:expr>obs360VO.getObsValueTxtDT_s(0).getValueTxt()</xsp:expr>
+																			<xsp:logic>}//ends 360</xsp:logic>
+																		</value>
+																	</element>
+																</line>
+															</element>
+														</line>
+														<xsp:logic>
+															}//end test for others
+														</xsp:logic>
+														<line>
+															<element type="plain-text" label="Expected Reship Date">
+																<value>
+																	<xsp:logic>
+																		if(trackIsolateMap.get(NEDSSConstants.LAB_361)!=null){
+																		ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_361));
+																	</xsp:logic>
+																	<xsp:expr>formatDate(observationVO.getObsValueDateDT_s(0).getFromTime())</xsp:expr>
+																	<xsp:logic>}//ends 361</xsp:logic>
+																</value>
+															</element>
+														</line>
+														<line>
+															<element type="plain-text" label="Actual Reship Date">
+																<value>
+																	<xsp:logic>
+																		if(trackIsolateMap.get(NEDSSConstants.LAB_362)!=null){
+																		ObservationVO observationVO = (ObservationVO)(trackIsolateMap.get(NEDSSConstants.LAB_362));
+																	</xsp:logic>
+																	<xsp:expr>formatDate(observationVO.getObsValueDateDT_s(0).getFromTime())</xsp:expr>
+																	<xsp:logic>}//ends 362</xsp:logic>
+																</value>
+															</element>
+														</line>
+													</element>
+												</line>
+												<xsp:logic>
+													} //ends obs358VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase Y
+													///////////////////////////end area//////////////////
+												</xsp:logic>
+											</element>
+										</line>
+										<xsp:logic>}//obs352VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase</xsp:logic>
+									</element>
+								</line>
+								<xsp:logic>
+									}//end obs351VO.getObsValueCodedDT_s(0).getCode().equalsIgnoreCase Y
+								</xsp:logic>
+								<xsp:logic>
+									///////////////////////////end lab351 to lab362 //////////////////////////////////////
+								</xsp:logic>
+							</element>
+						</line>
+						<xsp:logic>
+							//} //end 329a
+						</xsp:logic>
+						<xsp:logic>
+							} //end resultedTestVO.getTheTrackIsolateVOHaspMap()!=null
+						</xsp:logic>
+					</element>
+				</line>
+				<xsp:logic>
+					//	System.out.println("The observationUId is :" + obsVO.getObsValueNumericDT_s(0).getLowRange());
+					}
+				</xsp:logic>
+				<xsp:logic>
+					}
+				</xsp:logic>
+			</group>
+			<!--group>
+				<line>
+				<element type="enhanced-data-table" name="data-table-33" recordsPerPage="20">
+
+					<xsp:logic> 
+						Collection observationCollections = (ArrayList)request.getAttribute("obsResultedColl");
+     						Iterator it =  observationCollections.iterator();
+     						while(it.hasNext())
+    						 {
+      							ObservationVO obsVO = (ObservationVO)it.next();
+      					</xsp:logic>
+      					<record>
+ 
+					<data name="date_created">
+						<value>
+							<xsp:expr>obsVO.getTheObservationDT().getObservationUid()</xsp:expr>
+						</value>
+					</data>
+
+
+
+      						<xsp:expr>obsVO.getTheObservationDT().getObservationUid()</xsp:expr>
+      					</record>	
+      	 				<xsp:logic>
+      	 						System.out.println("The observationUId is :" + obsVO.getTheObservationDT().getObservationUid());
+      	 					}
+					</xsp:logic>
+					</element>
+				</line>
+			</group-->
+			<group name="Order Information">
+				<line>
+					<element type="line-separator" title="Facility and Provider Information"/>
+				</line>
+				<line>
+					<element name="entity.completeOrgSearchResult" type="text" align-label="right" label="Reporting Facility">
+						<value>
+							<xsp-request:get-attribute name="reportingOrgDetails"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element type="line-separator"/>
+				</line>
+				<line>
+					<element name="orderingFacility" type="text" align-label="right" label="Ordering Facility">
+						<value>
+							<xsp-request:get-attribute name="orderingOrgDetails"/>
+						</value>
+						<xsp:logic>//System.out.println("$$$$$$The LAB269AndAssociatedValsdetails are :" + request.getAttribute("orderingOrgDetails"));</xsp:logic>
+					</element>
+				</line>
+				<line>
+					<element type="line-separator"/>
+				</line>
+				<line>
+					<element name="orderingProvider" type="text" align-label="right" label="Ordering Provider">
+						<value>
+							<xsp-request:get-attribute name="providerDetails"/>
+						</value>
+					</element>
+				</line>
+				<!--/group>
+			<group-->
+				<line>
+					<element type="line-separator"/>
+				</line>
+				<line>
+					<element type="line-separator" title="Order Details"/>
+				</line>
+				<line>
+					<element name="ProgramArea" type="select" label="Program Area">
+						<srt-options-string>
+							<srt-codes:getProgramAreaCodedValue/>
+						</srt-options-string>
+						<value>
+							<xsp-request:get-attribute name="programAreaCd"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="jurisdictionCd" type="select" label="Jurisdiction">
+						<srt-options-string>
+							<srt-codes:getJurisdictionCodedSortedValues/>
+						</srt-options-string>
+						<value>
+							<xsp-request:get-attribute name="jurisdictionCd"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element type="plain-text"/>
+					<element type="checkbox" indented="yes">
+						<options>
+							<option name="proxy.publicHealthCaseVO_s.thePublicHealthCaseDT.sharedInd" label="Share record with Guests for this Program Area and Jurisdiction" value="T">
+								<value>
+									<xsp-request:get-attribute name="sharedInd"/>
+								</value>
+							</option>
+						</options>
+					</element>
+					<element/>
+				</line>
+				<line>
+					<element type="text" label="Date Specimen Collected">
+						<value>
+							<xsp-request:get-attribute name="dateSpecimenCollected"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element type="text" label="Specimen Source">
+						<!--srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>SPECMN_SRC</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string-->
+						<value>
+							<xsp-request:get-attribute name="SpecimenSource"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element type="text" label="Specimen Site">
+						<!--srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>ANATOMIC_SITE</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string-->
+						<value>
+							<!--<xsp-request:get-attribute name="SpecimenSite"/>-->
+							<xsp-request:get-attribute name="SpecimenSitelAB112forView"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element type="text" label="Accession Number">
+						<value>
+							<xsp-request:get-attribute name="LAB125"/>
+						</value>
+					</element>
+				</line>
+				<xsp:logic>
+					if(ELRelectronicInd != null )
+					{
+					if(ELRelectronicInd.equals("Y"))
+					{
+				</xsp:logic>
+				<line>
+					<element type="text" label="Specimen Details">
+						<value>
+							<xsp-request:get-attribute name="SpecimenDetails"/>
+						</value>
+					</element>
+				</line>
+				<xsp:logic>
+					}}
+				</xsp:logic>
+				<line>
+					<element type="text" label="Patient Status at Specimen Collection">
+						<value>
+							<xsp-request:get-attribute name="LAB330"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="pregnantIndCd" type="conditional-entry">
+						 <controller trigger="Y" type="select" label="Pregnant" length="7">
+								<srt-options-string>
+								<srt-codes:getCodedValues>
+									<type>YNU</type>
+								</srt-codes:getCodedValues>
+							</srt-options-string> 
+							<value>
+							  <xsp-request:get-attribute name="pregnantIndCd"/>
+							</value>
+						   </controller> 
+						   <line>
+							 <element type="text" label="Weeks" size="2" alignment="left" length="2"> 
+							<value>
+							  <xsp-request:get-attribute name="pregnantWeek"/>
+							</value>
+						  </element> 
+						  </line>
+					</element> 
+				</line>
+				<line>
+					<element name="NotificationExists" type="hidden" validate="NotificationCheck">
+						<value>
+							<xsp-request:get-attribute name="NotificationExists"/>
+						</value>
+					</element>
+				</line>
+			</group>
+			<group>
+				<line tie-to="View">
+					<element type="line-separator" title="Lab Report Comments"/>
+				</line>
+				<xsp:logic>
+					if(ELRelectronicInd != null )
+					{
+					if(ELRelectronicInd.equals("Y") || ELRelectronicInd.equals("E") )
+					{
+				</xsp:logic>
+				<line tie-to="View">
+					<element name="addUserComments" type="button" onclick="addComment(1);">
+						<value>Add Comment</value>
+					</element>
+				</line>
+				<xsp:logic>}} </xsp:logic>
+				<line tie-to="View">
+					<element type="data-table" name="data-table-comment">
+						<header width="15%"/>
+						<header width="15%"/>
+						<header width="70%"/>
+						<!--value>01/11/2003$vinegar~bukcets~$INT310002000INT$|no date$linteler$INT342334444INT$|</value-->
+						<value>
+							<xsp-request:get-attribute name="AddUserComments"/>
+						</value>
+					</element>
+				</line>
+			</group>
+			<xsp:logic>
+				if(ELRelectronicInd != null)
+				{
+				if(ELRelectronicInd.equals("Y") )
+				{
+			</xsp:logic>
+			<group name="Other Information">
+				<line>
+					<element name="patientsBirthPlace" type="plain-text" label="Patient's Birth Place">
+						<value>
+							<xsp-request:get-attribute name="PatientBirthPlace"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="MultipleBirth" type="plain-text" label="Multiple Birth">
+						<value>
+							<xsp-request:get-attribute name="multipleBirth"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="AlternateContact" type="plain-text" label="Alternate Contact">
+						<value>
+							<xsp-request:get-attribute name="alternateContactDetails"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="AlternateContactPhone" type="plain-text" label="Alternate Contact Phone">
+						<value>
+							<xsp-request:get-attribute name="otherContactPhoneDetails"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="AlternateContact Relationship" type="plain-text" label="Alternate Contact Relationship">
+						<value>
+							<xsp-request:get-attribute name="alternateContactRelationship"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="LAB265LAB313" type="plain-text" label="Collection Volume">
+						<value>
+							<xsp-request:get-attribute name="materialDetails"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="LAB261" type="plain-text" label="Clinical Information">
+						<value>
+							<xsp-request:get-attribute name="clinicalInformation"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="LAB123" type="plain-text" label="Reason for Test">
+						<value>
+							<xsp-request:get-attribute name="obsReasons"/>
+						</value>
+						<xsp:logic>
+							// System.out.println(" \n obsReasons " + request.getAttribute("obsReasons"));
+						</xsp:logic>
+					</element>
+				</line>
+				<line>
+					<element name="LAB263" type="plain-text" label="Danger Code">
+						<value>
+							<xsp-request:get-attribute name="materialDangerCd"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="LOG101" type="plain-text" label="Message Control ID">
+						<value>
+							<xsp-request:get-attribute name="messageControlID"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="LAB264" type="plain-text" label="Priority Code">
+						<value>
+							<xsp-request:get-attribute name="priorityCode"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="LAB266" type="plain-text" label="Order Comments">
+						<value>
+							<xsp-request:get-attribute name="orderComments"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element name="ReceivingFacility" type="plain-text" label="Receiving Facility">
+						<value>
+							<xsp-request:get-attribute name="receivingFacilityDetails"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element type="line-separator" title="Participant(s)"/>
+				</line>
+				<line>
+					<element type="data-table">
+						<header width="20%">title</header>
+						<header width="80%">name</header>
+						<footer width="20%"/>
+						<value>
+							<xsp-request:get-attribute name="participantsColl"/>
+						</value>
+					</element>
+				</line>
+				<line>
+					<element type="line-separator" title="Copy to Provider(s)"/>
+				</line>
+				<xsp:logic>
+					Collection copyDetails = (ArrayList)request.getAttribute("copyToProvDetails");
+					
+					if(copyDetails != null)
+					{
+					Iterator itCopyDetails =  copyDetails.iterator();
+					while(itCopyDetails.hasNext())
+					{
+					String copyDetailperson = (String)itCopyDetails.next();
+					//System.out.println("copyDetailperson "+ copyDetailperson );
+				</xsp:logic>
+				<line>
+					<element type="join" background="gray" border="true">
+						<line>
+							<element type="plain-text">
+								<value>
+									<xsp:expr>copyDetailperson</xsp:expr>
+								</value>
+							</element>
+						</line>
+					</element>
+				</line>
+				<xsp:logic>
+					}}else if(copyDetails == null)
+					{ String copyDetailperson  = null;
+				</xsp:logic>
+				<line>
+					<element type="data-table">
+						<value>
+							<xsp:expr>copyDetailperson</xsp:expr>
+						</value>
+					</element>
+				</line>
+				<xsp:logic>
+					}
+				</xsp:logic>
+				<line>
+					<element type="line-separator" title="Associated Lab Document(s)"/>
+				</line>
+				<line>
+					<element type="enhanced-data-table" name="data-table-33">
+						<xsp:attribute name="displayPage">1</xsp:attribute>
+						<header>
+							<data>Add Time</data>
+							<data>Version</data>
+						</header>
+						<xsp:logic>
+							Collection documentColl = ((LabResultProxyVO)request.getAttribute("labResultProxyVO")).geteDXDocumentCollection();
+							if (documentColl!= null)
+							{
+							int j = documentColl.size();
+							for( Iterator anIterator = documentColl.iterator(); anIterator.hasNext(); )
+							{
+							EDXDocumentDT  doc = (EDXDocumentDT) anIterator.next();
+
+						</xsp:logic>
+						<record>
+							<data name="date_created">
+								<xsp:attribute name="link">
+									javascript:openELRViewer('<xsp:expr>doc.getEDXDocumentUid()</xsp:expr>','<xsp:expr>dateReceived</xsp:expr>')
+								</xsp:attribute>
+								<value>
+									<xsp:expr>formatDateTime(doc.getAddTime())</xsp:expr>
+								</value>
+							</data>
+							<data name="version">
+								<value>
+									<xsp:expr>j--</xsp:expr>
+								</value>
+							</data>
+						</record>
+						<xsp:logic>}}</xsp:logic>
+					</element>
+				</line>
+
+			</group>
+			<xsp:logic>
+				}}
+			</xsp:logic>
+			<util:include-expr>
+				<util:expr>
+					<xsp:expr>previewXSP</xsp:expr>
+				</util:expr>
+			</util:include-expr>
+			<util:include-expr>
+				<util:expr>
+					<xsp:expr>extXSP</xsp:expr>
+				</util:expr>
+			</util:include-expr>
+			<util:include-expr>
+				<util:expr>
+					<xsp:expr>extPatientXSP</xsp:expr>
+				</util:expr>
+			</util:include-expr>
+			<xsp:logic>
+				ArrayList patSubformList = (ArrayList)request.getAttribute(NEDSSConstants.PATIENT_LDF+"SubformList" );
+				if(patSubformList != null) {
+				for(Iterator anIter = patSubformList.iterator(); anIter.hasNext();)  {
+				CustomSubformMetadataDT dt = (CustomSubformMetadataDT) anIter.next();
+			</xsp:logic>
+			<group>
+				<xsp:attribute name="name">
+					<xsp:expr>dt.getSubformNm()</xsp:expr>
+				</xsp:attribute>
+				<line>
+					<element type="raw">
+						<span>
+							<util:include-expr>
+								<util:expr>
+									<xsp:expr>dt.getHtmlData()</xsp:expr>
+								</util:expr>
+							</util:include-expr>
+						</span>
+					</element>
+				</line>
+			</group>
+			<xsp:logic> }} </xsp:logic>
+			<xsp:logic>
+				ArrayList labSubformList = (ArrayList)request.getAttribute(NEDSSConstants.LABREPORT_LDF+"SubformList" );
+				//System.out.println("labSubformList size ==" + labSubformList .size());
+				if(labSubformList != null) {
+				for(Iterator anIter = labSubformList.iterator(); anIter.hasNext();)  {
+				CustomSubformMetadataDT dt = (CustomSubformMetadataDT) anIter.next();
+			</xsp:logic>
+			<group>
+				<xsp:attribute name="name">
+					<xsp:expr>dt.getSubformNm()</xsp:expr>
+				</xsp:attribute>
+				<line>
+					<element type="raw">
+						<span>
+							<util:include-expr>
+								<util:expr>
+									<xsp:expr>dt.getHtmlData()</xsp:expr>
+								</util:expr>
+							</util:include-expr>
+						</span>
+					</element>
+				</line>
+			</group>
+			<xsp:logic> }} </xsp:logic>
+			<!-- display subform xsp in Printable forms -->
+			<xsp:logic>
+				<![CDATA[
+				ArrayList printXSPList = (ArrayList) request.getAttribute(NEDSSConstants.PATIENT_LDF+"printSubformXSP");
+				if(printXSPList != null && printXSPList.size() > 0) {
+					for(Iterator anIter = printXSPList.iterator(); anIter.hasNext();) {
+					
+			]]>
+			</xsp:logic>
+			<util:include-expr>
+				<util:expr>
+					<xsp:expr>(String)anIter.next()</xsp:expr>
+				</util:expr>
+			</util:include-expr>
+			<xsp:logic>  }} </xsp:logic>
+			<xsp:logic>
+				<![CDATA[
+				printXSPList = (ArrayList) request.getAttribute(NEDSSConstants.LABREPORT_LDF+"printSubformXSP");
+				if(printXSPList != null && printXSPList.size() > 0) {
+					for(Iterator anIter = printXSPList.iterator(); anIter.hasNext();) {
+					
+			]]>
+			</xsp:logic>
+			<util:include-expr>
+				<util:expr>
+					<xsp:expr>(String)anIter.next()</xsp:expr>
+				</util:expr>
+			</util:include-expr>
+			<xsp:logic>  }} </xsp:logic>
+		</tab>
+	</content>
+</xsp:page>

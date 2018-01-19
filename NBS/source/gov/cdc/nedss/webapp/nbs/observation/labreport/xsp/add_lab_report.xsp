@@ -1,0 +1,1752 @@
+<?xml version="1.0"?>
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp" xmlns:nedss="http://www.cdc.gov/nedss/logicsheet/nedss" xmlns:session="http://apache.org/xsp/session/2.0" xmlns:xsp-response="http://apache.org/xsp/response/2.0" xmlns:xsp-request="http://apache.org/xsp/request/2.0" xmlns:srt-codes="http://www.cdc.gov/nedss/GetSRTCodes/1.0" xmlns:util="http://apache.org/xsp/util/2.0">
+	<xsp:structure>
+		<xsp:include>java.util.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.util.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.webapp.nbs.diseaseform.util.InvestigationFieldConstants</xsp:include>
+		<xsp:include>gov.cdc.nedss.webapp.nbs.action.person.util.PersonUtil</xsp:include>
+		<xsp:include>gov.cdc.nedss.ldf.subform.dt.*</xsp:include>
+	</xsp:structure>
+	<content>
+		<nedss:FileInstances/>
+		<nedss:RequestValues/>
+		<xsp:logic><![CDATA[
+		           
+				String labId ="";
+				String clia = "";
+				String OrderedTestNameCode= "";
+				String conditionCode = "";
+
+				String flag = (String)request.getAttribute("ExternalFlag");
+				if(flag == null)
+				 flag= "";
+				String retainCheckbox= (String)request.getAttribute("retainCheckbox");
+				
+				if(retainCheckbox == null)
+				 retainCheckbox= "";
+		 			
+				String contextAction = (String)request.getParameter("ContextAction");
+				if (contextAction == null)
+				    contextAction ="";
+
+				String permissionForProgJuriShar= (String)request.getAttribute("PermissionForProgJuriShar");
+				if (permissionForProgJuriShar == null)
+				    permissionForProgJuriShar="";
+								
+				String ReportExternalUser= (String)request.getAttribute("ReportExternalUser");
+				if (ReportExternalUser== null)
+				    ReportExternalUser="";	
+				
+				String displayFacility= (String)request.getAttribute("displayFacility");
+				if (displayFacility== null)
+				    displayFacility="";		
+		
+				String trueReadOnly= (String)request.getAttribute("trueReadOnly");
+				if (trueReadOnly== null)
+				    trueReadOnly="";		
+					    
+				String mode = (String)request.getAttribute("mode");
+					if (mode == null)
+					    mode ="";
+				String sCurrentTask= (String)request.getAttribute("currentTask");
+				if (sCurrentTask== null)
+				    sCurrentTask="";
+			    
+				 //LDF
+				String previewXSP= (String)request.getAttribute("previewXSP");
+				if(previewXSP==null)
+					previewXSP="<null></null>";
+			
+				String extXSP= (String)request.getAttribute(NEDSSConstants.LABREPORT_LDF+"extXSP");
+				if(extXSP==null)
+					extXSP="<null></null>";
+
+				String sfValidationXSP = request.getAttribute("subformValidations") == null ? "<group></group>" : (String) request.getAttribute("subformValidations");
+		
+			]]></xsp:logic>
+		<id-bar>
+			<xsp:logic>if(sCurrentTask.startsWith("EditObservation")){
+		   </xsp:logic>
+			<id name="Observation ID">
+				<xsp-request:get-attribute name="observationLocalUID"/>
+			</id>
+			<xsp:logic>}</xsp:logic>
+		</id-bar>
+		<button-bar>
+			<!--left>
+				<label>POSTED</label>
+				<javascript-action>document.forms[0].action="/nbs/posted";submitForm();</javascript-action>
+			</left-->
+			
+			<!--<xsp:logic>if(!retainCheckbox.equalsIgnoreCase("true")) {</xsp:logic>
+				<left tie-to="Add|Create">
+					<label>Submit and Mark as Reviewed</label>
+					<javascript-action>OpenMarkAsReviewed('Lab');</javascript-action>
+				</left>
+			<xsp:logic>}</xsp:logic>-->
+			<xsp:logic>
+			if(contextAction.equalsIgnoreCase("AddLab"))
+			{</xsp:logic>
+			<right>
+				<label>Submit</label>
+				<javascript-action>document.forms['nedssForm'].action='<xsp:expr>(request.getAttribute("Submit")== null?"null":request.getAttribute("Submit"))</xsp:expr>';submitForm();</javascript-action>
+				<javascript-action>submitForm();</javascript-action>
+				<javascript-action>submitForm();</javascript-action>
+			</right>
+			<xsp:logic>
+			}else
+			{</xsp:logic>
+			<right>
+				<label>Submit</label>
+				<javascript-action>submitForm();</javascript-action>
+				<javascript-action>submitForm();</javascript-action>
+				<javascript-action>submitForm();</javascript-action>
+			</right>
+			<xsp:logic>
+			}
+			</xsp:logic>
+			<right>
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="ExternalFlag"/>
+				</xsp:attribute>
+				<label>Submit and Create Investigation</label>
+				<javascript-action>document.forms['nedssForm'].action='<xsp:expr>(request.getAttribute("SubmitAndCreateInvestigation")== null?"null":request.getAttribute("SubmitAndCreateInvestigation"))</xsp:expr>';submitForm();</javascript-action>
+			</right>
+			<right>
+				<label>Cancel</label>
+				<javascript-action>cancelForm('<xsp-request:get-attribute name="Cancel"/>');</javascript-action>
+			</right>
+		</button-bar>
+		<xsp:logic>
+			String customJavaScript= (String)request.getAttribute("customJavaScript");
+
+			String customJavaScriptLAB= (String)request.getAttribute(NEDSSConstants.LABREPORT_LDF+"customJavaScript");
+		</xsp:logic>
+		<javascript-files>
+			<insert>
+				<xsp:expr>customJavaScript</xsp:expr>
+			</insert>
+			<insert>
+				<xsp:expr>customJavaScriptLAB</xsp:expr>
+			</insert>
+			<import>EntitySearch.js</import>
+			<import>LabReportSpecific.js</import>
+			<import>ProcessingDecision.js</import>
+		</javascript-files>
+		<topgroup anchor="yes">
+			<line>
+				<element name="patientName" type="plain-text" label="Name">
+					<value>
+						<xsp-request:get-attribute name="patientName"/>
+					</value>
+				</element>
+				<element name="dateOfBirth" type="plain-text" label="DOB">
+					<value>
+						<xsp-request:get-attribute name="birthTime"/>
+					</value>
+				</element>
+				<xsp:logic>if(contextAction.equals("AddLabDataEntry")){</xsp:logic>
+				<element name="patientCurrentSex" type="select" label="Sex">
+					<readonly/>
+					<srt-options-string>
+						<srt-codes:getCodedValues>
+							<type>SEX</type>
+						</srt-codes:getCodedValues>
+					</srt-options-string>
+					<value>
+						<xsp-request:get-attribute name="currSexCd"/>
+					</value>
+				</element>
+				<xsp:logic>}else{</xsp:logic>
+				<element name="patientCurrentSex" type="select" label="Current Sex">
+					<readonly/>
+					<srt-options-string>
+						<srt-codes:getCodedValues>
+							<type>SEX</type>
+						</srt-codes:getCodedValues>
+					</srt-options-string>
+					<value>
+						<xsp-request:get-attribute name="currSexCd"/>
+					</value>
+				</element>
+				<xsp:logic>}</xsp:logic>
+			</line>
+			<xsp:logic>if(contextAction.equals("AddLabDataEntry")){</xsp:logic>
+			<line>
+				<element name="streetAddr1" type="plain-text" label="Address">
+					<value>
+						<xsp-request:get-attribute name="patientAddress"/>
+					</value>
+				</element>
+			</line>
+			<line>
+				<element name="ssn" type="plain-text" label="SSN">
+					<value>
+						<xsp-request:get-attribute name="patientSSN"/>
+					</value>
+				</element>
+			</line>
+			<xsp:logic>}</xsp:logic>
+			<xsp:logic>if(!retainCheckbox.equalsIgnoreCase("true")) {
+					String PDLogic = (String) request.getAttribute("PDLogic");
+					if(PDLogic != null){
+						if (!PDLogic.equals(NEDSSConstants.STD_PROCESSING_DECISION_NOT_APPLICABLE)){
+				</xsp:logic>
+			<line>
+				<element name="processingDecision" type="plain-text" label="Processing Decision">
+					<value>
+						<xsp-request:get-attribute name="markAsReviewReasonDesc"/>
+					</value>
+				</element>
+			</line>
+			<xsp:logic>}}}</xsp:logic>
+		</topgroup>
+		<tab name="Report Information">
+			<nedss:writeErrorMessages/>
+			<group name="Order Information">
+				<line>
+					<element type="hidden" name="clia">
+						<value>
+							<xsp:expr>clia</xsp:expr>
+						</value>
+					</element>
+					<element type="hidden" name="conditionCode ">
+						<value>
+							<xsp-request:get-attribute name="conditionCode"/>
+						</value>
+					</element>
+					<element type="hidden" name="OrderedTestNameTest">
+						<value>
+							<xsp-request:get-attribute name="OrderedTestNameTest"/>
+						</value>
+					</element>
+					<element type="hidden" name="displayFacility">
+						<value>
+							<xsp-request:get-attribute name="displayFacility"/>
+						</value>
+					</element>
+					<element type="hidden" name="OrderedTestNameCode">
+						<value>
+							<xsp:expr>OrderedTestNameCode</xsp:expr>
+						</value>
+					</element>
+					<element type="hidden" name="hiddenOrderedTestNameCode">
+						<value>
+							<xsp-request:get-attribute name="hiddenOrderedTestNameCode"/>
+						</value>
+					</element>
+					<element type="hidden" name="hiddenOrderedTestNameDesc">
+						<value>
+							<xsp-request:get-attribute name="hiddenOrderedTestNameDesc"/>
+						</value>
+					</element>
+					<element type="hidden" name="hiddenOrderedTestCdSystemCd">
+						<value>
+							<xsp-request:get-attribute name="hiddenOrderedTestCdSystemCd"/>
+						</value>
+					</element>
+					<element type="hidden" name="hiddenOrderedTestCdSystemDsec">
+						<value>
+							<xsp-request:get-attribute name="hiddenOrderedTestCdSystemDsec"/>
+						</value>
+					</element>
+					<!--element name="ContextActionLeftNav" type="hidden">
+						<value>
+							<xsp-request:get-attribute name="ContextActionLeftNav"/>
+						</value>
+					</element-->
+					<element name="ContextAction" type="hidden">
+						<value>
+							<xsp-request:get-attribute name="ContextAction"/>
+						</value>
+					</element>
+					<element type="hidden" name="labId" id="labId">
+						<value>
+							<xsp-request:get-attribute name="labId"/>
+						</value>
+					</element>
+					<element name="observationUID" type="hidden">
+						<value>
+							<xsp-request:get-attribute name="observationUID"/>
+						</value>
+					</element>
+					<element name="NBSSecurityJurisdictions" type="hidden">
+						<value>
+							<xsp-request:get-attribute name="NBSSecurityJurisdictions"/>
+						</value>
+					</element>
+					<element type="hidden" name="reportingOrganizationUID">
+						<value>
+							<xsp-request:get-attribute name="reportingFacilityUID"/>
+						</value>
+					</element>
+					<element name="jurisdictionCd1" type="hidden">
+						<value>
+							<xsp-request:get-attribute name="jurisdictionCd1"/>
+						</value>
+					</element>
+					<element type="hidden" name="conditionCd">
+						<value>
+							<xsp-request:get-attribute name="conditionCd"/>
+						</value>
+					</element>
+					<element type="hidden" name="STD_PA_LIST">
+						<value>
+							<xsp-request:get-attribute name="STD_PA_LIST"/>
+						</value>
+					</element>
+					<!-- Hidden element for Mark as Review Processing Decision-->
+					<element type="hidden" label="" id="markAsReviewReason">
+								<xsp:attribute name="name">proxy.observationVO_s[0].theObservationDT.processingDecisionCd</xsp:attribute>
+								<xsp:attribute name="observation-name">proxy.observationVO_s[0].theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB112</xsp:attribute>
+								<value>
+									<xsp-request:get-attribute name="markAsReviewReason"/>
+								</value>
+					</element>
+					<xsp:logic>
+					if( trueReadOnly.equalsIgnoreCase("true"))
+					{
+					</xsp:logic>
+					<element type="hidden" name="programAreaCd1">
+						<value>
+							<xsp-request:get-attribute name="programAreaCd1"/>
+						</value>
+					</element>
+					<xsp:logic>
+					}
+					</xsp:logic>
+					<element type="hidden" name="Org-ReportingOrganizationUIDHiddenValue">
+						<value>
+							<xsp-request:get-attribute name="reportingSourceDetails"/>
+						</value>
+					</element>
+					<element type="hidden" name="Org-ReportingOrganizationDetails">
+						<value>
+							<xsp-request:get-attribute name="reportingSourceDetails"/>
+						</value>
+					</element>
+				</line>
+				<!--line tie-to="Edit">
+					<element type="hidden" name="programarea">
+						<value>
+							<xsp-request:get-attribute name="programAreaCd"/>
+						</value>
+					</element>
+					<element type="hidden" name="jurisdiction">
+						<value>
+							<xsp-request:get-attribute name="jurisdictionCd"/>
+						</value>
+					</element>
+				</line-->
+				<line>
+					<element type="raw">
+						<span>
+							<i>
+								<font class="boldTenRed"> * Indicates a required field </font>
+							</i>
+						</span>
+					</element>
+				</line>
+				<line>
+					<element type="line-separator" title="Facility and Provider Information"/>
+				</line>
+				<line>
+					<xsp:logic>
+
+					if(mode.equalsIgnoreCase("edit")) {
+						</xsp:logic>
+					<element type="plain-text" label=" Reporting Facility" valign-label="top" align-label="left" name="Org-ReportingOrganizationUID" alignment="left">
+						<value>
+							<xsp-request:get-attribute name="reportingSourceDetails"/>
+						</value>
+					</element>
+					<element/>
+					<element/>
+					<element/>
+					<element/>
+					<element/>
+					<element/>
+					<element/>
+					<element/>
+					<element/>
+					<element/>
+					<element/>
+					<xsp:logic>
+					}else{
+						
+					    if(displayFacility.equals("true")){
+					  
+					     </xsp:logic>
+					<element type="plain-text" label=" Reporting Facility" valign-label="top" align-label="left" name="Org-ReportingOrganizationUID" alignment="left">
+						<value>
+							<xsp-request:get-attribute name="reportingSourceDetails"/>
+						</value>
+					</element>
+					<xsp:logic>  
+					     }else{
+					    </xsp:logic>
+					<element type="entity-search" name="Org-ReportingOrganizationUID" entity-type="organizationReportLab" alignment="left" code-lookup="code">
+						<validation type="required" name="Reporting Facility"/>
+						<xsp-request:get-attribute name="checkFile"/>
+						<value>
+							<xsp-request:get-attribute name="reportingFacilityUID"/>
+						</value>
+						<!--line>
+								<element label="* Reporting Facility 8"  align-label="top">
+								</element>
+							</line-->
+						<line>
+							<element label="* Reporting Facility" valign-label="top" name="entity.completeOrgSearchResult" type="plain-text" alignment="left">
+								<value>
+									<xsp-request:get-attribute name="reportingSourceDetails"/>
+								</value>
+							</element>
+						</line>
+						<line>
+							<element name="reportingSourceDetail" type="hidden">
+								<value>
+									<xsp-request:get-attribute name="reportingSourceDetail"/>
+								</value>
+							</element>
+						</line>
+					</element>
+					<xsp:logic>}}</xsp:logic>
+				</line>
+				<line>
+					<element type="line-separator"/>
+				</line>
+				<line>
+					<element type="entity-search" name="Org-OrderingFacilityUID" entity-type="organization" alignment="left" code-lookup="code">
+						<value>
+							<xsp-request:get-attribute name="orderingOrgDetailsUID"/>
+						</value>
+						<!--line>
+							<element label="Ordering Facility">
+							</element>
+						</line-->
+						<line>
+							<element label="Ordering Facility" valign-label="top" name="entity.completeOrgSearchResult" type="plain-text" alignment="left">
+								<value>
+									<xsp-request:get-attribute name="orderingOrgDetails"/>
+								</value>
+							</element>
+						</line>
+						<xsp:logic>
+						
+						if(!mode.equalsIgnoreCase("edit")) {
+						</xsp:logic>
+						<line>
+							<element type="checkbox">
+								<options>
+									<option name="LAB277" label="Same as Reporting Facility" value="T" onclick="copyData();">
+										<value>
+											<xsp-request:get-attribute name=""/>
+										</value>
+									</option>
+								</options>
+							</element>
+						</line>
+						<xsp:logic>}</xsp:logic>
+					</element>
+				</line>
+				<line>
+					<element type="line-separator"/>
+				</line>
+				<line>
+					<element type="entity-search" name="Prov-entity.entityProvUID" entity-type="provider" alignment="left" code-lookup="code">
+						<value>
+							<xsp-request:get-attribute name="providerUID"/>
+						</value>
+						<!--line>
+							<element label="Ordering Provider">
+							</element>
+						</line-->
+						<line>
+							<element label="Ordering Provider" valign-label="top" name="entity.completePersonSearchResult" type="plain-text" alignment="left">
+								<value>
+									<xsp-request:get-attribute name="providerDetails"/>
+								</value>
+							</element>
+						</line>
+					</element>
+				</line>
+				<free/>
+				<line>
+					<element type="line-separator"/>
+				</line>
+			</group>
+			<group>
+				<line>
+					<element type="join">
+						<line>
+							<xsp:logic>if(permissionForProgJuriShar.equalsIgnoreCase("false")) {</xsp:logic>
+							<readonly/>
+							<element type="hidden" label="" onchange="labTestFilter();" id="proxy.observationVO_s[0].theObservationDT.progAreaCd">
+								<xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.progAreaCd</xsp:attribute>
+								<xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB112</xsp:attribute>
+								<xsp:logic>if(mode.equalsIgnoreCase("edit")) {</xsp:logic>
+								<readonly/>
+								<xsp:logic>}</xsp:logic>
+								<value>
+									<xsp-request:get-attribute name="programAreaCd"/>
+								</value>
+							</element>
+							<xsp:logic>}else{</xsp:logic>
+							<element type="select" label="* Program Area" noblank="true" onchange="labTestFilter();" id="proxy.observationVO_s[0].theObservationDT.progAreaCd">
+								<xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.progAreaCd</xsp:attribute>
+								<xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB112</xsp:attribute>
+								<xsp:logic>if(mode.equalsIgnoreCase("edit") || trueReadOnly.equalsIgnoreCase("true")) {</xsp:logic>
+								<readonly/>
+								<xsp:logic>}</xsp:logic>
+								<srt-options-string>
+									<xsp-request:get-attribute name="FilteredPrograAreas"/>
+								</srt-options-string>
+								<xsp:logic>if(trueReadOnly.equalsIgnoreCase("true")) {</xsp:logic>
+								<value>
+									<xsp-request:get-attribute name="programAreaCd1"/>
+								</value>
+								<xsp:logic>}else{</xsp:logic>
+								<value>
+									<xsp-request:get-attribute name="programAreaCd"/>
+								</value>
+								<xsp:logic>}</xsp:logic>
+								<validation type="required" error-code="ERR001" name="Program Area"/>
+							</element>
+							<xsp:logic>}</xsp:logic>
+						</line>
+						<line>
+							<xsp:logic>if(permissionForProgJuriShar.equalsIgnoreCase("false") ) {</xsp:logic>
+							<!--element type="plain-text" label=" Jurisdiction">
+								<xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.jurisdictionCd</xsp:attribute>
+								<xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB112</xsp:attribute>
+								<xsp:logic>if(mode.equalsIgnoreCase("edit")) {</xsp:logic>
+								<readonly/>
+								<xsp:logic>}</xsp:logic>							
+								
+								<value>
+									<xsp-request:get-attribute name="jurisdictionCd"/>
+								</value>
+								
+							</element>
+								<readonly/-->
+							<xsp:logic>}else{</xsp:logic>
+							<element type="select" label="* Jurisdiction" noblank="true">
+								<xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.jurisdictionCd</xsp:attribute>
+								<xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB112</xsp:attribute>
+								<xsp:logic>if(mode.equalsIgnoreCase("edit")  || trueReadOnly.equalsIgnoreCase("true")) {</xsp:logic>
+								<readonly/>
+								<xsp:logic>}</xsp:logic>
+								<srt-options-string>
+									<xsp:logic>
+									//System.out.println("contextActionis :" + contextAction);
+								if(contextAction.equals("AddLabDataEntry") || contextAction.equals("SubmitAndLoadLabDE1"))
+								{
+								</xsp:logic>
+									<srt-codes:getJurisdictionWithUnknown/>
+									<xsp:logic>
+								}
+								else
+								{
+								</xsp:logic>
+									<srt-codes:getJurisdictionCodedSortedValues/>
+									<xsp:logic>
+								}
+								</xsp:logic>
+								</srt-options-string>
+								<xsp:logic>
+								if(trueReadOnly.equalsIgnoreCase("true")) {</xsp:logic>
+								<value>
+									<xsp-request:get-attribute name="jurisdictionCd1"/>
+								</value>
+								<xsp:logic>}else{</xsp:logic>
+								<value>
+									<xsp-request:get-attribute name="jurisdictionCd"/>
+								</value>
+								<xsp:logic>}</xsp:logic>
+								<!--validation type="JurisdictionCheck" name="Jurisdiction"/-->
+								<validation type="JurisdictionCheckForObs" error-code="ERR001" name="Jurisdiction"/>
+							</element>
+							<xsp:logic>}</xsp:logic>
+						</line>
+						<line>
+							<xsp:logic>
+							if(permissionForProgJuriShar.equalsIgnoreCase("false")) { </xsp:logic>
+							<element type="plain-text">
+							
+							</element>
+							<element type="checkbox">
+								<readonly/>
+								<options>
+									<option name="proxy.observationVO_s[0].theObservationDT.sharedInd" label=" Share record with Guests for this Program Area and Jurisdiction" value="T">
+										<checked>ACTIVE</checked>
+									</option>
+								</options>
+								<value>
+									<xsp-request:get-attribute name="sharedInd"/>
+								</value>
+							</element>
+							<xsp:logic>}else{ </xsp:logic>
+							<element type="plain-text">
+							
+							</element>
+							<element type="checkbox" align="left">
+								<options>
+									<option name="proxy.observationVO_s[0].theObservationDT.sharedInd" label="Share record with Guests for this Program Area and Jurisdiction" value="T">
+										<xsp:logic>if(mode.equalsIgnoreCase("edit")) {										
+										if(!request.getAttribute("sharedInd").equals("F")){
+										</xsp:logic>
+										<checked>ACTIVE</checked>
+										<xsp:logic>}</xsp:logic>
+										<readonly/>
+										<xsp:logic>}else{</xsp:logic>
+										<checked>ACTIVE</checked>
+										<xsp:logic>}</xsp:logic>
+									</option>
+								</options>
+								<value>
+									<xsp-request:get-attribute name="sharedInd"/>
+								</value>
+							</element>
+							<xsp:logic>}</xsp:logic>
+						</line>
+						<line>
+							<element type="text" label="Lab Report Date" mask="##/##/####">
+								<xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.activityToTime_s</xsp:attribute>
+								<xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB112</xsp:attribute>
+								<validation type="date" mask="mm/dd/yyyy" name="Lab Report Date"/>
+								<value>
+									<xsp-request:get-attribute name="LAB197"/>
+								</value>
+							</element>
+						</line>
+                        <xsp:logic>    if(!displayFacility.equals("true")){</xsp:logic>
+							
+						<line>
+							<element type="text" label="* Date Received by Public Health" mask="##/##/####">
+								<xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.rptToStateTime_s</xsp:attribute>
+								<xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB112</xsp:attribute>
+								<validation type="date" required="true" mask="mm/dd/yyyy" name="Date Received by Public Health" error-code="ERR023"/>
+								<xsp:attribute name="default">
+									<xsp:expr>PersonUtil.formatCurrentDate()</xsp:expr>
+								</xsp:attribute>
+								<value>
+									<xsp-request:get-attribute name="LAB201"/>
+								</value>
+							</element>
+						</line>
+					
+                        <xsp:logic>}</xsp:logic>
+                          <line>
+							<element type="line-separator"/>
+						</line>
+						<line id="orderedTestNameInd">
+							<element type="entity-search" name="test" entity-type="OrderedTestName">
+								<line>
+									<!--element type="select" label="Ordered Test" onchange="getOrderedTestChange();"-->
+									<element type="select" label="Ordered Test">
+										<xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.txt</xsp:attribute>
+										<!--xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute-->
+										<srt-options-string>
+											<xsp-request:get-attribute name="OrderedTestNameCollection"/>
+										</srt-options-string>>
+										<value>
+											<xsp-request:get-attribute name="OrderedTestName"/>
+										</value>
+									</element>
+									<element type="text" size="15" name="OrderedDisplay" onload="getOrderedTestOnLoadCondition();">
+										<readonly/>
+										<value>
+											<xsp-request:get-attribute name="OrderedTestName"/>
+										</value>
+									</element>
+									<element type="hidden" name="proxy.observationVO_s[0].theObservationDT.hiddenCd"/>
+									<element type="hidden" name="proxy.observationVO_s[0].theObservationDT.searchResultOT">
+										<xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute>
+										<xsp:attribute name="observation-value">LAB112</xsp:attribute>
+									</element>
+									<element type="hidden" name="proxy.observationVO_s[0].theObservationDT.cdSystemCdOT">
+										<xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute>
+										<xsp:attribute name="observation-value">LAB112</xsp:attribute>
+									</element>
+								</line>
+							</element>
+						</line>
+						<line>
+							<element type="text" label="Accession Number" maxlength="25">
+								<xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].actIdDT_s[0].rootExtensionTxt</xsp:attribute>
+								<xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB112</xsp:attribute>
+								<value>
+									<xsp-request:get-attribute name="LAB125"/>
+								</value>
+							</element>
+						</line>
+						<line id="specimenSource">
+							<element type="select" label="Specimen Source">
+								<xsp:attribute name="name">proxy.materialVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theMaterialDT.cd</xsp:attribute>
+								<!--xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB112</xsp:attribute-->
+								<!--srt-options-string>
+									<xsp-request:get-attribute name="SpecimentSourceCollection"/>
+								</srt-options-string>-->
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>SPECMN_SRC</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+								<value>
+									<xsp-request:get-attribute name="SpecimenSourceMaterial"/>
+								</value>
+							</element>
+						</line>
+						<line id="specimentSite">
+							<element type="select" label="Specimen Site">
+								<xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.targetSiteCd</xsp:attribute>
+								<!--xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB112</xsp:attribute-->
+								<!--srt-options-string>
+									<xsp-request:get-attribute name="specimenSiteNameCollection"/>
+								</srt-options-string>-->
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>ANATOMIC_SITE</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+								<value>
+									<xsp-request:get-attribute name="SpecimenSitelAB112"/>
+								</value>
+							</element>
+						</line>
+						<line>
+							<element type="text" label="Date Specimen Collected" mask="##/##/####">
+								<xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.effectiveFromTime_s</xsp:attribute>
+								<!--xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB112</xsp:attribute-->
+								<validation type="date" mask="mm/dd/yyyy" name="Date Specimen Collected"/>
+								<value>
+									<xsp-request:get-attribute name="dateSpecimenCollected"/>
+								</value>
+							</element>
+						</line>
+						<line>
+							<element type="select" label="Patient Status at Specimen Collection">
+								<xsp:attribute name="name">patientStatusVO.obsValueCodedDT_s[0].code</xsp:attribute>
+								<xsp:attribute name="observation-name">patientStatusVO.theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB330</xsp:attribute>
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>PHVSFB_SPCMNPTSTATUS</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+								<value>
+									<xsp-request:get-attribute name="LAB330"/>
+								</value>
+							</element>
+						</line>
+						<line>
+                            <element name="pregnantIndCd" type="conditional-entry">
+                             <controller trigger="Y" type="select" label="Pregnant" length="7">
+                                <xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.pregnantIndCd</xsp:attribute>
+                                <validation type="pregnantMale" name="Is Patient Pregnant"/> 
+                                <srt-options-string>
+                                    <srt-codes:getCodedValues>
+                                        <type>YNU</type>
+                                    </srt-codes:getCodedValues>
+                                </srt-options-string> 
+                                <value>
+                                  <xsp-request:get-attribute name="pregnantIndCd"/>
+                                </value>
+                               </controller> 
+                               <line>
+                                 <element type="text" label="Weeks" size="2" alignment="left" length="2"> 
+                                <xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS000</xsp:expr>].theObservationDT.pregnantWeek</xsp:attribute>
+                                <validation type="reg-expr" error-code="ERR191" name="Weeks">
+                                  <pattern>
+                                   <![CDATA[^$|^[1-3]?[0-9]?$|^[4][0]$|^[4][1]$|^[4][2]$|^[4][3]$|^[4][4]$|^[4][5]$|^[9][9]$]]>
+                                  </pattern>
+                                </validation>
+                                <value>
+                                  <xsp-request:get-attribute name="pregnantWeek"/>
+                                </value>
+                              </element> 
+                              </line>
+                            </element> 
+                        </line>
+					</element>
+				</line>
+			</group>
+			<group name="Test Result(s)">
+				<line>
+					<element name="Test Result" type="batch-entry">
+						<value>
+							<xsp-request:get-attribute name="batchString"/>
+						</value>
+						<line>
+							<element name="resultedTest[i].theSusceptibilityVO.theObservationDT.statusCd" type="hidden"/>
+						</line>
+						<line id="resultedTestNameInd">
+							<element type="entity-search" name="ResultedTestName" entity-type="ResultedTestName">
+								<line>
+									<element type="select" label="* Resulted Test" name="resultedTest[i].theIsolateVO.theObservationDT.cdDescTxt" onchange="getOrganismIndicator();">
+										<!--xsp:attribute name="name">resultedTest[i].theIsolateVO.theObservationDT.cdDescTxt</xsp:attribute-->
+										<header>Resulted Test</header>
+										<srt-options-string>
+											<xsp-request:get-attribute name="ResultedTestNameCollection"/>
+										</srt-options-string>>
+										<validation type="required" error-code="ERR001" name="Resulted Test Name"/>
+									</element>
+									<element type="text" size="15" name="ResultedDisplay">
+										<readonly/>
+										<value>
+											<xsp-request:get-attribute name="resultedTestName"/>
+										</value>
+									</element>
+									<element type="hidden" name="resultedTest[i].theIsolateVO.theObservationDT.searchResultRT">
+										<header>Resulted Test</header>
+									</element>
+									<element type="hidden" name="resultedTest[i].theIsolateVO.theObservationDT.cdSystemCdRT"/>
+									<element type="hidden" name="resultedTest[i].theIsolateVO.theObservationDT.hiddenCd"/>
+									<element type="hidden" name="organismInd">
+										<value>N</value>
+									</element>
+									<!--element name="resultedTest[i].theSusceptibilityVO.theObservationDT.statusCd" type="hidden"/-->
+								</line>
+							</element>
+						</line>
+						<!--line>
+							<element type="plain-text" label="" makeItalic="(One of the following are required for Add Lab Report:Coded Result Value, Numeric Result Value, or Text Result Value" name="softRequiredFieldResultedTest)" size = "4"/>
+						</line-->
+						<line id="organismIndicator">
+							<element type="entity-search" name="orderedTest" entity-type="OrganismName">
+								<line>
+									<element type="select" label="* Organism" name="resultedTest[i].theIsolateVO.obsValueCodedDT_s[0].displayName">
+										<!--xsp:attribute name="name">resultedTest[i].theIsolateVO.theObservationDT.cdDescTxt</xsp:attribute-->
+										<header>Result(s)</header>
+										<srt-options-string>
+											<srt-codes:getOrganismList/>
+										</srt-options-string>
+										<validation type="required" name="Organism Name"/>
+									</element>
+									<element type="text" size="15" name="OrganismDisplay">
+										<readonly/>
+									</element>
+									<element type="hidden" name="resultedTest[i].theIsolateVO.obsValueCodedDT_s[0].hiddenCd">
+										<header>Result(s)</header>
+									</element>
+									<element type="hidden" name="resultedTest[i].theIsolateVO.obsValueCodedDT_s[0].searchResultRT"/>
+									<element type="hidden" name="resultedTest[i].theIsolateVO.obsValueCodedDT_s[0].cdSystemCdRT"/>
+									<element type="hidden" name="resultedTest[i].theIsolateVO.theObservationDT.ctrlCdUserDefined1"/>
+								</line>
+							</element>
+						</line>
+						<line id="codedResultIndicatorMessage" tie-to="Add|Create|Edit|">
+							<element/>
+							<element type="raw">
+								<span>
+									<i>(One of the following is required for  Add/Update Test Result: Coded Result Value,Numeric Result Value, or Text Result Value)</i>
+								</span>
+							</element>
+						</line>
+						<line id="codedResultIndicator">
+							<element type="select" label="Coded Result" trigger="Y" length="44" name="resultedTest[i].theIsolateVO.obsValueCodedDT_s[0].code">
+								<header>Result(s)</header>
+								<validation name="Coded Result Value"/>
+								<srt-options-string>
+									<srt-codes:getCodedResultValue/>
+								</srt-options-string>
+							</element>
+						</line>
+						<line id="numericResult">
+							<element type="text" label="Numeric Result" name="resultedTest[i].theIsolateVO.obsValueNumericDT_s[0].numericValue" onkeyup="enableValueCd(this);">
+								<header>Result(s)</header>
+								<validation type="reg-expr" name="Numeric Result Value">
+									<pattern><![CDATA[^([<>=]|[<][=]|[>][=]|[<][>])?(((((\d){0,10})|((\d){1,10})([\.]{1})((\d){1,5}))?)|(((((\d){1,10})([\.]{1})((\d){1,5})[+])|(((\d){1,10})[+]))|((((\d){1,10})|(((\d){1,10})([\.]{1})((\d){1,5})))[-:\/](((\d){1,10})|(((\d){1,10})([\.]{1})((\d){1,5})))))?)?$]]></pattern>
+								</validation>
+								<!--validation name="Numeric Result"/-->
+								<partner type="select" value="Search" length="16" name="resultedTest[i].theIsolateVO.obsValueNumericDT_s[0].numericUnitCd">
+									<header>Result(s)</header>
+									<srt-options-string>
+										<srt-codes:getCodedValues>
+											<type>UNIT_ISO</type>
+										</srt-codes:getCodedValues>
+									</srt-options-string>
+								</partner>
+							</element>
+							<element/>
+						</line>
+						<line id="textResult">
+							<element type="textarea" label="Text Result">
+								<xsp:attribute name="name">resultedTest[i].theIsolateVO.obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+								<header>Result(s)</header>
+								<validation name="Text Result Value"/>
+								<note>General Comments</note>
+							</element>
+						</line>
+						<line id="referenceRange">
+							<element type="text" label="Reference Range" size="15" maxlength="20">
+								<xsp:attribute name="name">resultedTest[i].theIsolateVO.obsValueNumericDT_s[0].lowRange</xsp:attribute>
+								<!--partner label="to"/-->
+								<partner type="text" label="to" size="15" maxlength="20">
+									<xsp:attribute name="name">resultedTest[i].theIsolateVO.obsValueNumericDT_s[0].highRange</xsp:attribute>
+								</partner>
+							</element>
+						</line>
+						<line>
+							<element type="select" label="Result Status" length="21">
+								<xsp:attribute name="name">resultedTest[i].theIsolateVO.theObservationDT.statusCd</xsp:attribute>
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>ACT_OBJ_ST</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+							</element>
+						</line>
+						<line>
+							<element type="textarea" label="Result Comments" name="resultedTest[i].theIsolateVO.obsValueTxtDT_s[1].valueTxt" onload="hideObjectsOnLoad();">
+								<xsp:attribute name="name">resultedTest[i].theIsolateVO.obsValueTxtDT_s[1].valueTxt</xsp:attribute>
+								<note>General Comments</note>
+							</element>
+						</line>
+						<line id="susceptiblityInd">
+							<element type="conditional-entry" name="susceptiblity-entry">
+								<controller type="select" label="Susceptibility Test?" trigger="Y" length="3">
+									<xsp:attribute name="name">resultedTest[i].theSusceptibilityVO.obsValueCodedDT_s[0].code</xsp:attribute>
+									<xsp:attribute name="observation-name">resultedTest[i].theSusceptibilityVO.theObservationDT.cd</xsp:attribute>
+									<xsp:attribute name="observation-value">LAB222</xsp:attribute>
+									<srt-options-string>
+										<srt-codes:getCodedValues>
+											<type>YN</type>
+										</srt-codes:getCodedValues>
+									</srt-options-string>
+								</controller>
+								<line>
+									<element name="Susceptibility" type="batch-entry">
+										<line>
+											<element type="select" label="Result Method" length="45">
+												<xsp:attribute name="name">resultedTest[i].susceptibility[j].theObservationDT.methodCd</xsp:attribute>
+												<header>Result Method</header>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>OBS_METH_SUSC</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+										</line>
+										<line id="drugName">
+											<element type="entity-search" name="drugTest" entity-type="DrugName">
+												<line>
+													<element type="select" label="* Drug Name" name="resultedTest[i].susceptibility[j].theObservationDT.cdDescTxt">
+														<xsp:attribute name="name">resultedTest[i].susceptibility[j].theObservationDT.cdDescTxt</xsp:attribute>
+														<header>Drug Name</header>
+														<srt-options-string>
+															<srt-codes:getDrugNames>
+															</srt-codes:getDrugNames>
+														</srt-options-string>
+														<validation type="required" error-code="ERR001" name="Drug Name"/>
+													</element>
+													<element type="text" size="15" name="DrugDisplay">
+														<readonly/>
+													</element>
+													<element type="hidden" name="resultedTest[i].susceptibility[j].theObservationDT.searchResultRT">
+														<header>Drug Name</header>
+													</element>
+													<element type="hidden" name="resultedTest[i].susceptibility[j].theObservationDT.cdSystemCdRT">
+													</element>
+													<element type="hidden" name="resultedTest[i].susceptibility[j].theObservationDT.hiddenCd">
+													</element>
+												</line>
+											</element>
+										</line>
+										<line id="numericResult">
+											<element type="text" label="Numeric Result" size="25" onkeyup="enableValueCd(this);" onchange="hideCodedResultFilter();">
+												<xsp:attribute name="name">resultedTest[i].susceptibility[j].obsValueNumericDT_s[0].numericValue</xsp:attribute>
+												<validation type="reg-expr" error-message="" name="Numeric Result">
+													<pattern><![CDATA[^([<>=]|[<][=]|[>][=]|[<][>])?(((((\d){0,10})|((\d){1,10})([\.]{1})((\d){1,5}))?)|(((((\d){1,10})([\.]{1})((\d){1,5})[+])|(((\d){1,10})[+]))|((((\d){1,10})|(((\d){1,10})([\.]{1})((\d){1,5})))[-:\/](((\d){1,10})|(((\d){1,10})([\.]{1})((\d){1,5})))))?)?$]]></pattern>
+												</validation>
+												<!--validation name="Numeric Result"/-->
+												<header>Result(s)</header>
+												<partner type="select" value="Search" length="16">
+													<xsp:attribute name="name">resultedTest[i].susceptibility[j].obsValueNumericDT_s[0].numericUnitCd</xsp:attribute>
+													<header>Result(s)</header>
+													<srt-options-string>
+														<srt-codes:getCodedValues>
+															<type>UNIT_ISO</type>
+														</srt-codes:getCodedValues>
+													</srt-options-string>
+												</partner>
+											</element>
+											<element/>
+										</line>
+										<line id="codedResultVal">
+											<element type="select" label="Coded Result" length="44">
+												<xsp:attribute name="name">resultedTest[i].susceptibility[j].obsValueCodedDT_s[0].code</xsp:attribute>
+												<header>Result(s)</header>
+												<!--srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>LAB_RSLT_QUAL</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string-->
+												<srt-options-string>
+													<srt-codes:getCodedResultValue/>
+												</srt-options-string>
+											</element>
+										</line>
+										<line id="interpretiveFlag">
+											<!--element type="select" label="Interpretive Flag" length="24" onload="getObjectHiddenOnLoad();"-->
+											<element type="select" label="Interpretive Flag" length="24">
+												<xsp:attribute name="name">resultedTest[i].susceptibility[j].observationInterpDT_s[0].interpretationCd</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>OBS_INTRP</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+										</line>
+										<line>
+											<element name="resultedTest[i].susceptibility[j].theObservationDT.statusCd" type="hidden"/>
+										</line>
+										<line>
+											<element name="resultedTest[i].susceptibility[j].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line>
+											<element name="resultedTest[i].susceptibility[j].theObservationDT.cd" type="hidden">
+												<value>LAB110</value>
+											</element>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element name="resultedTest[i].theSusceptibilityVO.theObservationDT.observationUid" type="hidden"/>
+								</line>
+								<line>
+									<element name="resultedTest[i].theIsolateVO.theObservationDT.cd" type="hidden">
+										<value>LAB220</value>
+									</element>
+								</line>
+								<line>
+									<element name="index" type="hidden"/>
+								</line>
+							</element>
+						</line>
+						<line>
+							<element type="join">
+								<line>
+									<element type="hidden" label="" length="10">
+										<xsp:attribute name="name">resultedTest[i].theTrackIsolate[0].obsValueCodedDT_s[0].code</xsp:attribute>
+										<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[0].theObservationDT.cd</xsp:attribute>
+										<xsp:attribute name="observation-value">NOLAB329ADDED</xsp:attribute>
+										<value/>
+									</element>
+								</line>
+							</element>
+						</line>
+						<line>
+							<element name="resultedTest[i].theTrackIsolate[0].theObservationDT.observationUid" type="hidden"/>
+						</line>
+						<line id="IsolateTrackInd">
+							<element type="select" label="Track Isolate?" length="10" onchange="trackIsolate();">
+								<xsp:attribute name="name">resultedTest[i].theTrackIsolate[1].obsValueCodedDT_s[0].code</xsp:attribute>
+								<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[1].theObservationDT.cd</xsp:attribute>
+								<xsp:attribute name="observation-value">LAB329a</xsp:attribute>
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>YN</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+								<line>
+									<element name="resultedTest[i].theTrackIsolate[1].theObservationDT.observationUid" type="hidden"/>
+								</line>
+							</element>
+						</line>
+						<line id="Q331">
+							<element type="join" border="true">
+								<line>
+									<element type="join">
+										<line>
+											<element type="select" label="Was an isolate received at the state public health lab?" length="10" align="left" onchange="isolateReceived();">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[2].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[2].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB331</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>YNU</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element name="resultedTest[i].theTrackIsolate[2].theObservationDT.observationUid" type="hidden"/>
+								</line>
+								<line id="Q332">
+									<element type="join">
+										<line>
+											<element type="select" label="If an isolate wasn't received at the state public health lab, what is the reason?" length="10" onchange="isolateNotRecdOther()">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[3].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[3].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB332</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>PHVSFB_SPECFORW</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[3].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q333">
+											<element type="text" label="If 'Other', please specify" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[4].obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[4].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB333</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[4].obsValueTxtDT_s[0].valueTxt"/>
+												</value>
+											</element>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[4].theObservationDT.observationUid" type="hidden"/>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element type="join">
+										<line id="Q334">
+											<element/>
+											<element type="text" label="If 'Yes', specify date received in state public health lab" mask="##/##/####">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[5].obsValueDateDT_s[0].fromTime_s</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[5].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB334</xsp:attribute>
+												<validation type="date" mask="mm/dd/yyyy" name="If 'Yes', specify date received in state public health lab"/>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[5].obsValueCodedDT_s[0].code"/>
+												</value>
+											</element>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[5].theObservationDT.observationUid" type="hidden"/>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element type="join">
+										<line id="Q335">
+											<element/>
+											<element type="text" label="State public health lab isolate id number" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[6].obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[6].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB335</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[6].obsValueTxtDT_s[0].valueTxt"/>
+												</value>
+											</element>
+										</line>
+									</element>
+								</line>
+								<line id="Q335Text">
+									<element type="raw">
+										<span>
+											<i>(Note: Should match the State Public Health Lab Accession Number)</i>
+										</span>
+									</element>
+								</line>
+								<line>
+									<element name="resultedTest[i].theTrackIsolate[6].theObservationDT.observationUid" type="hidden"/>
+								</line>
+								<line id="Q336">
+									<element type="join">
+										<line>
+											<element/>
+											<element type="select" label="Was case confirmed at state public health lab?" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[7].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[7].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB336</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>YNU</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element name="resultedTest[i].theTrackIsolate[7].theObservationDT.observationUid" type="hidden"/>
+								</line>
+								<line>
+									<element type="line-separator"/>
+								</line>		
+								<line>
+									<element type="join">
+										<line id="Q363">
+											<element type="select" label="Was specimen or isolate forwarded to CDC for testing or confirmation?" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[34].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[34].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB363</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>YNU</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[34].theObservationDT.observationUid" type="hidden"/>
+										</line>
+									</element>														
+								</line>	
+								<line>
+									<element type="line-separator"/>
+								</line>
+								<line>
+									<element type="join">
+										<line id="Q337">
+											<element type="select" label="PulseNet Isolate?" length="10" align="left" onchange="pulseNetIsolate();">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[8].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[8].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB337</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>YN</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element name="resultedTest[i].theTrackIsolate[8].theObservationDT.observationUid" type="hidden"/>
+								</line>
+								<line>
+									<element type="join">
+										<line id="Q338">
+											<element/>
+											<element type="select" label="Has isolate PFGE pattern been sent to central PulseNet database?" length="10" onchange="pulseNetPFGE();">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[9].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[9].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB338</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>YNU</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[9].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q339">
+											<element/>
+											<element type="text" label="PulseNet PFGE Designation Enzyme 1" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[10].obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[10].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB339</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[10].obsValueTxtDT_s[0].valueTxt"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[10].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q340">
+											<element/>
+											<element type="text" label="State Health Department Lab PFGE Designation Enzyme 1" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[11].obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[11].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB340</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[11].obsValueTxtDT_s[0].valueTxt"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[11].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q341">
+											<element/>
+											<element type="text" label="PulseNet PFGE Designation Enzyme 2" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[12].obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[12].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB341</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[12].obsValueTxtDT_s[0].valueTxt"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[12].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q342">
+											<element/>
+											<element type="text" label="State Health Department Lab PFGE Designation Enzyme 2" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[13].obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[13].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB342</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[13].obsValueTxtDT_s[0].valueTxt"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[13].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q343">
+											<element/>
+											<element type="text" label="PulseNet PFGE Designation Enzyme 3" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[14].obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[14].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB343</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[14].obsValueTxtDT_s[0].valueTxt"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[14].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q344">
+											<element/>
+											<element type="text" label="State Health Department Lab PFGE Designation Enzyme 3" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[15].obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[15].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB344</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[15].obsValueTxtDT_s[0].valueTxt"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[15].theObservationDT.observationUid" type="hidden"/>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element type="line-separator"/>
+								</line>
+								<line id="Q345">
+									<element type="join">
+										<line>
+											<element type="select" label="NARMS Isolate?" length="10" onchange="NARMSSelected();">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[16].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[16].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB345</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>YN</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+											<element/>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element name="resultedTest[i].theTrackIsolate[16].theObservationDT.observationUid" type="hidden"/>
+								</line>
+								<line id="Q346">
+									<element type="join">
+										<line>
+											<element type="select" label="Has isolate been sent to NARMS?" length="10" onchange="IsolateToNARMS();">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[17].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[17].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB346</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>YNU</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[17].theObservationDT.observationUid" type="hidden"/>
+										</line>
+									</element>
+								</line>
+								<line id="Q347">
+									<element type="join">
+										<line>
+											<element/>
+											<element type="select" label="If an isolate was not sent to NARMS, what is the reason?" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[18].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[18].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB347</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>PHVSFB_ISOLATNO</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+											<element/>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element name="resultedTest[i].theTrackIsolate[18].theObservationDT.observationUid" type="hidden"/>
+								</line>
+								<line id="Q348">
+									<element type="join">
+										<line>
+											<element type="text" label="State-assigned NARMS ID number" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[19].obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[19].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB348</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[19].obsValueTxtDT_s[0].valueTxt"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element type="raw">
+												<span>
+													<i>(Note: NARMS ID number and State Public Health Lab isolate ID number should be the same)</i>
+												</span>
+											</element>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[19].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q349">
+											<element type="text" label="Expected Ship Date" length="10" mask="##/##/####">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[20].obsValueDateDT_s[0].fromTime_s</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[20].theObservationDT.cd</xsp:attribute>
+												<validation type="LAB349" mask="mm/dd/yyyy" name="Expected Ship Date"/>
+												<xsp:attribute name="observation-value">LAB349</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[20].theObservationDT.cd"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[20].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q350">
+											<element type="text" label="Actual Ship Date" length="10" mask="##/##/####">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[21].obsValueDateDT_s[0].fromTime_s</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[21].theObservationDT.cd</xsp:attribute>
+												<validation type="date" mask="mm/dd/yyyy" name="Actual Ship Date"/>
+												<xsp:attribute name="observation-value">LAB350</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[21].theObservationDT.cd"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[21].theObservationDT.observationUid" type="hidden"/>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element type="line-separator"/>
+								</line>
+								<line id="Q351">
+									<element type="join">
+										<line>
+											<element type="select" label="EIP Isolate?" length="10" onchange="EIPSelected();">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[22].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[22].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB351</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>YN</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+											<element/>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element name="resultedTest[i].theTrackIsolate[22].theObservationDT.observationUid" type="hidden"/>
+								</line>
+								<line id="Q352">
+									<element type="join">
+										<line>
+											<element/>
+											<element type="select" label="Is this specimen available for further EIP testing?" length="10" onchange="furtherEIPTesting();">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[23].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[23].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB352</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>PHVSFB_ISOLATAV</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[23].theObservationDT.observationUid" type="hidden"/>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element type="join">
+										<line id="Q353">
+											<element/>
+											<element type="select" label="If a specimen is not available for further EIP testing," subText="  what is the reason?" length="10" onchange="otherResonsForLab353();">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[24].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[24].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB353</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>PHVSFB_SPECAVAL</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[24].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q354">
+											<element/>
+											<element type="text" label="If 'Other', please specify other reason why specimen " subText="  is not available" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[25].obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[25].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB354</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[25].obsValueTxtDT_s[0].valueTxt"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[25].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q355">
+											<element/>
+											<element type="select" label="If 'Yes', where will the specimen be shipped?" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[26].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[26].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB355</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>PHVSFB_CDCLABSH</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[26].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q356">
+											<element/>
+											<element type="text" label="Expected Ship Date" length="10" mask="##/##/####">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[27].obsValueDateDT_s[0].fromTime_s</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[27].theObservationDT.cd</xsp:attribute>
+												<validation type="LAB356" mask="mm/dd/yyyy" name="Expected Ship Date"/>
+												<xsp:attribute name="observation-value">LAB356</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[27].theObservationDT.cd"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[27].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q357">
+											<element/>
+											<element type="text" label="Actual Ship Date" length="10" mask="##/##/####">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[28].obsValueDateDT_s[0].fromTime_s</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[28].theObservationDT.cd</xsp:attribute>
+												<validation type="date" mask="mm/dd/yyyy" name="Actual Ship Date"/>
+												<xsp:attribute name="observation-value">LAB357</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[28].theObservationDT.cd"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[28].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q358">
+											<element/>
+											<element type="select" label="Was specimen requested for reshipment?" length="10" onchange="changeLAB358();">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[29].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[29].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB358</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>YN</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[29].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q359">
+											<element/>
+											<element type="select" label="If a specimen was requested for reshipment " subText=" for further EIP testing, what is the reason?" length="10" onchange="checkOtherForLab360();">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[30].obsValueCodedDT_s[0].code</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[30].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB359</xsp:attribute>
+												<srt-options-string>
+													<srt-codes:getCodedValues>
+														<type>PHVSFB_CONTAMIN</type>
+													</srt-codes:getCodedValues>
+												</srt-options-string>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[30].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q360">
+											<element/>
+											<element type="text" label="If 'Other', please specify reason for reshipment" length="10">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[31].obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[31].theObservationDT.cd</xsp:attribute>
+												<xsp:attribute name="observation-value">LAB360</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[31].obsValueTxtDT_s[0].valueTxt"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[31].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q361">
+											<element/>
+											<element type="text" label="Expected Reship Date" length="10" mask="##/##/####">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[32].obsValueDateDT_s[0].fromTime_s</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[32].theObservationDT.cd</xsp:attribute>
+												<validation type="LAB361" mask="mm/dd/yyyy" name="Expected Reship Date"/>
+												<xsp:attribute name="observation-value">LAB361</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[32].theObservationDT.cd"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+										<line>
+											<element name="resultedTest[i].theTrackIsolate[32].theObservationDT.observationUid" type="hidden"/>
+										</line>
+										<line id="Q362">
+											<element/>
+											<element type="text" label="Actual Reship Date" length="10" mask="##/##/####" onload="trackQuestions();">
+												<xsp:attribute name="name">resultedTest[i].theTrackIsolate[33].obsValueDateDT_s[0].fromTime_s</xsp:attribute>
+												<xsp:attribute name="observation-name">resultedTest[i].theTrackIsolate[33].theObservationDT.cd</xsp:attribute>
+												<validation type="LAB362" mask="mm/dd/yyyy" name="Actual Reship Date"/>
+												<xsp:attribute name="observation-value">LAB362</xsp:attribute>
+												<value>
+													<xsp-request:get-attribute name="resultedTest[i].theTrackIsolate[33].theObservationDT.cd"/>
+												</value>
+											</element>
+											<element/>
+										</line>
+									</element>
+								</line>
+								<line>
+									<element name="resultedTest[i].theTrackIsolate[33].theObservationDT.observationUid" type="hidden"/>
+								</line>
+								<line>
+									<element name="resultedTest[i].theIsolateVO.theObservationDT.observationUid" type="hidden"/>
+								</line>
+							</element>
+						</line>
+					</element>
+				</line>
+			</group>
+			<group name="Administrative">
+				<line>
+					<element type="textarea" label="Comments">
+						<xsp:attribute name="name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS001</xsp:expr>].obsValueTxtDT_s[0].valueTxt</xsp:attribute>
+						<xsp:attribute name="observation-name">proxy.observationVO_s[<xsp:expr>InvestigationFieldConstants.NEDSS001</xsp:expr>].theObservationDT.cd</xsp:attribute>
+						<xsp:attribute name="observation-value">LAB214</xsp:attribute>
+						<note>General Comments</note>
+						<value>
+							<xsp-request:get-attribute name="LAB214"/>
+						</value>
+					</element>
+				</line>
+				<xsp:logic>if(retainCheckbox.equalsIgnoreCase("true")) {</xsp:logic>
+				<line>
+					<element type="line-separator"/>
+				</line>
+				<line>
+					<element type="checkbox">
+						<options>
+							<option name="retainPatientValue" label="Retain Patient for next entry " value="T" class="boldTenBlack">
+							</option>
+						</options>
+					</element>
+				</line>
+				<line>
+					<element type="checkbox">
+						<options>
+							<option name="retainReportingValue" label="Retain Reporting Facility for next entry" value="T" class="boldTenBlack">
+							</option>
+						</options>
+					</element>
+				</line>
+				<xsp:logic>}</xsp:logic>
+			</group>
+			<util:include-expr>
+				<util:expr>
+					<xsp:expr>previewXSP</xsp:expr>
+				</util:expr>
+			</util:include-expr>
+			<util:include-expr>
+				<util:expr>
+					<xsp:expr>extXSP</xsp:expr>
+				</util:expr>
+			</util:include-expr>
+			<xsp:logic>
+				ArrayList subformList = (ArrayList)request.getAttribute(NEDSSConstants.LABREPORT_LDF+"SubformList" );				
+				if(subformList != null) {
+			          for(Iterator anIter = subformList .iterator(); anIter.hasNext();)  {
+				            CustomSubformMetadataDT dt = (CustomSubformMetadataDT) anIter.next();			
+			</xsp:logic>
+			<group>
+				<xsp:attribute name="name">
+					<xsp:expr>dt.getSubformNm()</xsp:expr>
+				</xsp:attribute>
+				<line>
+					<element type="raw">
+						<span>
+							<util:include-expr>
+								<util:expr>
+									<xsp:expr>dt.getHtmlData()</xsp:expr>
+								</util:expr>
+							</util:include-expr>
+						</span>
+					</element>
+				</line>
+			</group>
+			<xsp:logic> }} </xsp:logic>
+			<util:include-expr>
+				<util:expr>
+					<xsp:expr>sfValidationXSP</xsp:expr>
+				</util:expr>
+			</util:include-expr>
+		</tab>
+	</content>
+</xsp:page>
+

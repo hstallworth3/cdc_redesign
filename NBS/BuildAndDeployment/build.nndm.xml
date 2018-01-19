@@ -1,0 +1,42 @@
+<!-- 
+	Note : NNDM build relies on property settings in build.properties.xml.
+	As such, nndm build targets should only be invoked from within the
+	context of NBS build.xml. 
+-->
+<project name="nedssproject.build.nndm" default="nndm.buildWar" basedir=".">
+	<!--import file="./build.properties.xml"/-->
+	<!-- Deploy NNDM Application-->
+	<target name="nndm.clean">
+		<delete includeEmptyDirs="true" quiet="true">
+			<fileset dir="${NNDM_APPLICATION_DIR}">
+				<include name="**"/>
+			</fileset>
+		</delete>
+	</target>
+	<target name="nndm.compile" depends="nndm.clean">
+		<javac srcdir="${nbs_development_dir}/source/nndm" destdir="${eclipse_build_dir}" debug="yes" fork="true" memoryInitialSize="312m" memoryMaximumSize="512m">
+			<classpath refid="class.path"/>
+		</javac>
+	</target>
+	<target name="nndm.jar" depends="nndm.compile" description="Generates nndm jar package">
+		<jar jarfile="${nndmWarDir}/WEB-INF/lib/nndm.jar">
+			<fileset dir="${eclipse_build_dir}">
+				<include name="nndm/*.class"/>
+			</fileset>
+		</jar>
+	</target>
+	<target name="nndm.buildWar" depends="nndm.jar" description="Copies the NNDM Application to Weblogic directory">
+		<copy todir="${Nedss_dir}/nndm/styles" overwrite="yes">
+			<fileset dir="${nbs_development_dir}/source/nndm/styles">
+				<include name="**"/>
+			</fileset>
+		</copy>
+		<copy todir="${nndmWarDir}/WEB-INF">
+			<fileset dir="${nbs_development_dir}/source/gov/cdc/nedss/webapp/nndm/WEB-INF">
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
+		<replace file="${properties_dir}/nndmConfig.properties" value="${NEDSS_DOMAIN_NAME}" token="@@@nedssdomain@@@"/>
+		<jar jarfile="${earDir}/${nndmWarFile}" basedir="${nndmWarDir}"/>
+	</target>
+</project>

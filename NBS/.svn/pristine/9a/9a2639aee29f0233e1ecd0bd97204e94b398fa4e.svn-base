@@ -1,0 +1,398 @@
+package com.nbs.tests;
+
+
+
+import java.awt.List;
+import java.awt.Robot;
+import java.io.File;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.*;
+
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.support.ui.Select;
+
+import com.rtts.utilities.Log;
+
+public class POCCreateWDS {
+  private WebDriver driver;
+  private String baseUrl;
+  private boolean acceptNextAlert = true;
+  private StringBuffer verificationErrors = new StringBuffer();
+  private Log log = new Log("WDS", "C:\\Selenium\\Logs\\"); 
+  
+	String action = "Mark as Reviewed";
+	String operator = "Equal";
+	String testResult = "HAEMOPHILUS INFLUENZAE";
+	String resultedTest1 ="MICROORGANISM IDENTIFIED";
+	String resultedTestCode="(T-57185)";
+	
+  @Before
+  public void setUp() throws Exception {
+    driver = new FirefoxDriver();
+	  
+	//IE
+		// System.setProperty("webdriver.ie.driver", "C:\\Selenium\\IEDriverServer_x64_2.52.0\\IEDriverServer.exe");
+	//	driver = new InternetExplorerDriver();
+		
+		//Chrome
+		// System.setProperty("webdriver.chrome.driver", "C:\\Selenium\\chromedriver_win32\\chromedriver.exe");
+		 //driver = new ChromeDriver();
+    baseUrl = "http://nedss-tstappsql:7001/";
+    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+    
+	
+    
+    
+  }
+
+  @Test
+  public void testPOCCreateWDS() throws Exception {
+	  NBSUtils utils = new NBSUtils();
+	  utils.setDriver(driver);
+	  utils.setLog(log);
+	  utils.logInNBS(baseUrl);
+	  
+	  
+	  log.write("Search Active WDS "+resultedTestCode+" "+resultedTest1+":"+testResult+" Action: "+action);
+	  //log.write("ELR "+obsID+ ": Import process failed, details shown below", "", false);
+	  boolean WDSexists=existAlgorithm();
+	  
+	  if(WDSexists==true){//True = create WDS
+		  log.write("The Algorithm doesn't exist");
+		  createWDS();
+	  }
+	  log.write("Running ELRImporter batch process");
+	  runBatchProcess();
+	  
+
+	  
+	  
+	 //TimeUnit.SECONDS.sleep(6);
+	  log.write("Searching ELR Importer in Activity Log and validate data");
+	  utils.readActivityLog(1);	
+	  
+
+				
+  }
+
+  public void createWDS() throws InterruptedException{
+
+	  //	driver.manage().window().maximize();
+	  
+	  	
+	  	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+	  	Calendar cal = Calendar.getInstance();
+	  	String time = dateFormat.format(cal.getTime()); //2014/08/06 16:00:22
+	  	
+	  	
+	  	String eventType = "Laboratory Report";
+	  	String nameAlgorithm = "SeleniumAlgorithm_"+time;
+
+	  	
+	  //  driver.get(baseUrl + "/nbs/login");
+	   // driver.findElement(By.id("id_UserName")).clear();
+	   // driver.findElement(By.id("id_UserName")).sendKeys("pks");
+	  //  driver.findElement(By.id("id_Submit_bottom_ToolbarButtonGraphic")).click();
+	  	
+	  	//TODO: Delete this one it's merge with Avinav test case for not coming back
+	   // driver.findElement(By.linkText("System Management")).click();
+	  //  driver.findElement(By.cssSelector("img[alt=\"Maximize\"]")).click();
+	  //  driver.findElement(By.linkText("Manage Workflow Decision Support")).click();
+	    
+	    
+	    driver.findElement(By.name("Submit")).click();
+	    driver.findElement(By.id("AlgoNm")).clear();
+	    driver.findElement(By.id("AlgoNm")).sendKeys(nameAlgorithm);	    
+	    driver.findElement(By.name("EVENT_TY_button")).click();
+	    driver.findElement(By.name("EVENT_TY_textbox")).sendKeys(eventType);
+	    
+	    driver.findElement(By.id("tabs0head1")).click();
+	    
+	    driver.findElement(By.name("ActionList_button")).click();
+	    driver.findElement(By.name("ActionList_textbox")).sendKeys(action);
+	    //Loose focus
+	   driver.findElement(By.id("ActionListL")).click();
+	    
+// Commented By Deepthi
+	/* 
+	   // driver.findElement(By.cssSelector("#ActionList > option[value=\"3\"]")).click();
+	    driver.findElement(By.name("resultOperatorList_button")).click();
+	    driver.findElement(By.name("resultOperatorList_textbox")).sendKeys(operator);
+	   // driver.findElement(By.cssSelector("option[value=\"=\"]")).click();
+	    driver.findElement(By.id("textResult_text")).clear();
+	    driver.findElement(By.id("textResult_text")).sendKeys(testResult);
+	    
+	    // ERROR: Caught exception [Error: Dom locators are not implemented yet!]
+	  */  
+	    
+	 // Commented By Deepthi    
+	   // Added by Deepthi
+	    
+	 //   driver.findElement(By.id("testSearchButton")).click();
+	  //  driver.findElement(By.id("labTest")).sendKeys(resultedTest);
+	  //  driver.findElement(By.id("Submit")).click();
+	    
+	    
+	     /*****************************************************************************************************************/
+	   
+	   
+	   
+	   Thread.sleep(4000);
+	    String currentWindow= driver.getWindowHandle();    // Storing parent window reference into a String Variable 
+	    System.out.println(" Check title " + driver.getTitle() + driver.getWindowHandles().size());
+	    for (String popUpHandle : driver.getWindowHandles()) {  
+	        if(popUpHandle.equalsIgnoreCase(currentWindow))
+	            continue;
+	        driver.switchTo().window(popUpHandle);
+	        String sTitle = driver.getTitle();
+	   
+	   
+	   System.out.println(sTitle);
+	   
+	    }
+	   String parentWindow = driver.getWindowHandle(); 
+	     driver.findElement(By.id("testSearchButton")).click();
+	     //String currentWindow=driver.getWindowHandle();    
+	 System.out.println(driver.getTitle());
+	   //get window handlers as list
+	    ArrayList<String> browserWindows = new ArrayList<String> (driver.getWindowHandles());
+
+	     //switch to new window
+	     driver.switchTo().window(browserWindows.get(1));
+	     System.out.println(driver.getTitle());
+	     
+	     System.out.println(" Check title " + driver.getTitle());
+	     resultedTest(resultedTest1);
+	   /* Set<String> handles =  driver.getWindowHandles();
+	       for(String windowHandle  : handles)
+	           {
+	           if(!windowHandle.equals(parentWindow))
+	              {
+	        	   driver.switchTo().window(windowHandle);
+	        	   resultedTest(resultedTest);
+	        	   
+	              }
+	           } */
+	     //driver.close();
+	     driver.switchTo().window(browserWindows.get(0));
+        // driver.close(); //closing child window
+        // driver.switchTo().window(parentWindow); //cntrl to parent window
+
+	     /*****************************************************************************************************************/
+         
+         
+	     
+         
+	     driver.findElement(By.cssSelector("#AddButtonToggleIdELRAdvancedSubSection > td > input[type=\"button\"]")).click();
+	     driver.findElement(By.id("Submit")).click();
+ 
+	     //Activate algorithm
+	     driver.findElement(By.id("submitB")).click();
+	     //assertEquals("You have indicated that you would like to activate the Testing1_2 algorithm. Once activated, this algorithm will be applied as a part of Workflow Decision Support.  Select OK to continue or Cancel to return to View Algorithm.", closeAlertAndGetItsText());
+	     Alert alert = driver.switchTo().alert();
+	     alert.accept();
+	     try{
+	     TimeUnit.SECONDS.sleep(1);
+	     }catch(Exception e){}
+	     try{
+	     log.write("The WDS: "+nameAlgorithm+" has been created","", true);
+	     }catch(Exception e){}
+	     log.takeSnapshot(driver);
+	     driver.findElement(By.id("manageLink")).click();
+	     driver.findElement(By.id("manageLink")).click();
+  }
+  
+  public void resultedTest(String resultedTestValue){
+	  
+	    // Perform the actions on new window
+	    driver.findElement(By.id("labTest")).clear();
+	    System.out.println("Able to identify child window");
+	    driver.findElement(By.id("labTest")).sendKeys(resultedTest1);
+	    driver.findElement(By.id("Submit")).click();
+	    driver.findElement(By.xpath("(//a[contains(text(),'Select')])[1]")).click();
+	    //driver.findElement(By.cssSelector("#AddButtonToggleIdELRAdvancedSubSection > td > input[type=\"button\"]")).click();
+	    
+	    
+  }
+  public void runBatchProcess(){
+	  try{
+	  //Runtime.getRuntime().exec("sh -c cd C:\\wildfly-8.2.0.Final\\server\\nedssdomain\\Nedss\\BatchFiles\\ELRImporter.bat") ;
+	  final Process process = Runtime.getRuntime().exec("cmd /c cmd.exe /K \"cd C:\\wildfly-8.2.0.Final\\nedssdomain\\Nedss\\BatchFiles\\ && ELRImporter.bat && exit\"");
+	  
+	  final int exitVal = process.waitFor();
+	  
+	  }catch(InterruptedException e){
+		  
+		  System.out.println("Error running ELRImporter.bat");
+	  
+	  }catch(IOException e){
+		  
+		  System.out.println("Error running ELRImporter.bat");
+	  }
+	  
+  }
+  @After
+  public void tearDown() throws Exception {
+    driver.quit();
+    log.close();
+    String verificationErrorString = verificationErrors.toString();
+    if (!"".equals(verificationErrorString)) {
+      fail(verificationErrorString);
+    }
+  }
+
+  private boolean isElementPresent(By by) {
+    try {
+      driver.findElement(by);
+      return true;
+    } catch (NoSuchElementException e) {
+      return false;
+    }
+  }
+
+  private boolean isAlertPresent() {
+    try {
+      driver.switchTo().alert();
+      return true;
+    } catch (NoAlertPresentException e) {
+      return false;
+    }
+  }
+
+  private String closeAlertAndGetItsText() {
+    try {
+      Alert alert = driver.switchTo().alert();
+      String alertText = alert.getText();
+      if (acceptNextAlert) {
+        alert.accept();
+      } else {
+        alert.dismiss();
+      }
+      return alertText;
+    } finally {
+      acceptNextAlert = true;
+    }
+  }
+  
+  /**
+   * existAlgorithm(): returns false is the algorithm exists and true if the algorithm doesn't exist
+   * @param rows
+   * @return
+   */
+  
+  public boolean existAlgorithm() throws Exception {
+		 /* driver.get(baseUrl + "/nbs/login");
+		  driver.findElement(By.id("id_UserName")).clear();
+		  driver.findElement(By.id("id_UserName")).sendKeys("pks");
+		  driver.findElement(By.id("id_Submit_top_ToolbarButtonGraphic")).click();
+		  */
+	  
+	 // boolean acceptNextAlert = true;
+	 // StringBuffer verificationErrors = new StringBuffer();
+	  String numOfResults, str;
+	  int len,rows,i;
+	  char ch;
+	//  ArrayList<String> algName = new ArrayList<>();
+	  boolean createAlg = true;
+	  
+	  
+		  driver.findElement(By.linkText("System Management")).click();
+		  driver.findElement(By.cssSelector("img[alt=\"Maximize\"]")).click();
+		  driver.findElement(By.linkText("Manage Workflow Decision Support")).click();
+		  driver.findElement(By.id("queueIcon")).click();
+		  driver.findElement(By.cssSelector("input.selectAll")).click();
+		  driver.findElement(By.xpath("(//input[@name='answerArray(EVENTTYPE)'])[2]")).click();
+		  driver.findElement(By.xpath("(//input[@id='b1'])[2]")).click();
+		  driver.findElement(By.xpath("(//img[@id='queueIcon'])[4]")).click();
+		  driver.findElement(By.xpath("(//input[@type='checkbox'])[4]")).click();
+		  driver.findElement(By.xpath("(//input[@name='answerArray(ACTION)'])[3]")).click();
+		  driver.findElement(By.xpath("(//input[@id='b1'])[4]")).click();
+		  driver.findElement(By.xpath("(//img[@id='queueIcon'])[6]")).click();
+		  driver.findElement(By.xpath("(//input[@type='checkbox'])[15]")).click();
+		  driver.findElement(By.name("answerArray(STATUS)")).click();
+		  driver.findElement(By.xpath("(//input[@id='b1'])[8]")).click();
+		  	  
+		  try
+		  {
+			  numOfResults = driver.findElement(By.xpath("//fieldset[@id='result']/table/tbody/tr/td/span[4]/b")).getText();
+			  len = numOfResults.length();
+			  ch = numOfResults.charAt(len-2);
+			  if (Character.isDigit(ch))
+				  str= numOfResults.substring(len-2);
+			  else
+				  str= numOfResults.substring(len-1);
+			  
+			  rows = Integer.parseInt(str);
+			  System.out.println("number of rows: " + rows);
+			  createAlg = findAlgorithm(rows); //return true or false based on which Fatima will create or not create an algorithm
+			  	
+			  
+		   }catch (Exception e)//if there are no active algorithms in the system, exception is thrown and caught here
+			  {
+				  if (createAlg == true)
+					  System.out.println("no active algorithms exist, creating new one. This is coming from catch statement");
+			  }
+		  
+		  return createAlg;
+		    }  
+
+  
+  /**
+   * findAlgorithm(): returns false is the algorithm exists and true if the algorithm doesn't exist
+   * @param rows
+   * @return
+   */
+
+	  private boolean findAlgorithm(int rows)
+	  {
+		  String testResult;
+		  String[] testName = new String[rows];
+		  int i;
+		  boolean createAlg = true;
+		  for (i=0;i<rows;i++)
+		    {
+		    	testName[i] = driver.findElement(By.xpath("//table[@id='parent']/tbody/tr["+(i+1)+"]/td[5]")).getText();
+		    	
+		    	if(testName[i].contains("T-57185"))
+		    		{
+		    			driver.findElement(By.xpath("(//img[@title='View'])["+(i+1)+"]")).click();
+		    			driver.findElement(By.id("tabs0head1")).click();
+		    			testResult = driver.findElement(By.xpath("//table[@id='ElrIdAdvancedSubSection']/tbody/tr/td/table/tbody/tr/td[4]")).getText();
+		    				if (testResult.equalsIgnoreCase("HAEMOPHILUS INFLUENZAE")){
+		    					 createAlg=false;
+		    					 log.write("The Algorithm already exists");
+		    					 log.takeSnapshot(driver);
+		    				}
+		    		 driver.findElement(By.id("manageLink")).click();
+		    		}
+		    }				
+	  	
+		  	if (createAlg == true)
+		  	{
+		  		System.out.println("algorithm doesnot exist, creating new one");
+		  		return true;
+		  	}
+		  	else
+		  	{
+		  		System.out.println("algorithm already exists, new one will not be created");
+			    return false;			
+		  	}    			
+		  
+	  }
+	  
+	  
+}

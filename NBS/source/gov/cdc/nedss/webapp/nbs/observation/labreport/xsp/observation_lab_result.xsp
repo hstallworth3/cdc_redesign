@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp" xmlns:util="http://apache.org/xsp/util/2.0" xmlns:srt-codes="http://www.cdc.gov/nedss/GetSRTCodes/1.0" xmlns:session="http://apache.org/xsp/session/2.0" xmlns:xsp-response="http://apache.org/xsp/response/2.0" xmlns:xsp-request="http://apache.org/xsp/request/2.0">
+	<xsp:structure>
+		<xsp:include>java.util.*</xsp:include>
+	
+		<xsp:include>gov.cdc.nedss.util.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.systemservice.nbssecurity.*</xsp:include>
+		<xsp:include>java.text.SimpleDateFormat</xsp:include>
+		<xsp:include>java.sql.Timestamp</xsp:include>
+	</xsp:structure>
+	<content>
+		<xsp:attribute name="form">
+			<xsp-request:get-attribute name="formHref"/>
+		</xsp:attribute>
+		<xsp:logic><![CDATA[    
+			int i = 0;
+			String ELR_IND = "N";
+			if(request.getAttribute("ElectronicInd") != null) {
+				ELR_IND = request.getAttribute("ElectronicInd").toString();
+			}
+			]]></xsp:logic>
+		<javascript-files>
+			<import>PopUpBatchEntry.js</import>
+			<import>EntitySearch.js</import>
+			<import>ObservationSpecific.js</import>
+		</javascript-files>
+		<xsp:logic>
+			String sCurrentTask= request.getParameter("CurrentTask");
+			////##!! System.out.println("Observation Lab Result - Inside xsp: sCurrentTask= " + sCurrentTask);			
+		</xsp:logic>
+		<button-bar>
+			<!--left>
+				<label>POSTED</label>
+				<javascript-action>PopupCreateHiddenInputsForStruts();document.forms['nedssForm'].action='/nedss/posted'; document.forms['nedssForm'].submit();</javascript-action>
+			</left-->
+			<!-- LOGIC TO DISPLAY SUBMIT BUTTON -->
+			<xsp:logic>
+				if (sCurrentTask.startsWith("AddObservation") || sCurrentTask.startsWith("EditObservation")) {
+		</xsp:logic>
+			<right>
+				<label>Submit</label>
+				<javascript-action>submitForm();</javascript-action>
+			</right>
+			<xsp:logic> }  </xsp:logic>
+			<!-- LOGIC TO DISPLAY SUBMIT AND CREATE INVESTIGATION BUTTON -->
+			<xsp:logic>
+			if(sCurrentTask.equals("AddObservationLab2")) {
+		</xsp:logic>
+			<right>
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="addInvPermission"/>
+				</xsp:attribute>
+				<label>Submit and Create Investigation</label>
+				<javascript-action>document.forms['nedssForm'].action='<xsp:expr>(request.getAttribute("SubmitAndCreateInvestigationHref")== null?"null":request.getAttribute("SubmitAndCreateInvestigationHref"))</xsp:expr>';submitForm();</javascript-action>
+			</right>
+			<xsp:logic> } </xsp:logic>
+			<!-- LOGIC TO DISPLAY CANCEL BUTTON -->
+			<xsp:logic>
+			if (sCurrentTask.startsWith("AddObservation") || sCurrentTask.startsWith("EditObservation")) {
+		</xsp:logic>
+			<right>
+				<label>Cancel</label>
+				<javascript-action>cancelForm('<xsp-request:get-attribute name="cancelButtonHref"/>');</javascript-action>
+			</right>
+			<xsp:logic> }  </xsp:logic>
+			<!-- LOGIC FOR MARK AS REVIEWED BUTTON-->
+			<xsp:logic><![CDATA[			
+				if (sCurrentTask.startsWith("ViewObservation")) {
+				if(sCurrentTask.equals("ViewObservationLab2") || sCurrentTask.equals("ViewObservationLab3") || sCurrentTask.equals("ViewObservationLab4") || sCurrentTask.equals("ViewObservationLab6") || sCurrentTask.equals("ViewObservationLab8")) {				
+			]]></xsp:logic>
+			<left>
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="reviewPermission"/>
+				</xsp:attribute>
+				<label>Mark as Reviewed</label>
+				<javascript-action>getPage(&apos;<xsp-request:get-attribute name="MarkReviewHref"/>&amp;observationUID=<xsp-request:get-attribute name="observationUID"/>&apos;);</javascript-action>
+			</left>
+			<xsp:logic> }}</xsp:logic>
+			<!-- LOGIC FOR Transfer  Ownership BUTTON-->
+			<xsp:logic>	if(sCurrentTask.startsWith("ViewObservation")) { </xsp:logic>
+			<left>
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="transferPermission"/>
+				</xsp:attribute>
+				<label>Transfer Ownership</label>
+				<javascript-action>getPage('<xsp-request:get-attribute name="TransferOwnershipHref"/>');</javascript-action>
+			</left>
+			<xsp:logic> } </xsp:logic>
+			<!-- LOGIC FOR EDIT Button-->
+			<xsp:logic><![CDATA[			
+				if (sCurrentTask.startsWith("ViewObservation")) {
+				if(!sCurrentTask.equals("ViewObservationLab9")) {				
+			]]></xsp:logic>
+			<right>
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="editPermission"/>
+				</xsp:attribute>
+				<label>Edit</label>
+				<javascript-action>getPage('<xsp-request:get-attribute name="editButtonHref"/>&amp;observationUID=<xsp-request:get-attribute name="observationUID"/>');</javascript-action>
+			</right>
+			<xsp:logic> }} </xsp:logic>
+			<!-- LOGIC FOR DELETE Button-->
+			<xsp:logic><![CDATA[			
+				if (sCurrentTask.startsWith("ViewObservation")) {
+				if(sCurrentTask.equals("ViewObservationLab2") || sCurrentTask.equals("ViewObservationLab3") || sCurrentTask.equals("ViewObservationLab4") || sCurrentTask.equals("ViewObservationLab6") || sCurrentTask.equals("ViewObservationLab8")) {
+			]]></xsp:logic>
+			<right>
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="deletePermission"/>
+				</xsp:attribute>
+				<label>Delete</label>
+				<javascript-action>promptForm('<xsp-request:get-attribute name="deleteButtonHref"/>&amp;observationUID=<xsp-request:get-attribute name="observationUID"/>','Are you sure you want to delete this record?');</javascript-action>
+			</right>
+			<xsp:logic> }} </xsp:logic>
+			<xsp:logic> 
+			if(sCurrentTask.equals("ViewObservationLab2") || sCurrentTask.equals("ViewObservationLab3")) {
+			</xsp:logic>
+			<right>
+				<xsp:attribute name="authorized">
+					<xsp-request:get-attribute name="addInvPermission"/>
+				</xsp:attribute>
+				<label>Create&lt;br/&gt;Investigation</label>
+				<javascript-action>getPage(&apos;<xsp-request:get-attribute name="InvestigationHref"/>&apos;);</javascript-action>
+			</right>
+			<xsp:logic>}</xsp:logic>
+		</button-bar>
+		<topgroup>
+			<line>
+				<element name="patientName" type="plain-text" label="Name">
+					<value>
+						<xsp-request:get-attribute name="patientName"/>
+					</value>
+				</element>
+				<element name="dateOfBirth" type="plain-text" label="DOB">
+					<value>
+						<xsp-request:get-attribute name="patientDateOfBirth"/>
+					</value>
+				</element>
+				<element name="patientCurrentSex" type="select" label="Current Sex">
+					<readonly/>
+					<srt-options-string>
+						<srt-codes:getCodedValues>
+							<type>SEX</type>
+						</srt-codes:getCodedValues>
+					</srt-options-string>
+					<value>
+						<xsp-request:get-attribute name="patientCurrentSex"/>
+					</value>
+				</element>
+			</line>
+			<xsp:logic>if(ELR_IND.equals("Y")) { </xsp:logic>
+			<line>
+				<element type="raw" align="center">
+					<span>
+						<b>
+							<font color="brown">This is an Electronically Submitted Lab Result</font>
+						</b>
+					</span>
+				</element>
+			</line>
+			<xsp:logic>} </xsp:logic>
+		</topgroup>
+		<tab name="Results">
+			<group>
+				<line>
+					<element name="Result" type="popup-batch-entry">
+						<xsp:logic>if(ELR_IND.equals("Y"))
+						<xsp:attribute name="options">nodelete</xsp:attribute>
+						</xsp:logic>
+						<value>
+							<xsp-request:get-attribute name="LabResultsAndSusceptibilities"/>
+						</value>
+						<line>
+							<element type="line-separator" title="Performing Lab"/>
+						</line>
+						<!--xsp:logic>if(sCurrentTask.startsWith("AddObservation")) { </xsp:logic-->
+						<line>
+							<element type="entity-search" name="resultedTest[i].thePerformingLabVO.theOrganizationDT.organizationUid" entity-type="organization">
+								<xsp:logic>
+											
+											if(ELR_IND.equals("Y")) { </xsp:logic>
+								<readonly/>
+								<xsp:logic> } </xsp:logic>
+								<hidden-values>
+									<xsp-request:get-attribute name="resultedTest[i].thePerformingLabVO.theOrganizationDT.uid-values"/>
+								</hidden-values>
+								<line>
+									<element name="entity.name" type="text" label="Name">
+										<value>
+											<!--xsp-request:get-attribute name="performingLabSourceName"/-->
+										</value>
+									</element>
+								</line>
+								<line>
+									<element name="entity.localID" type="text" label="Organization ID">
+										<value>
+											<!--xsp-request:get-attribute name="performingLabLocalID"/-->
+										</value>
+									</element>
+								</line>
+								<line>
+									<element type="text" label="Phone Number" name="entity.phoneNbrTxt">
+										<value>
+											<!--xsp-request:get-attribute name="performingLabPhoneNumber"/-->
+										</value>
+									</element>
+									<element type="text" label="Ext" name="entity.extensionTxt">
+										<value>
+											<!--xsp-request:get-attribute name="performingLabExtension"/-->
+										</value>
+									</element>
+								</line>
+							</element>
+						</line>
+						<!--xsp:logic> } else {</xsp:logic>	
+									<line>
+										<element name="resultedTest[i].thePerformingLabVO.theOrganizationDT.localId" type="text"  label="Organization ID">
+										</element>
+									</line>	
+									<line>
+										<element name="resultedTest[i].thePerformingLabVO.organizationNameDT_s[0].nmTxt" type="text" label="Name">
+										</element>
+									</line>
+									<line>
+										<element name="resultedTest[i].thePerformingLabVO.entityLocatorParticipationDT_s[0].theTeleLocatorDT_s.phoneNbrTxt" type="text" label="Telephone" mask="(###)###-####">					
+										</element>
+										<element name="resultedTest[i].thePerformingLabVO.entityLocatorParticipationDT_s[0].theTeleLocatorDT_s.extensionTxt" type="text" label="Ext" size="5">
+										</element>					
+									</line>								
+								  <xsp:logic> } </xsp:logic-->
+						<line>
+							<element type="line-separator" title="Test Results"/>
+						</line>
+						<line>
+							<xsp:logic>if(ELR_IND != null &amp;&amp; ELR_IND.equals("Y")) { </xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.theObservationDT.cd" type="text" label="Resulted Test Name">
+								<readonly/>
+								<header>Resulted Test</header>
+							</element>
+							<xsp:logic> } else{</xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.theObservationDT.cd" label="Resulted Test Name">
+								<xsp:attribute name="type">
+									<xsp-request:get-attribute name="observationDTType"/>
+								</xsp:attribute>
+								<xsp:attribute name="default">
+									<xsp-request:get-attribute name="testName"/>
+								</xsp:attribute>
+								<validation type="required" name="Resulted Test Name"/>
+								<srt-options-string>
+									<srt-codes:getLabTestCodes/>
+								</srt-options-string>
+								<header>Resulted Test</header>
+							</element>
+							<xsp:logic> } </xsp:logic>
+						</line>
+						<line>
+							<xsp:logic>if(ELR_IND != null &amp;&amp; ELR_IND.equals("Y")) { </xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.theObservationDT.activityToTime_s" type="text" label="Resulted Date" size="10" mask="##/##/####">
+								<readonly/>
+								<header>Resulted Date</header>
+								<validation type="date" name="Resulted Date" mask="mm/dd/yyyy"/>
+							</element>
+							<xsp:logic> } else{</xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.theObservationDT.activityToTime_s" type="text" label="Resulted Date" size="10" mask="##/##/####">
+								<header>Resulted Date</header>
+								<validation type="date" name="Resulted Date" mask="mm/dd/yyyy"/>
+							</element>
+							<xsp:logic> } </xsp:logic>
+						</line>
+						<line>
+							<element name="resultedTest[i].theResultedTestVO.observationInterpDT_s[0].interpretationCd" type="select" label="Qualitative Results">
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>LAB_RSLT_QUAL</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+							</element>
+						</line>
+						<line>
+							<xsp:logic>if(ELR_IND != null &amp;&amp; ELR_IND.equals("Y")) { </xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.obsValueCodedDT_s[0].LabResultDesc" type="text" label="Lab Result Description" size="20">
+								<readonly/>
+								<header>lab desc</header>
+							</element>
+							<xsp:logic> } else{</xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.obsValueTxtDT_s[0].valueTxt" type="text" label="Lab Result Description" size="20">
+								<header>lab desc</header>
+							</element>
+							<xsp:logic> } </xsp:logic>
+						</line>
+						<line>
+							<xsp:logic>if(ELR_IND != null &amp;&amp; ELR_IND.equals("Y")) { </xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].comparatorCd1" type="select" label="Quantitative Results" default="=">
+								<readonly/>
+								<srt-options-string>
+									<srt-codes:getCodesForDesc>
+										<type>OV_NUM_CMP</type>
+									</srt-codes:getCodesForDesc>
+								</srt-options-string>
+								<partner name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].numericValue1" type="text" size="3">
+									<readonly/>
+									<validation type="reg-expr" name="NumericValue1" requiredPartner="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].numericUnitCd">
+										<pattern><![CDATA[^(((\d+)?(\.{1}\d+)?))?$]]></pattern>
+									</validation>
+								</partner>
+								<partner name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].numericUnitCd" type="text">
+									<readonly/>
+								</partner>
+								<partner name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].separatorCd" type="select">
+									<readonly/>
+									<srt-options-string>
+										<srt-codes:getCodesForDesc>
+											<type>OV_NUM_SEP</type>
+										</srt-codes:getCodesForDesc>
+									</srt-options-string>
+								</partner>
+								<partner name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].numericValue2" type="text" size="3">
+									<readonly/>
+									<validation type="reg-expr" name="Numeric Value 2">
+										<pattern><![CDATA[^(((\d+)?(\.{1}\d+)?))?$]]></pattern>
+									</validation>
+								</partner>
+							</element>
+							<xsp:logic> } else{</xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].comparatorCd1" type="select" label="Quantitative Results" default="=">
+								<srt-options-string>
+									<srt-codes:getCodesForDesc>
+										<type>OV_NUM_CMP</type>
+									</srt-codes:getCodesForDesc>
+								</srt-options-string>
+								<partner name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].numericValue1" type="text" size="3">
+									<validation type="reg-expr" name="NumericValue1" requiredPartner="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].numericUnitCd">
+										<pattern><![CDATA[^(((\d+)?(\.{1}\d+)?))?$]]></pattern>
+									</validation>
+								</partner>
+								<xsp:logic>if(ELR_IND != null &amp;&amp; ELR_IND.equals("Y")) { </xsp:logic>
+								<partner name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].numericUnitCd" type="text">		
+														</partner>
+								<xsp:logic>}else{</xsp:logic>
+								<partner name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].numericUnitCd" type="select">
+									<srt-options-string>
+										<srt-codes:getCodesForDesc>
+											<type>UNIT_ISO</type>
+										</srt-codes:getCodesForDesc>
+									</srt-options-string>
+								</partner>
+								<xsp:logic>}</xsp:logic>
+								<partner name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].separatorCd" type="select">
+									<srt-options-string>
+										<srt-codes:getCodesForDesc>
+											<type>OV_NUM_SEP</type>
+										</srt-codes:getCodesForDesc>
+									</srt-options-string>
+								</partner>
+								<partner name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].numericValue2" type="text" size="3">
+									<validation type="reg-expr" name="Numeric Value 2">
+										<pattern><![CDATA[^(((\d+)?(\.{1}\d+)?))?$]]></pattern>
+									</validation>
+								</partner>
+							</element>
+							<xsp:logic> } </xsp:logic>
+						</line>
+						<line>
+							<xsp:logic>if(ELR_IND != null &amp;&amp; ELR_IND.equals("Y")) { </xsp:logic>
+							<element label="Reference Range" type="">
+												</element>
+							<element name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].lowRange" type="text" label="From" size="10">
+								<readonly/>
+								<validation type="reg-expr" name="Reference Range: From">
+									<pattern><![CDATA[^((\d+(\.{1}\d+)?))?$]]></pattern>
+								</validation>
+							</element>
+							<element name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].highRange" type="text" label="To" size="10">
+								<readonly/>
+								<validation type="reg-expr" name="Reference Range: To">
+									<pattern><![CDATA[^((\d+(\.{1}\d+)?))?$]]></pattern>
+								</validation>
+							</element>
+							<element type=""/>
+							<xsp:logic>}else{</xsp:logic>
+							<element label="Reference Range" type="">
+												</element>
+							<element name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].lowRange" type="text" label="From" size="10">
+								<validation type="reg-expr" name="Reference Range: From">
+									<pattern><![CDATA[^((\d+(\.{1}\d+)?))?$]]></pattern>
+								</validation>
+							</element>
+							<element name="resultedTest[i].theResultedTestVO.obsValueNumericDT_s[0].highRange" type="text" label="To" size="10">
+								<validation type="reg-expr" name="Reference Range: To">
+									<pattern><![CDATA[^((\d+(\.{1}\d+)?))?$]]></pattern>
+								</validation>
+							</element>
+							<element type=""/>
+							<xsp:logic>}</xsp:logic>
+						</line>
+						<line>
+							<xsp:logic>if(ELR_IND != null &amp;&amp; ELR_IND.equals("Y")) { </xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.observationInterpDT_s[1].interpretationCd" type="select" label="Interpretation">
+								<readonly/>
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>OBS_INTRP</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+							</element>
+							<xsp:logic> } else{</xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.observationInterpDT_s[1].interpretationCd" type="select" label="Interpretation">
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>OBS_INTRP</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+							</element>
+							<xsp:logic> } </xsp:logic>
+						</line>
+						<line>
+							<xsp:logic>if(ELR_IND != null &amp;&amp; ELR_IND.equals("Y")) { </xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.theObservationDT.methodCd" type="select" label="Test Method">
+								<readonly/>
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>OBS_METH</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+							</element>
+							<xsp:logic> } else{</xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.theObservationDT.methodCd" type="select" label="Test Method">
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>OBS_METH</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+							</element>
+							<xsp:logic> } </xsp:logic>
+						</line>
+						<line>
+							<xsp:logic>if(ELR_IND != null &amp;&amp; ELR_IND.equals("Y")) { </xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.obsValueTxtDT_s[1].valueTxt" type="textarea" label="Notes" size="10">
+								<readonly/>
+							</element>
+							<xsp:logic> } else{</xsp:logic>
+							<element name="resultedTest[i].theResultedTestVO.obsValueTxtDT_s[1].valueTxt" type="textarea" label="Notes" size="10">
+									</element>
+							<xsp:logic> } </xsp:logic>
+						</line>
+						<line>
+							<element name="resultedTest[i].theResultedTestVO.theObservationDT.statusCd" type="hidden"/>
+						</line>
+						<line>
+							<element name="resultedTest[i].theResultedTestVO.theObservationDT.observationUid" type="hidden"/>
+						</line>
+						<!--	elements from the susceptibility that show up in this history box	-->
+						<line>
+							<element name="resultedTest[i].susceptibility[j].theObservationDT.cd" type="select" label="Drug Name" hide="true">
+								<header>Drug Name</header>
+								<srt-options-string>
+									<srt-codes:getSuspTestCodes/>
+								</srt-options-string>
+							</element>
+						</line>
+						<line>
+							<element name="resultedTest[i].susceptibility[j].theObservationDT.activityToTime_s" type="text" label="Resulted Date" size="10" hide="true">
+								<header>Resulted Date</header>
+							</element>
+						</line>
+						<line>
+							<element name="resultedTest[i].susceptibility[j].obsValueTxtDT_s[0].valueTxt" type="text" label="Text Results" hide="true">
+								<header>Text Results</header>
+							</element>
+						</line>
+					</element>
+					<element name="ELR" type="hidden">
+						<value>
+							<xsp:expr>ELR_IND</xsp:expr>
+						</value>
+					</element>
+				</line>
+			</group>
+		</tab>
+	</content>
+</xsp:page>

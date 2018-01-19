@@ -1,0 +1,25 @@
+package com.nbs.tests;
+
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+public class Search_Patient_Basic {
+	
+	
+	File file = new File ("D:/Dev/ReadData/src/datafile.properties");
+	
+	
+	@Before 
+	public void ReadPropertyFile() throws Exception {
+		//System.setProperty("webdriver.ie.driver", "C:\\Selenium\\IEDriver\\IEDriverServer.exe");
+		//		driver = new InternetExplorerDriver(); 
+	    driver = new FirefoxDriver();
+	    baseUrl = "http://nedss-tstappsql:7001/";
+	    //baseUrl = "http://localhost:7001/";
+	    
+	    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+	  }
+	
+
+}

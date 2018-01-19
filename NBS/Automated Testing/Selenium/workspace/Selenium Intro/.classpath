@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="src">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="Selenium Jars/poi-3.12-20150511.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/poi-ooxml-3.12-20150511.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/poi-ooxml-schemas-3.12-20150511.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/ooxml-lib/xmlbeans-2.6.0.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/apache-mime4j-0.6.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/cglib-nodep-2.1_3.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/commons-exec-1.3.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/gson-2.3.1.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/hamcrest-library-1.3.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jna-4.1.0.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jna-platform-4.1.0.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/netty-3.5.7.Final.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/phantomjsdriver-1.2.1.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/bsh-2.0b4.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/guava-19.0.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/httpclient-4.5.1.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/httpcore-4.4.3.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/httpmime-4.5.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jcommander-1.48.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/junit-4.12.jar" sourcepath="Selenium Jars/libs/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/testng-6.9.9.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/sqljdbc4.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/commons-collections-3.2.2.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/commons-el-1.0.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/commons-lang3-3.4.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/cssparser-0.9.16.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/htmlunit-2.18.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/htmlunit-core-js-2.17.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jasper-compiler-5.5.15.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jasper-compiler-jdt-5.5.15.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jasper-runtime-5.5.15.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/javax.servlet-api-3.1.0.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jetty-continuation-9.2.13.v20150730.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jetty-http-9.2.13.v20150730.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jetty-io-9.2.13.v20150730.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jetty-jmx-9.2.13.v20150730.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jetty-security-9.2.13.v20150730.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jetty-server-9.2.13.v20150730.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jetty-servlet-9.2.13.v20150730.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jetty-servlets-9.2.13.v20150730.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jetty-util-9.2.13.v20150730.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/jsp-api-2.0.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/nekohtml-1.9.22.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/sac-1.3.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/serializer-2.7.2.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/websocket-api-9.2.13.v20150730.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/websocket-client-9.2.13.v20150730.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/websocket-common-9.2.13.v20150730.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/xalan-2.7.2.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/xercesImpl-2.11.0.jar"/>
+	<classpathentry kind="lib" path="Selenium Jars/libs/xml-apis-1.4.01.jar"/>
+	<classpathentry kind="lib" path="C:/Selenium/workspace/Selenium Intro/Selenium Jars/selenium-java-2.53.1.jar"/>
+	<classpathentry kind="lib" path="C:/Selenium/workspace/Selenium Intro/Selenium Jars/selenium-java-2.53.1-srcs.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

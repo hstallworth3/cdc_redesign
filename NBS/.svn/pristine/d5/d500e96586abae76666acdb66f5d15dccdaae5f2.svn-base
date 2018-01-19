@@ -1,0 +1,7 @@
+
+URL = http://nedss-tstappsql:7001/
+username = pks
+
+browser = IE
+#browser = Firefox
+#browser = Chrome

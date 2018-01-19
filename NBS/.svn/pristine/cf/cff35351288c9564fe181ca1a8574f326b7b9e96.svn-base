@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ===================================================================== -->
+<!--                                                                       -->
+<!--  JBoss Server Configuration                                           -->
+<!--                                                                       -->
+<!-- ===================================================================== -->
+<!-- $Id: mssql-ds.xml,v 1.3 2004/09/15 14:37:40 loubyansky Exp $ -->
+<!-- ======================================================================-->
+<!-- New ConnectionManager setup for Microsoft SQL Server 2000  driver     -->
+<!-- You may download the latest Microsoft JDBC driver from *Microsoft*    -->
+<!-- http://msdn.microsoft.com/downloads/default.asp?url=/downloads/sample.asp?url=/MSDN-FILES/027/001/779/msdncompositedoc.xml&frame=true -->
+<!-- ===================================================================== -->
+<datasources>
+<!--
+	<local-tx-datasource>
+		<jndi-name>MSSQLDS</jndi-name>
+
+		<connection-url>jdbc:sqlserver://cdcdevdb:1433;DatabaseName=nbs_odse</connection-url>
+		<driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+		<user-name>nbs_ods</user-name>
+		<password>ods</password>
+		     
+		<metadata>
+			<type-mapping>MS SQLSERVER2000</type-mapping>
+		</metadata>
+	</local-tx-datasource>
+-->	
+	
+	<local-tx-datasource>
+		<jndi-name>NedssDataSource</jndi-name>
+		<connection-url>jdbc:sqlserver://CDCDEVDB1:1433;SelectMethod=cursor;DatabaseName=nbs_odse</connection-url>
+		<driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+		<user-name>nbs_ods</user-name>
+		<password>ods</password>
+		<!-- corresponding type-mapping in the standardjbosscmp-jdbc.xml (optional) -->
+		<metadata>
+			<type-mapping>MS SQLSERVER2000</type-mapping>
+		</metadata>
+		    <!--pooling parameters-->
+		    <min-pool-size>5</min-pool-size>
+		    <max-pool-size>100</max-pool-size>
+		    <blocking-timeout-millis>5000</blocking-timeout-millis>
+		    <idle-timeout-minutes>15</idle-timeout-minutes>
+		    <prepared-statement-cache-size>300</prepared-statement-cache-size>
+		   
+	</local-tx-datasource>
+	<local-tx-datasource>
+		<jndi-name>MsgOutDataSource</jndi-name>
+		<connection-url>jdbc:sqlserver://CDCDEVDB1:1433;SelectMethod=cursor;DatabaseName=nbs_msgoute</connection-url>
+		<driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+		<user-name>nbs_ods</user-name>
+		<password>ods</password>
+		<!-- sql to call when connection is created
+        <new-connection-sql>some arbitrary sql</new-connection-sql>
+        -->
+		<!-- sql to call on an existing pooled connection when it is obtained from pool 
+        <check-valid-connection-sql>some arbitrary sql</check-valid-connection-sql>
+        -->
+		<!-- corresponding type-mapping in the standardjbosscmp-jdbc.xml (optional) -->
+		<metadata>
+			<type-mapping>MS SQLSERVER2000</type-mapping>
+		</metadata>
+		<min-pool-size>5</min-pool-size>
+				    <max-pool-size>100</max-pool-size>
+				    <blocking-timeout-millis>5000</blocking-timeout-millis>
+				    <idle-timeout-minutes>15</idle-timeout-minutes>
+		    <prepared-statement-cache-size>300</prepared-statement-cache-size>
+	</local-tx-datasource>
+	<local-tx-datasource>
+		<jndi-name>MsgInDataSource</jndi-name>
+		<connection-url>jdbc:sqlserver://CDCDEVDB1:1433;SelectMethod=cursor;DatabaseName=nbs_msgine</connection-url>
+		<driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+		<user-name>nbs_ods</user-name>
+		<password>ods</password>
+		<metadata>
+			<type-mapping>MS SQLSERVER2000</type-mapping>
+		</metadata>
+		<min-pool-size>5</min-pool-size>
+				    <max-pool-size>100</max-pool-size>
+				    <blocking-timeout-millis>5000</blocking-timeout-millis>
+				    <idle-timeout-minutes>15</idle-timeout-minutes>
+		    <prepared-statement-cache-size>300</prepared-statement-cache-size>
+	</local-tx-datasource>
+
+	<local-tx-datasource>
+		<jndi-name>ElrXrefDataSource</jndi-name>
+		<connection-url>jdbc:sqlserver://CDCDEVDB1:1433;SelectMethod=cursor;DatabaseName=nbs_msgoute</connection-url>
+		<driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+		<user-name>nbs_ods</user-name>
+		<password>ods</password>
+		<!-- corresponding type-mapping in the standardjbosscmp-jdbc.xml (optional) -->
+		<metadata>
+			<type-mapping>MS SQLSERVER2000</type-mapping>
+		</metadata>
+		<min-pool-size>5</min-pool-size>
+				    <max-pool-size>100</max-pool-size>
+				    <blocking-timeout-millis>5000</blocking-timeout-millis>
+				    <idle-timeout-minutes>15</idle-timeout-minutes>
+		    <prepared-statement-cache-size>300</prepared-statement-cache-size>
+	</local-tx-datasource>
+	<local-tx-datasource>
+		<jndi-name>RdbDataSource</jndi-name>
+		<connection-url>jdbc:sqlserver://CDCDEVDB1\RDB:1433;SelectMethod=cursor;DatabaseName=rdb</connection-url>
+		<driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+		<user-name>nbs_rdb</user-name>
+		<password>rdb</password>
+		<!-- corresponding type-mapping in the standardjbosscmp-jdbc.xml (optional) -->
+		<metadata>
+			<type-mapping>MS SQLSERVER2000</type-mapping>
+		</metadata>
+		    <!--pooling parameters-->
+		    <min-pool-size>5</min-pool-size>
+		    <max-pool-size>100</max-pool-size>
+		    <blocking-timeout-millis>5000</blocking-timeout-millis>
+		    <idle-timeout-minutes>15</idle-timeout-minutes>
+		    <prepared-statement-cache-size>300</prepared-statement-cache-size>		   
+	</local-tx-datasource>	
+	<local-tx-datasource>
+		<jndi-name>SrtDataSource</jndi-name>
+		<connection-url>jdbc:sqlserver://CDCDEVDB1:1433;SelectMethod=cursor;DatabaseName=nbs_srte</connection-url>
+		<driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
+		<user-name>srte_admin</user-name>
+		<password>admin</password>
+		<!-- corresponding type-mapping in the standardjbosscmp-jdbc.xml (optional) -->
+		<metadata>
+			<type-mapping>MS SQLSERVER2000</type-mapping>
+		</metadata>
+		    <!--pooling parameters-->
+		    <min-pool-size>5</min-pool-size>
+		    <max-pool-size>100</max-pool-size>
+		    <blocking-timeout-millis>5000</blocking-timeout-millis>
+		    <idle-timeout-minutes>15</idle-timeout-minutes>
+		    <prepared-statement-cache-size>300</prepared-statement-cache-size>
+		   
+	</local-tx-datasource>
+</datasources>

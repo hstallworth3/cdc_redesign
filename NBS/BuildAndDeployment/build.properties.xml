@@ -1,0 +1,116 @@
+<project name="nedssproject.build.properties" basedir=".">
+	<!-- set global properties for this build. YOU MAY NEED TO CHANGE SOME OF THE VALUES BASED ON YOUR LOCAL SETTINGS  -->
+	<property environment="env"/>
+	<property name="JB_HOME" value="${env.JBOSS_HOME}"/>
+	<!-- NOTE THAT YOU MAY NEED TO CHANGE THIS PROPERTY VALUE BASED ON YOUR DOAIN NAME -->
+	<property name="NEDSS_DOMAIN_NAME" value="nedssdomain"/>
+	<property name="JB_SERVER" value="${JB_HOME}"/>
+	<property name="JB_DOMAIN_HOME" value="${JB_SERVER}/${NEDSS_DOMAIN_NAME}"/>
+	<property name="APPLICATIONS" value="${JB_DOMAIN_HOME}/deployments"/>
+	<property name="JAVA_HOME" value="${env.JAVA_HOME}"/>
+	<property name="nbs_development_dir" location=".."/>
+	<property name="Nedss_dir" value="${JB_DOMAIN_HOME}/Nedss"/>
+	<property name="libraries_dest_dir" value="${JB_SERVER}/modules/system/layers/base/NBSLibraries/main"/>
+	<property name="sql_libraries_dest_dir" value="${JB_SERVER}/modules/system/layers/base/com/microsoft/main"/>
+	<property name="oracle_libraries_dest_dir" value="${JB_SERVER}/modules/system/layers/base/com/oracle/main"/>
+	<property name="config_dir" value="${nbs_development_dir}/source/Configuration Files"/>
+	<property name="properties_dir" value="${Nedss_dir}/Properties"/>
+	<property name="user_guide_dir" value="${Nedss_dir}/UserGuide"/>
+	<property name="build_dir" value="${Nedss_dir}/classfiles"/>
+	<property name="eclipse_build_dir" value="${nbs_development_dir}/buildclasses"/>
+	<property name="dist_dir" value="${nbs_development_dir}/dist"/>
+	<property name="nbs_webapp_dir" value="${dist_dir}/webapp/nbs.war"/>
+	<property name="cdf-dir" value="${Nedss_dir}/CDF-Subform"/>
+	<property name="warFile" value="nbs.war"/>
+	<property name="nndmWarFile" value="nndm.war"/>
+	<property name="earFile" value="nbs.ear"/>
+	<property name="jarFile" value="nbs.jar"/>
+	<property name="earDir" value="${eclipse_build_dir}/ear"/>
+	<property name="warDir" value="${eclipse_build_dir}/war"/>
+	<property name="nndmWarDir" value="${eclipse_build_dir}/nndmWar"/>
+	<property name="jarDir" value="${eclipse_build_dir}/jar"/>
+	<property name="bin.jboss" value="${env.JBOSS_HOME}"/>
+	<property name="bin.jboss.exec" value="${bin.jboss}/bin/run.bat"/>
+	<property name="bin.jboss.shutdown" value="${bin.jboss}/bin/shutdown.bat"/>
+	<property name="bin.jboss.debug" value="${bin.jboss}/bin/debug.bat"/>
+	<property name="bin.jboss.installservice.exec" value="${bin.jboss}/bin/InstallJBoss-NT.bat"/>
+	<property name="bin.jboss.uninstallservice.exec" value="${bin.jboss}/bin/UninstallJBoss-NT.bat"/>
+	<property name="bin.jboss.restartservice.exec" value="${bin.jboss}/bin/RestartJBoss-NT.bat"/>
+	<property name="bin.jboss.startservice.exec" value="${bin.jboss}/bin/StartJBossService-NT.bat"/>
+	<property name="bin.jboss.stopservice.exec" value="${bin.jboss}/bin/StopJBossService-NT.bat"/>
+	<property name="bin.jboss.console.exec" value="${bin.jboss}/bin/Jboss.bat"/>
+	<property name="version" value="NBS 1.1.5"/>
+	<property name="bin.java14207" value="${JAVA_HOME}/jre"/>
+	<property name="bin.java.exec" value="${JAVA_HOME}/jre/bin/java.exe"/>
+	<property name="NNDM_APPLICATION_DIR" value="${APPLICATIONS}/nndm.war"/>
+	<property name="userprofile_dir" value="${Nedss_dir}/UserProfile"/>
+	<exec executable="hostname" outputproperty="host.name"/>
+	<!-- Email Properties-->
+	<property name="MailLogger.mailhost" value="mailhost.sra.com"/>
+	<property name="MailLogger.port" value="25"/>
+	<property name="MailLogger.from" value="Maninder.Singh@csra.com"/>
+	<property name="MailLogger.replyto" value="Maninder.Singh@csra.com"/>
+	<property name="MailLogger.failure.to" value="Christi.Hildebrandt@csra.com,Avinav.Menon@csra.com,Jay.Nelson@csra.com,Dhaval.Patel@csra.com,Pradeep.Sharma@csra.com,Maninder.Singh@csra.com,Kai.Tiffany@csra.com,Greg.Tucker@csra.com,Jennifer.Ward@csra.com,John.Ortega@csra.com,Fatima.Lopezcalzado@csra.com,Akshar.Patel@csra.com,Pruthvi_Patel@sra.com,Harshit_Pareek@sra.com,Deepthi_Tulluri@sra.com,Jayasudha_Sundaram@sra.com"/>
+	<property name="MailLogger.success.to" value="Christi.Hildebrandt@csra.com,Avinav.Menon@csra.com,Jay.Nelson@csra.com,Dhaval.Patel@csra.com,Pradeep.Sharma@csra.com,Maninder.Singh@csra.com,Kai.Tiffany@csra.com,Greg.Tucker@csra.com,Jennifer.Ward@csra.com,John.Ortega@csra.com,Fatima.Lopezcalzado@csra.com,Akshar.Patel@csra.com,Pruthvi_Patel@sra.com,Harshit_Pareek@sra.com,Deepthi_Tulluri@sra.com,Jayasudha_Sundaram@sra.com"/>
+	<property name="MailLogger.failure.subject" value="Build failed on ${host.name} (EOM)"/>
+	<property name="MailLogger.success.subject" value="Build ran successfully on ${host.name} (EOM)"/>
+	<!-- Email Properties Ends-->
+	
+	<path id="class.path">
+		<pathelement location="${JAVA_HOME}/jre/lib/rt.jar"/>
+		<pathelement location="${JAVA_HOME}/lib/tools.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/jboss/jboss-j2ee.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/Apache/xalan.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/Castor/castor-0.9.3.9.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/nndMasterMsgFrameWork/NedssMasterMessageFramework.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/Log4J/log4j-1.2.17.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/struts/struts-core-1.3.8.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/struts/struts-extras-1.3.8.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/struts/struts-taglib-1.3.8.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/struts/jsp-api-2.3.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/struts/dwr.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/struts/displaytag-1.1.1.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/servlet/servlet-api-3.1.0.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/webAF/sas.core.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/webAF/sas.ads.core.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/webAF/sas.ads.misc.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/webAF/sas.servlet.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/ORACLE/ojdbc6.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/ORACLE/xdb6.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/ORACLE/ironjacamar-jdbc-1.1.9.Final.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/tidy/jtidy-r938.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/Apache/commons-pool-1.2.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/customSubformJaxbLibrary/cdf-subform.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/XML/xercesImpl_2.6.2.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/Centrus/ABClient.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/struts/Struts-Layout-1.2.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/JustFormsPDF/JustFormsPDF.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/xmlbeans/xmlbeans-2.6.0.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/xmlbeans/jsr173_1.0_api.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/xmlbeans/resolver.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/xmlbeans/xbean_xpath.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/xmlbeans/xmlbeans-qname.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/xmlbeans/xmlpublic.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/xmlbeans/nndintermediarymessage.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/mail/mail.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/mail/activation.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/xmlbeans/PHDCMessage.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/cda/CDA_SDTC.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/xmlbeans/DSMAlgorithm.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/xmlbeans/demo.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/Informa/informa.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/Informa/jdom.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/charts/jcommon-1.0.16.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/charts/jfreechart-1.0.13.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/Apache/commons-codec-1.4.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/json/gson-1.4.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/vads/vocabServiceClient.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/vads/hessian-3.1.3.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/struts/commons-beanutils-1.7.0.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/DMBPageSchema/dmbPageSchema.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/DMBPageSchema/dmbTemplateExportSchema.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/PartnerServices/PartnerServices_v21.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/pdfbox/pdfbox-app-2.0.0.jar"/>
+		<pathelement location="${nbs_development_dir}/Libraries/xmlbeans/PagePortMapping.jar"/>
+	</path>
+</project>

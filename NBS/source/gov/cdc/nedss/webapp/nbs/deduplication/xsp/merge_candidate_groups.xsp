@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp" xmlns:session="http://apache.org/xsp/session/2.0" xmlns:nedss="http://www.cdc.gov/nedss/logicsheet/nedss" xmlns:xsp-response="http://apache.org/xsp/response/2.0" xmlns:xsp-request="http://apache.org/xsp/request/2.0" xmlns:util="http://apache.org/xsp/util/2.0">
+	<xsp:structure>
+		<xsp:include>java.util.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.entity.entityid.dt.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.locator.dt.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.entity.person.dt.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.entity.person.vo.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.entity.person.util.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.webapp.nbs.logicsheet.helper.CachedDropDownValues</xsp:include>
+		<xsp:include>gov.cdc.nedss.systemservice.nbscontext.NBSContext</xsp:include>
+	</xsp:structure>
+	<nedss:getTitle/>
+	<content>
+		<xsp:attribute name="title">
+			<xsp:expr>getTitle()</xsp:expr>
+		</xsp:attribute>
+		<nedss:SearchResultRequestValues/>
+      <button-bar/>
+		<javascript-files>
+			<import>EntitySearch.js</import>
+			<import>searchResultsSpecific.js</import>
+		</javascript-files>
+	
+		<AddNewPersonHref location="/nedss/servlet/gov.cdc.nedss.cdm.ComparePersonServlet"/>
+		<xsp-request:get-uri as="xml"/>
+		<session:get-id as="xml"/>
+		<viewHref>
+			<xsp-request:get-attribute name="viewHref"/>
+		</viewHref>
+		<nextHref>
+			<xsp-request:get-attribute name="nextHref"/>
+		</nextHref>
+		<prevHref>
+			<xsp-request:get-attribute name="prevHref"/>
+		</prevHref>
+		<header>
+		<column>
+				<name></name>
+			</column>
+
+			<column>
+				<name>Group</name>
+			</column>
+			<column>
+				<name># of Patient Records</name>
+			</column>
+		</header>
+		<currentIndex>
+			<xsp:expr>currentIndex</xsp:expr>
+		</currentIndex>
+		<totalRecords>
+			<xsp:expr>numberOfRecords</xsp:expr>
+		</totalRecords>
+		<records>
+		<record>
+		<column>
+		<xsp:expr>"1"</xsp:expr>
+		</column>
+		<column>
+		<xsp:expr>"4"</xsp:expr>
+		</column>
+		</record>
+		<record>
+			<column>
+				<xsp:expr>"2"</xsp:expr>
+			</column>
+			<column>
+				<xsp:expr>"3"</xsp:expr>
+			</column>
+		</record>
+		
+		<record>
+			<column>
+				<xsp:expr>"3"</xsp:expr>
+			</column>
+			<column>
+				<xsp:expr>"4"</xsp:expr>
+			</column>
+		</record>
+		
+		<record>
+			<column>
+				<xsp:expr>"4"</xsp:expr>
+			</column>
+			<column>
+				<xsp:expr>"5"</xsp:expr>
+			</column>
+		</record>
+		
+		<record>
+			<column>
+				<xsp:expr>"5"</xsp:expr>
+			</column>
+			<column>
+				<xsp:expr>"3"</xsp:expr>
+			</column>
+		</record>
+	</records>
+  </content>
+</xsp:page>

@@ -1,0 +1,79 @@
+package com.nbs.tests;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+
+public class Login {
+	private WebDriver driver;
+	private String baseUrl;
+	private String path =  "C:\\Users\\TulluriD\\workspace\\Selenium Intro\\src\\com\\nbs\\tests\\dataFile.properties";
+
+	@Test
+	public void Setup() throws Exception{
+		
+	 File file = new File (path);
+	 				FileInputStream fileInput = null;
+			 			try {
+			 				fileInput = new FileInputStream(file);
+			 			} catch (FileNotFoundException e) {
+			 				e.printStackTrace();
+			 			}
+			 			Properties prop = new Properties();
+			 			try {
+			 				prop.load(fileInput);
+			 			} catch (IOException e) {
+			 				e.printStackTrace();
+			 			}
+// Setting the browser based on the properties file
+			 		String baseUrl = prop.getProperty("URL");
+			 		String browser = prop.getProperty("browser");
+			 		String IEdriverpath = prop.getProperty("IE_Driver_Path");
+			 		String Chromedriverpath = prop.getProperty("Chrome_Driver_Path");
+			 		String username = prop.getProperty("Username");
+			 		String password = prop.getProperty("password");
+			 		
+			 		switch (browser) {
+			 		case  "IE":
+			 			 System.setProperty("webdriver.ie.driver",IEdriverpath);
+			 			 driver = new InternetExplorerDriver();
+			 			 break;
+			 		
+			 		case "FireFox":
+			 			driver = new FirefoxDriver();
+			 			 break;
+			 		case "Chrome":
+			 				System.setProperty("webdriver.chrome.driver",Chromedriverpath);
+			 				driver = new ChromeDriver();
+			 				 break;
+			 	     default:			 	    	 
+			 	    	System.setProperty("webdriver.ie.driver",IEdriverpath);
+			 			 driver = new InternetExplorerDriver();		
+			 		}
+			 		
+	
+
+	//Opening the NBS application		 		
+			 	   
+			 	   // driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+			 		driver.get(baseUrl + "/nbs/login");
+			 		driver.manage().window().maximize();
+			 	    driver.findElement(By.id("id_UserName")).clear();
+			 	    driver.findElement(By.id("id_UserName")).sendKeys("pks");
+			 	    
+			 	    driver.findElement(By.id("id_Submit_bottom_ToolbarButtonGraphic")).click();
+			 	
+			 	
+}
+}

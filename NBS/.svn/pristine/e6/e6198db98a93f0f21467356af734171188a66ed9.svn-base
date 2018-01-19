@@ -1,0 +1,11 @@
+# NBS Url and the username
+URL = http://nedss-tstappsql:7001/
+username = pks
+password =
+
+#Choosing the browser and path of the driver
+#browser = IE
+IE_Driver_Path = C:\\Selenium\\IEDriver\\IEDriverServer.exe
+#browser = Firefox
+browser = Chrome
+Chrome_Driver_Path = C:\\Selenium\\chromedriver_win32\\chromedriver.exe

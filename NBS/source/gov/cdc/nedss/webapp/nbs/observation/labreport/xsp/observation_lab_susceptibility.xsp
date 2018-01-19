@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.2 U (http://www.xmlspy.com) by aa aaa (Computer Sciences Corporation) -->
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp" xmlns:util="http://apache.org/xsp/util/2.0" xmlns:srt-codes="http://www.cdc.gov/nedss/GetSRTCodes/1.0" xmlns:session="http://apache.org/xsp/session/2.0" xmlns:xsp-response="http://apache.org/xsp/response/2.0" xmlns:xsp-request="http://apache.org/xsp/request/2.0">
+	<xsp:structure>
+		<xsp:include>java.util.*</xsp:include>
+
+		<xsp:include>gov.cdc.nedss.util.*</xsp:include>
+		<xsp:include>gov.cdc.nedss.systemservice.nbssecurity.*</xsp:include>
+		<xsp:include>java.text.SimpleDateFormat</xsp:include>
+		<xsp:include>java.sql.Timestamp</xsp:include>
+	</xsp:structure>
+	<xsp:logic><![CDATA[
+				private String getTitle(){
+					String sValue="";
+					String opType="";
+					opType=request.getParameter("ContextAction").toString();
+
+					if(opType.equals("create"))
+						sValue = "Add Susceptibility";
+					else if(opType.equals("edit"))
+						sValue = "Edit Susceptibility";
+					else if(opType.equals("view"))
+						sValue = "View Susceptibility";
+					//##!! System.out.println("--dfsdfsdfs" + sValue);
+					return sValue;
+				}
+				private String getIndicator() {
+				 	String ELR_IND = "N";
+					if(request.getParameter("ElectronicInd") != null)
+						ELR_IND = request.getParameter("ElectronicInd").toString();
+					return ELR_IND;
+				}
+				private String getOperation() {
+					String opType1 = "";
+					opType1 = request.getParameter("ContextAction").toString();
+					if(opType1 != null)
+						return opType1;
+						else
+						return null;
+				}
+				private String getType() {
+				 	String indicator = getIndicator();
+				 	//##!! System.out.println("indicator is: "+ indicator);
+					if(indicator .equals("Y"))
+						return "text";
+					else
+						return "select";
+				}
+
+
+			]]></xsp:logic>
+	<content form="/nbs/posted">
+		<xsp:attribute name="title">
+			<xsp:expr>getTitle()</xsp:expr>
+		</xsp:attribute>
+		<javascript-files>
+			<import>PopUpBatchEntryChild.js</import>
+		</javascript-files>
+		<button-bar>
+			<xsp:logic>
+				String operationType= request.getParameter("ContextAction");
+			if (operationType != null) {
+						if (operationType.equals("create") || operationType.equals("edit")) { </xsp:logic>
+			<right>
+				<label>Submit</label>
+				<javascript-action>PopupPassTheInnerBack();</javascript-action>
+			</right>
+			<right>
+				<label>Cancel</label>
+				<javascript-action>PopupCancelChildWindow();</javascript-action>
+			</right>
+			<xsp:logic>}	 else {	</xsp:logic>
+			<right>
+				<label>Close</label>
+				<javascript-action>window.close();</javascript-action>
+			</right>
+			<!--right>
+                <label>Delete</label>
+                <javascript-action>deleteEntity('/nedss/storeObservationGeneralLab.do?OperationType=<xsp:expr>NEDSSConstants.DEL</xsp:expr>');</javascript-action>
+            </right>
+            <right>
+                <label>Edit</label>
+                <javascript-action>getPage('/nedss/loadObservationGeneralLab.do?OperationType=edit&amp;observationUID=<xsp-request:get-attribute name="observationUID"/>');</javascript-action>
+            </right-->
+			<xsp:logic>}}</xsp:logic>
+		</button-bar>
+		<tab name="Add Susceptibility">
+			<group>
+				<free/>
+				<line>
+					<element name="Susceptibility" type="batch-entry" popup="true">
+						<line>
+							<xsp:logic>if(getIndicator() == "N" &amp; !getOperation().equals("view")) { </xsp:logic>
+							<free/>
+							<element type="raw">
+								<span>
+									<font color="#790000">
+										<b>
+								* Indicates a required field
+								</b>
+									</font>
+								</span>
+							</element>
+							<xsp:logic>} </xsp:logic>
+						</line>
+						<line>
+							<xsp:logic>
+					//##!! System.out.println("--->>"+ getType());
+					</xsp:logic>
+							<xsp:logic>
+							if(getOperation().equals("view")) {
+						</xsp:logic>
+							<element name="resultedTest[i].susceptibility[j].theObservationDT.cd" label="Drug Name">
+								<xsp:attribute name="type">
+									<xsp-request:get-attribute name="drugNameType"/>
+								</xsp:attribute>
+								<header>Drug Name</header>
+								<validation type="required" name="Drug Name"/>
+								<srt-options-string>
+									<srt-codes:getSuspTestCodes/>
+								</srt-options-string>
+							</element>
+							<xsp:logic>
+						 } else {
+						</xsp:logic>
+							<element name="resultedTest[i].susceptibility[j].theObservationDT.cd" label="* Drug Name">
+								<xsp:attribute name="type">
+									<xsp-request:get-attribute name="drugNameType"/>
+								</xsp:attribute>
+								<header>Drug Name</header>
+								<validation type="required" name="Drug Name"/>
+								<srt-options-string>
+									<srt-codes:getSuspTestCodes/>
+								</srt-options-string>
+							</element>
+							<xsp:logic> }	</xsp:logic>
+						</line>
+						<line>
+							<element name="resultedTest[i].susceptibility[j].theObservationDT.methodCd" type="select" label="Test Method">
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>OBS_METH</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+							</element>
+						</line>
+						<line>
+							<element name="resultedTest[i].susceptibility[j].theObservationDT.activityToTime_s" type="text" label="Resulted Date" size="10" mask="##/##/####">
+								<header>Resulted Date</header>
+								<validation type="date" mask="mm/dd/yyyy"/>
+							</element>
+						</line>
+						<line>
+							<element name="resultedTest[i].susceptibility[j].obsValueNumericDT_s[0].comparatorCd1" type="select" label="Quantitative Results">
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>OV_NUM_CMP</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+								<partner name="resultedTest[i].susceptibility[j].obsValueNumericDT_s[0].numericValue1" type="text" size="3">
+									<validation type="reg-expr" name="NumericValue1" requiredPartner="resultedTest[i].susceptibility[j].obsValueNumericDT_s[0].numericUnitCd">
+										<pattern><![CDATA[^(((\d+)?(\.{1}\d+)?))?$]]></pattern>
+									</validation>
+								</partner>
+								<partner name="resultedTest[i].susceptibility[j].obsValueNumericDT_s[0].numericUnitCd" type="select">
+									<srt-options-string>
+										<srt-codes:getCodedValues>
+											<type>UNIT_ISO</type>
+										</srt-codes:getCodedValues>
+									</srt-options-string>
+								</partner>
+								<partner name="resultedTest[i].susceptibility[j].obsValueNumericDT_s[1].separatorCd" type="select">
+									<srt-options-string>
+										<srt-codes:getCodedValues>
+											<type>OV_NUM_SEP</type>
+										</srt-codes:getCodedValues>
+									</srt-options-string>
+								</partner>
+								<partner name="resultedTest[i].susceptibility[j].obsValueNumericDT_s[0].numericValue2" type="text" size="3">
+									<validation type="reg-expr" name="NumericValue2">
+										<pattern><![CDATA[^(((\d+)?(\.{1}\d+)?))?$]]></pattern>
+									</validation>
+								</partner>
+							</element>
+						</line>
+						<line>
+							<element label="Reference Range" type="">
+						</element>
+							<element name="resultedTest[i].susceptibility[j].obsValueNumericDT_s[0].lowRange" type="text" label="From" size="10">
+								<validation type="reg-expr" name="From">
+									<pattern><![CDATA[^(((\d+)?(\.{1}\d+)?))?$]]></pattern>
+								</validation>
+							</element>
+							<element name="resultedTest[i].susceptibility[j].obsValueNumericDT_s[0].highRange" type="text" label="To" size="10">
+								<validation type="reg-expr" name="To">
+									<pattern><![CDATA[^(((\d+)?(\.{1}\d+)?))?$]]></pattern>
+								</validation>
+							</element>
+							<element type=""/>
+						</line>
+						<line>
+							<element name="resultedTest[i].susceptibility[j].observationInterpDT_s[0].interpretationCd" type="select" label="Interpretation">
+								<srt-options-string>
+									<srt-codes:getCodedValues>
+										<type>OBS_MC_ABN</type>
+									</srt-codes:getCodedValues>
+								</srt-options-string>
+							</element>
+						</line>
+						<line>
+							<element name="resultedTest[i].susceptibility[j].obsValueTxtDT_s[0].valueTxt" type="text" label="Text Results">
+								<header>Text Results</header>
+							</element>
+						</line>
+						<line>
+							<element name="resultedTest[i].susceptibility[j].obsValueTxtDT_s[1].valueTxt" type="textarea" label="Notes" size="10">
+						</element>
+						</line>
+						<line>
+							<element name="resultedTest[i].susceptibility[j].theObservationDT.statusCd" type="hidden"/>
+						</line>
+						<line>
+							<element name="resultedTest[i].susceptibility[j].theObservationDT.observationUid" type="hidden"/>
+						</line>
+					</element>
+				</line>
+			</group>
+		</tab>
+	</content>
+</xsp:page>

@@ -1,0 +1,197 @@
+<?xml version="1.0"?>
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp" xmlns:session="http://apache.org/xsp/session/2.0" xmlns:nedss="http://www.cdc.gov/nedss/logicsheet/nedss" xmlns:xsp-response="http://apache.org/xsp/response/2.0" xmlns:xsp-request="http://apache.org/xsp/request/2.0" xmlns:util="http://apache.org/xsp/util/2.0">
+    <xsp:structure>
+        <xsp:include>java.util.*</xsp:include>
+        <xsp:include>java.sql.Timestamp</xsp:include>
+        <xsp:include>gov.cdc.nedss.util.*</xsp:include>
+        <xsp:include>gov.cdc.nedss.entity.entityid.dt.*</xsp:include>
+        <xsp:include>gov.cdc.nedss.locator.dt.*</xsp:include>
+        <xsp:include>gov.cdc.nedss.entity.person.dt.*</xsp:include>
+        <xsp:include>gov.cdc.nedss.entity.person.vo.*</xsp:include>
+        <xsp:include>gov.cdc.nedss.entity.person.util.*</xsp:include>
+        <xsp:include>gov.cdc.nedss.webapp.nbs.logicsheet.helper.CachedDropDownValues</xsp:include>
+        <xsp:include>gov.cdc.nedss.systemservice.nbscontext.NBSContext</xsp:include>
+    </xsp:structure>
+    <nedss:Declarations/>
+    <nedss:StateDescTxt/>
+    <nedss:getTitle/>
+    <!--xsp:logic><![CDATA[
+
+		   	private CachedDropDownValues srtValues = new CachedDropDownValues();
+               private TreeMap treemap = srtValues.getStateCodes2("USA");
+
+		   private String getStateDescTxt(String sStateCd) {
+
+		   		String desc=null;
+		                  	if (treemap != null){
+
+		                      if(sStateCd!=null && treemap.get(sStateCd)!=null)
+		                      	desc = (String)treemap.get(sStateCd);
+
+		                   }
+		      			return desc;
+		    }
+
+		    String entityFirstNm = null;
+		    String entityLastNm = null;
+		    String entityEmail = null;
+		    String entityPhoneNbr = null;
+		    String entityPhoneExt = null;
+		    String entityPersonUID = null;
+		    String entityLocalID = null;
+
+
+	]]></xsp:logic-->
+    <content>
+        <xsp:attribute name="form">
+            <xsp-request:get-attribute name="formHref"/>
+        </xsp:attribute>
+        <xsp:attribute name="title">
+            <xsp:expr>getTitle()</xsp:expr>
+        </xsp:attribute>
+        <nedss:SearchResultRequestValues/>
+        <!--xsp:logic><![CDATA[
+
+				String sOperationType = request.getParameter("ContextAction");
+
+
+				int currentIndex = 0;
+				int maxRowCount = 10;
+				int numberOfRecords = 0;
+				//String temp = request.getParameter("currentIndex");
+
+
+				String temp = (String) request.getAttribute("DSFromIndex");
+
+				String sSearchCriteria = (String) session.getAttribute("DSSearchCriteriaString");
+
+				if (temp!=null) {
+					currentIndex = Integer.parseInt(temp);
+				}
+				ArrayList personList = new ArrayList();
+				ArrayList  person = new ArrayList();
+
+				PersonSearchVO personFind = null;
+
+			try {
+				numberOfRecords = 0;
+				//personList = (ArrayList) request.getSession().getAttribute("DSSearchResults");
+				personList = (ArrayList) request.getAttribute("DSSearchResults");
+
+				if(personList != null){
+					DisplayPersonList  list = (DisplayPersonList)personList.get(0);
+
+					if (list != null) {
+						person = list.getList();
+						numberOfRecords = person.size() ;
+					}
+				}
+			}
+			catch (Exception e) {
+				//##!! System.out.println("error occurred in person_search_results.xsp");
+			}
+
+
+			]]></xsp:logic-->
+        <link-bar/>
+        <button-bar>
+            <!--nedss:NotEntitySearch-->
+            <!--xsp:logic><![CDATA[if(sOperationType !=null  && (!sOperationType.equals("EntitySearch"))) { ]]></xsp:logic-->
+            <!--left>
+				<label>posted</label>
+				<javascript-action>document.forms[0].action='/nbs/posted';submitForm();</javascript-action>
+			</left-->
+            <right>
+                <label>Cancel</label>
+                <javascript-action>cancel('/nbs/HomePage.do?method=loadHomePage');</javascript-action>
+            </right>
+            <!--/nedss:ifEntitySearch-->
+            <!--xsp:logic> } </xsp:logic-->
+        </button-bar>
+        <javascript-files>
+            <import>EntitySearch.js</import>
+            <import>searchResultsSpecific.js</import>
+            <import>MergePersonSpecific.js</import>
+        </javascript-files>
+        <!--	<submit location="localhost/cocoon/nedss/PersonSearchResult.xml"/>-->
+        <AddNewPersonHref location="/nedss/servlet/gov.cdc.nedss.cdm.ComparePersonServlet"/>
+        <!--	<ViewPersonHref location="/nedss/servlet/gov.cdc.nedss.cdm.ComparePersonServlet"/>-->
+        <xsp-request:get-uri as="xml"/>
+        <session:get-id as="xml"/>
+        <groupNo>0</groupNo>
+        <groupAOD>04/15/2003</groupAOD>
+        <refineSearchHref>
+            <xsp-request:get-attribute name="refineSearchHref"/>
+        </refineSearchHref>
+        <newSearchHref>
+            <xsp-request:get-attribute name="newSearchHref"/>
+        </newSearchHref>
+        <!--viewHref>
+			<xsp-request:get-attribute name="viewHref"/>
+		</viewHref-->
+        <!--nextHref>
+			<xsp-request:get-attribute name="nextHref"/>
+		</nextHref>
+		<prevHref>
+			<xsp-request:get-attribute name="prevHref"/>
+		</prevHref-->
+        <searchCriteria>
+            <xsp:expr>sSearchCriteria </xsp:expr>
+        </searchCriteria>
+        <currentIndex>
+            <xsp:expr>currentIndex</xsp:expr>
+        </currentIndex>
+        <totalRecords>
+            <xsp:expr>numberOfRecords</xsp:expr>
+        </totalRecords>
+        <!--text>
+			<first/>
+		</text-->
+        <text>
+            <second/>
+        </text>
+        <text>
+            <third/>
+        </text>
+        <text>
+            <fourth/>
+        </text>
+        <!--text>
+			<fifth/>
+		</text-->
+        <text>
+            <sixth/>
+        </text>
+        <!--text>
+			<seventh/>
+		</text-->
+        <header>
+            <column>
+                <name>Compare</name>
+            </column>
+            <column>
+                <name>Full Name</name>
+            </column>
+            <column>
+                <name>Age/DOB</name>
+            </column>
+            <column>
+                <name>Sex</name>
+            </column>
+            <column>
+			</column>
+            <column>
+                <name>Address</name>
+            </column>
+            <column>
+                <name>Telephone/ID
+				</name>
+            </column>
+            <column>
+                <name>Merge</name>
+            </column>
+        </header>
+        <records>
+		</records>
+    </content>
+</xsp:page>

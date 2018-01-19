@@ -1,0 +1,20 @@
+package com.nbs.tests;
+
+import org.junit.Test;
+
+public class HomePage_PatientSearch {
+
+	
+		@Test
+		public void patientSearch() throws Exception {
+			
+			Login login = new Login();
+			
+			login.Setup();
+		}
+		
+		
+		
+	}
+	
+
