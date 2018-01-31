@@ -2,22 +2,63 @@
  
  body {
      background-color: #FFFFFF;
+     font-family: Futura, "Trebuchet MS", Arial, sans-serif;
  }
+
+p.sansserif {
+    font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+}
+
+h1.sansserif {
+    font-family: futura, "Trebuchet MS", Arial, sans-serif;
+}
+
+h3.sansserif {
+font-family: Futura, "Trebuchet MS", Arial, sans-serif;}
  
- h1 {
-     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+h1 {
+     font-family: Futura, "Trebuchet MS", Arial, sans-serif;
      color: #000000;
  }
  
  p {
-     font-family: Georgia, Times, "Times New Roman", serif;
+     font-family: Futura, "Trebuchet MS", Arial, sans-serif;
      color: #000000;
  }
  
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #075290;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover {
+    background-color: #111;
+}
+
+table, th, td {
+  border: 1px solid black;
+
+}
+
  .button {
      background-color: #1E90FF;
      color: #FFFFFF;
      text-align: center;
      display: inline-block;
-     font-family: Georgia, Times, "Times New Roman", serif;
+     font-family: Futura, "Trebuchet MS", Arial, sans-serif;
  } 
