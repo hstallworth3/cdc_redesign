@@ -1,20 +1,25 @@
 /*basic as possible so that it would be easier to integrate once we know which files go with what*/
- 
+
 @font-face {
- font-family: "HelvNeue";
- src: url("fonts/Helvneuem.ttf");
- src: url("fonts/helveneunem.woff") format("woff");
+ font-family: HelvNeue;
+ src: url(fonts/Helvneuem.ttf);
+ src: url(fonts/helveneunem.woff) format(woff);
 }
 
 @font-face {
- font-family: "Clarendon";
- src: url("fonts/ClarendonR.ttf");
- src: url("fonts/clarendonm.woff" format("woff");
+ font-family: Clarendon;
+ src: url(fonts/ClarendonR.ttf);
+ src: url(fonts/clarendonm.woff) format(woff);
 }
 
 body {
      background-color: #FFFFFF;
      font-family: "Trebuchet MS", 'Clarendon', sans-serif;
+     text-align: left;
+ }
+
+h2 {
+   text-align: left;
  }
 
 p.sansserif {
@@ -23,22 +28,25 @@ p.sansserif {
 
 h1.sansserif {
     font-family: "Trebuchet MS", 'HelvNeue', sans-serif;
+    padding-left: 2cm;
 }
 
 h3.sansserif {
     font-family: "Trebuchet MS", 'HelvNeue', sans-serif;
+    padding-left: 2cm;
 }
- 
+
 h1 {
      font-family: "Trebuchet MS", 'HelvNeue', sans-serif;
      color: #000000;
  }
- 
+
  p {
      font-family: "Trebuchet MS", 'Clarendon', sans-serif;
      color: #000000;
+     padding-left: 2cm;
  }
- 
+
 ul {
     list-style-type: none;
     margin: 0;
@@ -68,10 +76,15 @@ table, th, td {
 
 }
 
+form {
+  padding-left: 2cm;
+}
+
  .button {
      background-color: #1E90FF;
      color: #FFFFFF;
      text-align: center;
      display: inline-block;
      font-family: "Trebuchet MS", 'Clarendon', sans-serif;
- } 
+     padding-left: 2cm;
+ }
