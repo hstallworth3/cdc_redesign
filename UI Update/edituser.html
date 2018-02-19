@@ -3,6 +3,8 @@
 <meta charset="UTF-8">
 <head>
 <link rel="stylesheet" type="text/css" href="newdefault.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 </head>
 <body>
 
@@ -23,9 +25,9 @@
 <h3 class="sansserif">User Information</h3>
 <form class="sansserif">
   First name:<br>
-  <input type="text" name="firstname"><br>
+  <input type="text" name="firstname" id="firstname"><br>
   Last name:<br>
-  <input type="text" name="lastname"><br>
+  <input type="text" name="lastname" id="lastname"><br>
   User ID:<br>
   <input type="text" name="userid">
 </form>
@@ -67,10 +69,26 @@
 
 <!-- table with user permissions will go here -->
 
-<button type="button">Update User</button>
+<button type="button" id="update">Update User</button>
 
 <button onclick="location.href='userlist.html'">Cancel</button>
 
+<script type="text/javascript">
+  //populate first and last name
+  if (localStorage.getItem("firstNameToEdit")) {
+    $('#firstname').val(localStorage.getItem("firstNameToEdit"));
+  }
+  if (localStorage.getItem("lastNameToEdit")) {
+    $('#lastname').val(localStorage.getItem("lastNameToEdit"));
+  }
+  localStorage.removeItem("firstNameToEdit");
+  localStorage.removeItem("lastNameToEdit");
+  $('#update').click(function() {
+    location.href = "./userlist.html";
+    localStorage.setItem("firstNameToUpdate", $('#firstname').val());
+    localStorage.setItem("lastNameToUpdate", $('#lastname').val());
+  })
+</script>
 
 </body>
 </html>

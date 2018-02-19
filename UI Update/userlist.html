@@ -3,6 +3,7 @@
 <meta charset="UTF-8">
 <head>
 <link rel="stylesheet" type="text/css" href="newdefault.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
 
@@ -26,7 +27,7 @@
 
 
 <p class="sansserif">
-Select a User ID to View or Edit an Existing User.</p>
+Select a User ID to View or click on an Existing User to Edit.</p>
 
 <table style="width:100%">
   <tr>
@@ -34,12 +35,12 @@ Select a User ID to View or Edit an Existing User.</p>
     <th>Lastname</th>
     <th>Age</th>
   </tr>
-  <tr>
+  <tr class='tr-hover'>
     <td>Jill</td>
     <td>Smith</td>
     <td>50</td>
   </tr>
-  <tr>
+  <tr class='tr-hover'>
     <td>Eve</td>
     <td>Jackson</td>
     <td>94</td>
@@ -50,6 +51,35 @@ Select a User ID to View or Edit an Existing User.</p>
 
 <button onclick="location.href='edituser.html'">Edit User</button>
 
+<script type="text/javascript">
+  var index = localStorage.getItem("index");
+  if (localStorage.getItem("firstNameToUpdate") != null) {
+    $($($('.tr-hover')[index]).children()[0]).html(localStorage.getItem("firstNameToUpdate"));
+  }
+  if (localStorage.getItem("lastNameToUpdate") != null) {
+    $($($('.tr-hover')[index]).children()[1]).html(localStorage.getItem("lastNameToUpdate"));
+  }
+  localStorage.clear();
 
+  $('.tr-hover').hover(function() {
+    $(this).css("background-color", "#075290");
+    $(this).css("color", "white");
+  });
+  $('.tr-hover').mouseout(function() {
+    $(this).css("color", "black");
+    if ($(this).index() - 1 % 2 == 0) {
+      $(this).css("background-color", "#f2f2f2");
+    } else {
+      $(this).css("background-color", "#ffffff");
+    }
+  });
+  $('.tr-hover').click(function() {
+    localStorage.setItem("firstNameToEdit",$(this).children()[0].innerHTML);
+    localStorage.setItem("lastNameToEdit",$(this).children()[1].innerHTML);
+    localStorage.setItem("index",$(this).index() - 1);
+    location.href = "./edituser.html";
+  });
+</script>
+  
 </body>
 </html>
