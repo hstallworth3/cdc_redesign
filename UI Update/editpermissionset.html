@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<head>
+<link rel="stylesheet" type="text/css" href="newdefault.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+</head>
+<body>
+
+<!-- Navigation -->
+<ul>
+  <li><a class="active" href="#home">Home</a></li>
+  <li><a href="#dataentry">Data Entry</a></li>
+  <li><a href="#cmergepatients">Merge Patients</a></li>
+  <li><a href="#openinvestigations">Open Investigations</a></li>
+  <li><a href="#reports">Reports</a></li>
+  <li><a href="#systemmanagement">System Management</a></li>
+</ul>
+
+<h2 class="sansserif">Edit User</h2>
+
+
+
+<h3 class="sansserif">User Information</h3>
+<form class="sansserif">
+  First name:<br>
+  <input type="text" name="firstname" id="firstname"><br>
+  Last name:<br>
+  <input type="text" name="lastname" id="lastname"><br>
+  User ID:<br>
+  <input type="text" name="userid">
+</form>
+
+<br>
+
+<form class="sansserif">Status:
+  <input type="radio" name="active" value="active" checked> Active
+  <input type="radio" name="active" value="inactive"> Inactive
+</form>
+
+
+<!-- both facility and provider will be filled from database, not hardcoded <-->
+
+<h3 class="sansserif">Facility Information</h3><p>Required for external (outside agency) users<p>
+
+<p>Reporting Facility: <select>
+  <option value="Facility 1">Facility 1</option>
+  <option value="Facility 2">Facility 2</option>
+</select>
+</p>
+
+<h3 class="sansserif">Provider Information</h3>
+
+<p>Provider: <select>
+  <option value="Provider 1">Provider 1</option>
+  <option value="Provider 2">Provider 2</option>
+</select>
+</p>
+
+<h3 class="sansserif">Administrator Information</h3>
+
+<form class="sansserif">
+  <input type="radio" name="active" value="active" checked> Master Security Administrator
+  <input type="radio" name="active" value="inactive"> Program Area Administrator
+</form>
+
+<h3 class="sansserif">User Permissions</h3>
+
+<!-- table with user permissions will go here -->
+
+<button type="button" id="update">Update User</button>
+
+<button onclick="location.href='userlist.html'">Cancel</button>
+
+<script type="text/javascript">
+  //populate first and last name
+  if (localStorage.getItem("firstNameToEdit")) {
+    $('#firstname').val(localStorage.getItem("firstNameToEdit"));
+  }
+  if (localStorage.getItem("lastNameToEdit")) {
+    $('#lastname').val(localStorage.getItem("lastNameToEdit"));
+  }
+  localStorage.removeItem("firstNameToEdit");
+  localStorage.removeItem("lastNameToEdit");
+  $('#update').click(function() {
+    location.href = "./userlist.html";
+    localStorage.setItem("firstNameToUpdate", $('#firstname').val());
+    localStorage.setItem("lastNameToUpdate", $('#lastname').val());
+  })
+</script>
+
+</body>
+</html>
