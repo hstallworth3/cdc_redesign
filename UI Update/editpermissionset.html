@@ -18,54 +18,127 @@
   <li><a href="#systemmanagement">System Management</a></li>
 </ul>
 
-<h2 class="sansserif">Edit User</h2>
 
+<h2 class="sansserif">Edit Permission Set</h2>
 
-
-<h3 class="sansserif">User Information</h3>
+<h3 class="sansserif">Permission Set Information</h3>
 <form class="sansserif">
-  First name:<br>
-  <input type="text" name="firstname" id="firstname"><br>
-  Last name:<br>
-  <input type="text" name="lastname" id="lastname"><br>
-  User ID:<br>
-  <input type="text" name="userid">
+  Permission Set Name:<br>
+  <input type="text" name="setname"><br>
+  Description:<br>
+  <input type="text" name="description">
 </form>
 
 <br>
 
-<form class="sansserif">Status:
-  <input type="radio" name="active" value="active" checked> Active
-  <input type="radio" name="active" value="inactive"> Inactive
+<h3 class="sansserif">Permission Set Configuration</h3>
+<form class="sansserif">System:<br>
+  <h5 class="sansserif">User Guest  A User marked as a Guest will only have access to shared records.</h5>
+  <input type="checkbox" name="active" value="inactive"> Decision Support Management<br>
+  <input type="checkbox" name="active" value="inactive"> Epi-Link ID (Lot Number) Management<br>
+  <input type="checkbox" name="active" value="inactive"> Page Management<br>
+  <input type="checkbox" name="active" value="inactive"> Geocoding Management<br>
+  <input type="checkbox" name="active" value="inactive"> Case Report and Laboratory Management<br>
+  <input type="checkbox" name="active" value="inactive"> Report Management<br>
+  <input type="checkbox" name="active" value="inactive"> Sending and Receiving Systems Management<br>
+
 </form>
 
+<form class="sansserif">Global:<br>
+  <h5 class="sansserif">User Guest  A User marked as a Guest will only have access to shared records.</h5>
+  <input type="radio"> Access to HIV fields<br>
+</form>
 
+<form class="sansserif">Patient:<br>
+
+</form>
+
+<form class="sansserif">Provider:<br>
+
+</form>
+
+<form class="sansserif">Organization:<br>
+
+</form>
+
+<form class="sansserif">Investigation:<br>
+
+</form>
+
+<form class="sansserif">RVCT (Tuberculosis):<br>
+
+</form>
+
+<form class="sansserif">Summary Report:<br>
+
+</form>
+
+<form class="sansserif">Vaccindation Record:<br>
+
+</form>
+
+<form class="sansserif">Lab Report:<br>
+
+</form>
+
+<form class="sansserif">Morbidity Report:<br>
+
+</form>
+
+<form class="sansserif">Treatment:<br>
+
+</form>
+
+<form class="sansserif">Case Report:<br>
+
+</form>
+
+<form class="sansserif">Notification:<br>
+
+</form>
+
+<form class="sansserif">Queues:<br>
+
+</form>
+
+<form class="sansserif">Share Investigation:<br>
+
+</form>
+
+<form class="sansserif">Reports:<br>
+
+</form>
+
+<form class="sansserif">Template:<br>
+
+</form>
+
+<form class="sansserif">Plublic:<br>
+
+</form>
+
+<form class="sansserif">Private:<br>
+
+</form>
+
+<form class="sansserif">Reporting Facility:<br>
+
+</form>
+
+<form class="sansserif">Contact Record:<br>
+
+</form>
+
+<form class="sansserif">Interview:<br>
+
+</form>
 <!-- both facility and provider will be filled from database, not hardcoded <-->
 
-<h3 class="sansserif">Facility Information</h3><p>Required for external (outside agency) users<p>
+<!-- table with user permissions will go here -->
 
-<p>Reporting Facility: <select>
-  <option value="Facility 1">Facility 1</option>
-  <option value="Facility 2">Facility 2</option>
-</select>
-</p>
+<button onclick="location.href='permissionset.html'">Add Permission Set</button>
 
-<h3 class="sansserif">Provider Information</h3>
-
-<p>Provider: <select>
-  <option value="Provider 1">Provider 1</option>
-  <option value="Provider 2">Provider 2</option>
-</select>
-</p>
-
-<h3 class="sansserif">Administrator Information</h3>
-
-<form class="sansserif">
-  <input type="radio" name="active" value="active" checked> Master Security Administrator
-  <input type="radio" name="active" value="inactive"> Program Area Administrator
-</form>
-
-<h3 class="sansserif">User Permissions</h3>
+<button onclick="location.href='permissionset.html'">Cancel</button>
 
 <!-- table with user permissions will go here -->
 
