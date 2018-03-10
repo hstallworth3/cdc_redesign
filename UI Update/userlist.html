@@ -4,13 +4,19 @@
 <head>
 <link rel="stylesheet" type="text/css" href="newdefault.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+<script src="./firebaseIO.js"></script>
+<script type="text/javascript">
+  $( document ).ready(function() {
+    connect(true);
+  });
+</script>
 </head>
 <body>
 
 <!-- Content will go here -->
 
 <!-- Navigation -->
-
 <ul>
   <li><a class="active" href="#home">Home</a></li>
   <li><a href="#dataentry">Data Entry</a></li>
@@ -20,36 +26,27 @@
   <li><a href="#systemmanagement">System Management</a></li>
 </ul>
 
-
-
-
 <h2 class="sansserif">Users</h2>
 
 
 <p class="sansserif">
 Select a User ID to View or click on an Existing User to Edit.</p>
 
-<table style="width:100%">
+<table id="user_table" style="width:100%">
   <tr>
     <th>Firstname</th>
     <th>Lastname</th>
     <th>Age</th>
-  </tr>
-  <tr class='tr-hover'>
-    <td>Jill</td>
-    <td>Smith</td>
-    <td>50</td>
-  </tr>
-  <tr class='tr-hover'>
-    <td>Eve</td>
-    <td>Jackson</td>
-    <td>94</td>
   </tr>
 </table>
 
 <button onclick="location.href='adduser.html'">Add New User</button>
 
 <button onclick="location.href='edituser.html'">Edit User</button>
+
+<script type="text/javascript">
+
+</script>
 
 <script type="text/javascript">
   var index = localStorage.getItem("index");
@@ -60,25 +57,6 @@ Select a User ID to View or click on an Existing User to Edit.</p>
     $($($('.tr-hover')[index]).children()[1]).html(localStorage.getItem("lastNameToUpdate"));
   }
   localStorage.clear();
-
-  $('.tr-hover').hover(function() {
-    $(this).css("background-color", "#075290");
-    $(this).css("color", "white");
-  });
-  $('.tr-hover').mouseout(function() {
-    $(this).css("color", "black");
-    if ($(this).index() - 1 % 2 == 0) {
-      $(this).css("background-color", "#f2f2f2");
-    } else {
-      $(this).css("background-color", "#ffffff");
-    }
-  });
-  $('.tr-hover').click(function() {
-    localStorage.setItem("firstNameToEdit",$(this).children()[0].innerHTML);
-    localStorage.setItem("lastNameToEdit",$(this).children()[1].innerHTML);
-    localStorage.setItem("index",$(this).index() - 1);
-    location.href = "./edituser.html";
-  });
 </script>
   
 </body>

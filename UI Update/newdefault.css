@@ -6,6 +6,24 @@
  src: url(fonts/helveneunem.woff) format(woff);
 }
 
+button {
+  margin-top: 10px;
+  padding: 8px 14px !important;
+  background-color: #4CAF50 !important;
+  color: white;
+  font-family: "Trebuchet MS", 'Clarendon', sans-serif;
+  font-size: 0.9em;
+}
+
+button:hover {
+  margin-top: 10px;
+  padding: 8px 14px !important;
+  background-color: #3e8741 !important;
+  color: white;
+  font-family: "Trebuchet MS", 'Clarendon', sans-serif;
+  font-size: 0.9em;
+}
+
 @font-face {
  font-family: Clarendon;
  src: url(fonts/ClarendonR.ttf);

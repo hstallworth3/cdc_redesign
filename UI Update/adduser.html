@@ -3,6 +3,14 @@
 <meta charset="UTF-8">
 <head>
 <link rel="stylesheet" type="text/css" href="newdefault.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+<script src="./firebaseIO.js"></script>
+<script type="text/javascript">
+  $( document ).ready(function() {
+    connect(false);
+  });
+  </script>
 </head>
 <body>
 
@@ -19,28 +27,30 @@
 
 <h2 class="sansserif">Add New User</h2>
 
-<h3 class="sansserif">User Information</h3>
+<h3 class="sansserif">New User Information</h3>
 <form class="sansserif">
   First name:<br>
-  <input type="text" name="firstname"><br>
+  <input type="text" name="firstname" id="firstname"><br>
   Last name:<br>
-  <input type="text" name="lastname"><br>
+  <input type="text" name="lastname" id="lastname"><br>
+  Age:<br>
+  <input type="text" name="age" id="age"><br>
   User ID:<br>
-  <input type="text" name="userid">
+  <input type="text" name="userid" id="userid">
 </form>
 
 <br>
 
 <form class="sansserif">Status:
-  <input type="radio" name="active" value="active" checked> Active
-  <input type="radio" name="active" value="inactive"> Inactive
+  <input type="radio" name="active" value="active" id="active" checked> Active
+  <input type="radio" name="active" value="inactive" id="inactive"> Inactive
 </form>
 
 <!-- both facility and provider will be filled from database, not hardcoded <-->
 
 <h3 class="sansserif">Facility Information</h3><p>Required for external (outside agency) users<p>
 
-<p>Reporting Facility: <select>
+<p>Reporting Facility: <select id="facility">
   <option value="Facility 1">Facility 1</option>
   <option value="Facility 2">Facility 2</option>
 </select>
@@ -48,7 +58,7 @@
 
 <h3 class="sansserif">Provider Information</h3>
 
-<p>Provider: <select>
+<p>Provider: <select id="provider">
   <option value="Provider 1">Provider 1</option>
   <option value="Provider 2">Provider 2</option>
 </select>
@@ -57,18 +67,30 @@
 <h3 class="sansserif">Administrator Information</h3>
 
 <form class="sansserif">
-  <input type="radio" name="active" value="active" checked> Master Security Administrator
-  <input type="radio" name="active" value="inactive"> Program Area Administrator
+  <input type="radio" name="active" value="active" id="master" checked> Master Security Administrator
+  <input type="radio" name="active" value="inactive" id="program"> Program Area Administrator
 </form>
 
 <h3 class="sansserif">User Permissions</h3>
 
 <!-- table with user permissions will go here -->
 
-<button onclick="location.href='userlist.html'">Add User</button>
+<button type="button" id="add">Add User</button>
 
 <button onclick="location.href='userlist.html'">Cancel</button>
 
-
+<script type="text/javascript">
+  $('#add').click(function() {
+    writeUserData($('#userid').val(),
+     $('#firstname').val(),
+     $('#lastname').val(),
+     $("#master").prop("checked"),
+     $("#program").prop("checked"),
+     $("#active").prop("checked"),
+     $("#provider").val(),
+     $("#facility").val(),
+     $("#age").val());
+  })
+</script>
 </body>
 </html>
