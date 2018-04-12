@@ -9,7 +9,7 @@
 button {
   margin-top: 10px;
   padding: 8px 14px !important;
-  background-color: #4CAF50 !important;
+  background-color: #075290 !important;
   color: white;
   font-family: "Trebuchet MS", 'Clarendon', sans-serif;
   font-size: 0.9em;
@@ -18,7 +18,7 @@ button {
 button:hover {
   margin-top: 10px;
   padding: 8px 14px !important;
-  background-color: #3e8741 !important;
+  background-color: #0b69b7 !important;
   color: white;
   font-family: "Trebuchet MS", 'Clarendon', sans-serif;
   font-size: 0.9em;
@@ -110,7 +110,7 @@ form {
 }
 
  .button {
-     background-color: #1E90FF;
+     background-color: #075290;
      color: #FFFFFF;
      text-align: center;
      display: inline-block;
