@@ -30,25 +30,30 @@
 <br>
 
 <h3 class="sansserif">Permission Set Configuration</h3>
-<form class="sansserif">System:<br>
-  <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
-  <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Decision Support Management<br>
-  <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Epi-Link ID (Lot Number) Management<br>
-  <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Page Management<br>
-  <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Geocoding Management<br>
-  <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Case Report and Laboratory Management<br>
-  <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Report Management<br>
-  <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Sending and Receiving Systems Management<br>
+<button class="accordion">System:</button>
+  <div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5></p>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Decision Support Management<br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Epi-Link ID (Lot Number) Management<br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Page Management<br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Geocoding Management<br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Case Report and Laboratory Management<br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Report Management<br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Sending and Receiving Systems Management<br></p>
+  </div>
 
 </form><br>
 
-<form class="sansserif">Global:<br>
-  <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
-  <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Access to HIV fields<br>
+<button class="accordion">Global:</button>
+  <div class="panel">
+  <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+  <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp; Access to HIV fields<br></p>
+</div>
 </form><br>
 
-<form class="sansserif">Patient:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Patient:</button>
+<div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;(requires Find Patient Access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;(requires View Patient Access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View<br>
@@ -56,33 +61,41 @@
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Delete &nbsp;(requires View Patient Access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Find&nbsp;(requires View Patient Access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Find Inactive&nbsp;(requires View Patient Access)<br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Merge Patients&nbsp;(requires Find Patient Access)<br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Merge Patients&nbsp;(requires Find Patient Access)<br></p>
+</div>
 
 
 </form><br>
 
-<form class="sansserif">Provider:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Manage&nbsp;(Add, Edit, and Inactivate) <br>
+<button class="accordion">Provider:</button>
+<div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Manage&nbsp;(Add, Edit, and Inactivate) <br></p>
+</div>
 
 
 </form><br>
 
-    <form class="sansserif">Place:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Manage&nbsp;(Add, Edit, and Inactivate) <br>
+    <button class="accordion">Place:</button>
+<div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Manage&nbsp;(Add, Edit, and Inactivate) <br></p>
+</div>
 
 
 </form><br>
 
-<form class="sansserif">Organization:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Manage&nbsp;(Add, Edit, and Inactivate) <br>
+<button class="accordion">Organization:</button>
+<div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Manage&nbsp;(Add, Edit, and Inactivate) <br></p>
+</div>
 
 </form><br>
 
-<form class="sansserif">Investigation:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Investigation:</button>
+<div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;(requires View Patient File access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;(requires View Investigation access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View&nbsp;(requires View Patient File access) <br>
@@ -95,39 +108,47 @@
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Associate Treatment&nbsp;(requires View Investigation and View Treatment OR Add Investigation and Manage Treatment access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Disassociate Initiating Event&nbsp;(requires Associate Lab and Associate Morbidity access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Change Condition&nbsp;(requires View Investigation access) <br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Merge Investigations&nbsp;(requires Edit Investigation, Associate Document, Associate Lab, Associate Morbidity, Associate Vaccination, Associate Treatment, Disassociate Initiating Event, Share Investigation, Create Notification, Edit Interview, and Manage Contact Records access) <br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Merge Investigations&nbsp;(requires Edit Investigation, Associate Document, Associate Lab, Associate Morbidity, Associate Vaccination, Associate Treatment, Disassociate Initiating Event, Share Investigation, Create Notification, Edit Interview, and Manage Contact Records access) <br></p>
+</div>
 
 
 
 </form><br>
 
-<form class="sansserif">RVCT (Tuberculosis):<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Access to HIV fields&nbsp;<br>
+<button class="accordion">RVCT (Tuberculosis):</button>
+<div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Access to HIV fields&nbsp;<br></p>
+</div>
 
 
 </form><br>
 
-<form class="sansserif">Summary Report:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Summary Report:</button>
+<div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Add/Edit&nbsp;(requires View Summary Report access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View&nbsp;<br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Delete&nbsp;<br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Delete&nbsp;<br></p>
+<div>
 
 
 </form><br>
 
-<form class="sansserif">Vaccindation Record:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Vaccindation Record:</button>
+<div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;(requires View Patient File access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;(requires View Vaccination Record access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View&nbsp;(requires View Patient File access)<br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Delete&nbsp;(requires View Vaccination Record access)<br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Delete&nbsp;(requires View Vaccination Record access)<br></p>
+</div>
 
 </form><br>
 
-<form class="sansserif">Lab Report:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Lab Report:</button>
+<div class="panel>
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;(requires View Lab Report access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View&nbsp;(requires View Patient File access)<br>
@@ -137,12 +158,13 @@
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Assign Security for Data Entry&nbsp;(requires Add Lab Report access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Transfer Ownership Privilege&nbsp;(requires View Lab Report access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View ELR Activity Log&nbsp;<br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Mark As Reviewed&nbsp;(requires View Lab Report access)<br>
-
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Mark As Reviewed&nbsp;(requires View Lab Report access)<br></p>
+                                                                                                                             </div>
 </form><br>
 
-<form class="sansserif">Morbidity Report:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Morbidity Report:</button>
+<div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;(requires View Morbidity Report access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View&nbsp;(requires View Patient File access)<br>
@@ -152,113 +174,129 @@
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Assign Security for Data Entry&nbsp;(requires Add Morbidity Report access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Transfer Ownership Privilege&nbsp;(requires View Morbidity Report access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;AutoCreate an Investigation&nbsp;(requires Add Morbidity Report access)<br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Mark As Reviewed&nbsp;(requires View Lab Report access)<br>
-
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Mark As Reviewed&nbsp;(requires View Lab Report access)<br></p>
+                                                                                                                             </div>
 </form><br>
 
-<form class="sansserif">Treatment:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Treatment:</button>
+<div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Manage&nbsp;(Add, Edit, and Delete) <br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View&nbsp;(requires View Patient File access) <br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View&nbsp;(requires View Patient File access) <br></p>
+                                                                                                                             </div>
 
 </form><br>
 
-<form class="sansserif">Case Report:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Case Report:</button>
+                         <div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View&nbsp;(requires View Patient File access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Delete&nbsp;(requires View Case Report access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Assign Security&nbsp;(requires Transfer Ownership Privilege to Case Report access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Transfer Ownership Privilege&nbsp;(requires View Case Report access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;AutoCreate an Investigation&nbsp;(requires View Case Report access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View PHCR Activity Log&nbsp;<br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Mark As Reviewed&nbsp;(requires View Case Report access)<br>
-
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Mark As Reviewed&nbsp;(requires View Case Report access)<br></p>
+                                                                                                                             </div>
 </form>
 
-<form class="sansserif">Notification:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Notification:</button>
+                         <div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Create&nbsp;(requires View Investigation access) <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="active" value="inactive"> Does Not Need Approval &nbsp;<input type="radio" name="active" value="inactive"> Needs Approval <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Review Notification for Approval&nbsp;(requires Edit Investigation access) <br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Create Summary Notification&nbsp;(requires View Summary Report access) <br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Create Summary Notification&nbsp;(requires View Summary Report access) <br></p>
+                                                                                                                             </div>
 
 
 
 </form><br>
 
-<form class="sansserif">Queues:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Queues:</button>
+                         <div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Message Queue&nbsp;(requires Edit Investigation access) <br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Supervisor Review Queue&nbsp;(requires Edit Investigation access) <br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Supervisor Review Queue&nbsp;(requires Edit Investigation access) <br></p>
+                                                                                                                             </div>
 
 </form><br>
 
-<form class="sansserif">Share Investigation:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Create&nbsp;(requires View Investigation access) <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="active" value="inactive"> Does Not Need Approval &nbsp;<input type="radio" name="active" value="inactive"> Needs Approval <br>
-
+<button class="accordion">Share Investigation:</button>
+                         <div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Create&nbsp;(requires View Investigation access) <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="active" value="inactive"> Does Not Need Approval &nbsp;<input type="radio" name="active" value="inactive"> Needs Approval <br></P>
+</div>
 </form><br>
 
-<form class="sansserif">Reports:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Reports:</button>
+                         <div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Export Report/Query Design&nbsp;(requires Select Criteria access) <br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Run Report/Query Design&nbsp;(requires Select Criteria access) <br>
-
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Run Report/Query Design&nbsp;(requires Select Criteria access) <br></p>
+                                                                                                                             </div>
 </form><br>
 
-<form class="sansserif">Template:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Template:</button>
+                         <div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Select Criteria Report/Query Design&nbsp;(requires View Report/Query Design access) <br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View Report/Query Design&nbsp;<br>
-
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View Report/Query Design&nbsp;<br></p>
+                                                                                                                             </div>
 </form><br>
 
-<form class="sansserif">Public:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Public:</button>
+                         <div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Add Report/Query Design&nbsp;(requires View Template Report/Query access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Delete Report/Query Design&nbsp;(requires View Public Report/Query access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Edit Report/Query Design&nbsp;(requires View Public Report/Query access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Select Filter Criteria&nbsp;(requires View Public Report/Query access)<br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View Report/Query Design&nbsp;<br>
-
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View Report/Query Design&nbsp;<br></p>
+                                                                                                                             </div>
 </form><br>
 
-<form class="sansserif">Private:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Private:</button>
+                         <div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Add Report/Query Design&nbsp;(requires View Template Report/Query access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Delete Report/Query Design&nbsp;(requires View Private Report/Query access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Edit Report/Query Design&nbsp;(requires View Private Report/Query access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Select Filter Criteria&nbsp;(requires View Private Report/Query access)<br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View Report/Query Design&nbsp;<br>
-
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View Report/Query Design&nbsp;<br></p>
+                                                                                                                             </div>
 </form><br>
 
-<form class="sansserif">Reporting Facility:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Reporting Facility:</button>
+                         <div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Add Report/Query Design&nbsp;(requires View Template Report/Query access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Delete Report/Query Design&nbsp;(requires View Reporting Facility Report/Query access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Edit Report/Query Design&nbsp;(requires View Reporting Facility Report/Query access)<br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Select Filter Criteria&nbsp;(requires View Reporting Facility Report/Query access)<br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View Report/Query Design&nbsp;<br>
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View Report/Query Design&nbsp;<br></p>
+                                                                                                                             </div>
 
 </form><br>
 
-<form class="sansserif">Contact Record:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Contact Record:</button>
+                         <div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;(requires View Investigation access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;(requires View Contract Record access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View&nbsp;(requires View Patient File access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Delete&nbsp;(requires View Investigation access) <br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Manage&nbsp;(requires View Contract Record access) <br>
-
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Manage&nbsp;(requires View Contract Record access) <br></p>
+                                                                                                                             </div>
 </form><br>
 
-<form class="sansserif">Interview:<br>
-    <h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
+<button class="accordion">Interview:</button>
+                         <div class="panel">
+    <p><h5 class="sansserif">User &nbsp; Guest &nbsp; (A User marked as a Guest will only have access to shared records)</h5>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Add&nbsp;(requires View Investigation access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Edit&nbsp;(requires View Interview access) <br>
     <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;View&nbsp;(requires View Investigation access) <br>
-    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Delete&nbsp;(requires View Interview access) <br>
-
+    <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp; <input type="checkbox" name="active" value="inactive"> &nbsp;&nbsp;&nbsp;&nbsp;Delete&nbsp;(requires View Interview access) <br></p>
+                                                                                                                             </div>
 </form><br>
 <!-- both facility and provider will be filled from database, not hardcoded <-->
 
