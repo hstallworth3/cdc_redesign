@@ -30,6 +30,25 @@ button:hover {
  src: url(fonts/clarendonm.woff) format(woff);
 }
 
+.accordion {
+    background-color: #075290;
+    color: white;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+}
+
+.panel {
+    padding: 0 18px;
+    background-color: white;
+    display: none;
+    overflow: hidden;
+}
+
 body {
    background-color: #FFFFFF;
    font-family: "Trebuchet MS", 'Clarendon', sans-serif;
