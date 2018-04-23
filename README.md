@@ -2,7 +2,7 @@
 Junior Design CDC User Management Redesign
 
 
-# release notes version 1.5
+# Release Notes Version 1.5
 
 New Features:
 Updated CSS for all pages
@@ -18,7 +18,7 @@ No added search functionality and fixing of search related bugs
 
 
 
-# usage guide
+# Usage Guide
 
 Prerequisites: Download and install python 2.7 or 3.6: https://www.python.org/downloads/
 
