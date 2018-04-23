@@ -22,6 +22,8 @@ No added search functionality and fixing of search related bugs
 
 Prerequisites: download and install python 2.7 or 3.6
 
+Installation: download the source code from the github to any location you desire
+
 Run Instructions: 1. navigate to the folder with the source code in command line
                   2. run "python -m SimpleHTTPServer 8080" or "python -m http.server 8080"
                   3. navigate to http://localhost:8080/userlist.html or http:localhost:8080/permissionset.html
