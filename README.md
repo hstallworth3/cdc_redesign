@@ -28,6 +28,7 @@ Download: https://github.com/hstallworth3/cdc_redesign
 
 Installation: Download the source code from the github to any location you desire
 
-Running Application: 1. Navigate to the folder with the source code in command line
-                     2. Run "python -m SimpleHTTPServer 8080" or "python -m http.server 8080"
-                     3. Navigate to http://localhost:8080/userlist.html or http:localhost:8080/permissionset.html
+Running Application: 
+1. Navigate to the folder with the source code in command line
+2. Run "python -m SimpleHTTPServer 8080" or "python -m http.server 8080"
+3. Navigate to http://localhost:8080/userlist.html or http:localhost:8080/permissionset.html
