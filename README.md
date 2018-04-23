@@ -26,6 +26,8 @@ Dependencies: None
 
 Download: https://github.com/hstallworth3/cdc_redesign
 
+Build Instructions: None
+
 Installation: Download the source code from the github to any location you desire
 
 Running Application: 
