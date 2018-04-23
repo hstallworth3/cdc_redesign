@@ -33,7 +33,9 @@ https://github.com/hstallworth3/cdc_redesign
 None
 
 ## Installation
-Download the source code from the github to any location you desire
+1. Download the source code from the github to any location you desire
+2. Navigate to UI directory
+3. Run application
 
 ## Running Application: 
 1. Navigate to the folder with the source code in command line
