@@ -49,6 +49,18 @@ button:hover {
     overflow: hidden;
 }
 
+.accordion:after {
+    content: '\02795';
+    font-size: 13px;
+    color: #777;
+    float: right;
+    margin-left: 5px;
+}
+
+.active:after {
+    content: "\2796";
+}
+
 body {
    background-color: #FFFFFF;
    font-family: "Trebuchet MS", 'Clarendon', sans-serif;
